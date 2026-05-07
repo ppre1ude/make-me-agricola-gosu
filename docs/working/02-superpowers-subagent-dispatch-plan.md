@@ -7,6 +7,7 @@ Latest checkpoint:
 ```text
 Schema Stabilization Gate: closed by 7 passing fixtures.
 Domain Logic Gate: 15 passing fixtures; pending human review.
+Fixture Gate Report: available through yarn report:fixture-gates.
 ```
 
 ## Scope
@@ -87,13 +88,20 @@ Prefer Korean commit messages unless the user asks for English or a specific exi
 Prefer this order:
 
 ```text
+yarn report:fixture-gates
 yarn test
 yarn validate:data
 yarn score:fixtures
 ```
 
-Use `yarn test` as the final acceptance command for the lane set.
-If a narrower command is needed while iterating, run it first and finish with `yarn test`.
+Use `yarn report:fixture-gates` before review checkpoints to show which
+light-spec gate cases are covered by the current fixture IDs. This report is
+not a substitute for strategy judgment review; it makes the review surface
+explicit.
+
+Use `yarn test` as the final acceptance command for the lane set. If a
+narrower command is needed while iterating, run it first and finish with
+`yarn test`.
 
 ## Completion Criteria
 

@@ -6,7 +6,8 @@
     "test": "yarn typecheck && yarn validate:data && yarn score:fixtures",
     "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
     "validate:data": "node scripts/validate-data.ts",
-    "score:fixtures": "node scripts/score-draft-fixtures.ts"
+    "score:fixtures": "node scripts/score-draft-fixtures.ts",
+    "report:fixture-gates": "node scripts/report-draft-fixture-gates.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
