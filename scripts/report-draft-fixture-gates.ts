@@ -194,10 +194,9 @@ const stretchCases: GateCase[] = [
   },
   {
     id: "high-pass-regret-plan-anchor-creates-pivot-hint",
-    coverage: "partial",
+    coverage: "direct",
     fixtureIds: ["plan-shift-hint-high-impact"],
-    evidence: ["planShiftIncludes and plan_anchor_candidate assertions"],
-    reviewNote: "Does not assert passRegret or pivotPotential for the same card yet."
+    evidence: ["planShiftIncludes, passRegret, pivotPotential, and plan anchor assertions"]
   },
   {
     id: "model-user-disagreement-recorded-without-judgment",

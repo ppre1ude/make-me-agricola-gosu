@@ -8,6 +8,7 @@
     "seenCardIds": ["occ-field-watchman", "minor-seed-cart", "minor-grain-supply", "occ-food-engine"],
     "passedCardIds": [],
     "previousPackCardIds": ["minor-seed-cart", "minor-late-points", "occ-food-engine"],
+    "missingFromPreviousPack": ["minor-seed-cart"],
     "offeredCardIds": ["minor-grain-supply", "occ-food-engine"]
   },
   "expected": {

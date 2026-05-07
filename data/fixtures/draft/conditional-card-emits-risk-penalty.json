@@ -16,6 +16,9 @@
     "componentAtLeast": [
       { "cardId": "minor-risky-bonus", "component": "riskPenalty", "value": 5 }
     ],
+    "componentBelow": [
+      { "cardId": "occ-food-engine", "component": "riskPenalty", "value": 1 }
+    ],
     "candidateGroupIncludes": [
       { "cardId": "minor-risky-bonus", "value": "risky_conditional_candidate" }
     ],
