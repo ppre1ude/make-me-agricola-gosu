@@ -130,5 +130,29 @@
     "sourceRefs": ["manual-prototype-seed"],
     "createdAt": "2026-05-08",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "occ-flex-merchant",
+    "type": "occupation",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["premium", "tempo"],
+    "timingTagIds": ["on_play_occupation"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "minor-risky-bonus",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["late_scoring", "conditional"],
+    "timingTagIds": ["scoring"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
   }
 ]

@@ -1,0 +1,21 @@
+{
+  "id": "late-pick-candidate-set-before-tier",
+  "description": "Late picks should prefer an executable food candidate over conditional raw points.",
+  "input": {
+    "pickNumber": 6,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-risky-bonus", "minor-snack-basket"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-risky-bonus", "minor-snack-basket"]
+  },
+  "expected": {
+    "topCardId": "minor-snack-basket",
+    "downrankedBelow": [
+      { "cardId": "minor-risky-bonus", "belowCardId": "minor-snack-basket" }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "minor-snack-basket", "value": "support_candidate" },
+      { "cardId": "minor-snack-basket", "value": "food_stability_candidate" }
+    ]
+  }
+}

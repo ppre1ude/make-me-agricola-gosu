@@ -1,0 +1,23 @@
+{
+  "id": "middle-pick-high-pass-regret-beats-weak-support",
+  "description": "In picks 3-4, a scarce premium support card can beat a weak support card through pass regret.",
+  "input": {
+    "pickNumber": 3,
+    "pickedCardIds": ["minor-late-points"],
+    "seenCardIds": ["minor-late-points", "occ-flex-merchant", "minor-snack-basket"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-flex-merchant", "minor-snack-basket"]
+  },
+  "expected": {
+    "topCardId": "occ-flex-merchant",
+    "downrankedBelow": [
+      { "cardId": "minor-snack-basket", "belowCardId": "occ-flex-merchant" }
+    ],
+    "componentAtLeast": [
+      { "cardId": "occ-flex-merchant", "component": "passRegret", "value": 7 }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "occ-flex-merchant", "value": "high_pass_regret_candidate" }
+    ]
+  }
+}

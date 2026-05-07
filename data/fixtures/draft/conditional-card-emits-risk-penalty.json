@@ -1,0 +1,26 @@
+{
+  "id": "conditional-card-emits-risk-penalty",
+  "description": "A conditional points card should surface risk and lose to an executable food follow-up.",
+  "input": {
+    "pickNumber": 5,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-risky-bonus", "occ-food-engine"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-risky-bonus", "occ-food-engine"]
+  },
+  "expected": {
+    "topCardId": "occ-food-engine",
+    "downrankedBelow": [
+      { "cardId": "minor-risky-bonus", "belowCardId": "occ-food-engine" }
+    ],
+    "componentAtLeast": [
+      { "cardId": "minor-risky-bonus", "component": "riskPenalty", "value": 5 }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "minor-risky-bonus", "value": "risky_conditional_candidate" }
+    ],
+    "hasRisk": [
+      { "cardId": "minor-risky-bonus", "risk": "conditional_bonus_unready" }
+    ]
+  }
+}

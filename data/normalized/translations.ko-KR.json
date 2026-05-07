@@ -98,5 +98,23 @@
     "shortText": "Prototype food support card distinct from a food engine.",
     "sourceRefs": ["manual-prototype-seed"],
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-flex-merchant",
+    "locale": "ko-KR",
+    "name": "Flex Merchant",
+    "aliases": ["Flex Merchant"],
+    "shortText": "Prototype scarce premium card for pass-regret fixtures.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-risky-bonus",
+    "locale": "ko-KR",
+    "name": "Risky Bonus",
+    "aliases": ["Risky Bonus"],
+    "shortText": "Prototype conditional points card for risk fixture coverage.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
   }
 ]

@@ -225,7 +225,7 @@
     "isBroken": false,
     "isPlanAnchor": false,
     "solves": [],
-    "supports": ["food_support"],
+    "supports": ["food_engine"],
     "increasesNeedFor": [],
     "saturationPenaltyTo": ["food_support"],
     "synergyWith": [],
@@ -237,6 +237,55 @@
     },
     "explanation": {
       "compact": { "ko-KR": "Small food help, not a complete food engine." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-flex-merchant",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["food_support"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [],
+    "supports": ["food_engine"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["food_support"],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": ["food_engine", "engine_completion"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Scarce premium support card for pass-regret fixtures." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-risky-bonus",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["late_bonus_points", "risk_conditional"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["late_bonus_points"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["late_bonus_points"],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": ["conditional_bonus_unready", "low_early_impact", "needs_specific_followup"],
+    "timingWindow": "late",
+    "nextPickGuidance": {
+      "ko-KR": ["condition_support"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Conditional points card that should expose risk clearly." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",

@@ -6,7 +6,7 @@ Latest checkpoint:
 
 ```text
 Schema Stabilization Gate: closed by 7 passing fixtures.
-Domain Logic Gate: in progress with 12 passing fixtures.
+Domain Logic Gate: 15 passing fixtures; pending human review.
 ```
 
 ## Scope
