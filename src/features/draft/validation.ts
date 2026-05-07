@@ -115,7 +115,8 @@ const FIXTURE_EXPECTED_KEYS = new Set([
   "evaluationMetaIncludes",
   "trackingSignalIncludes",
   "planShiftIncludes",
-  "reasonIncludes"
+  "reasonIncludes",
+  "reasonExcludes"
 ]);
 
 export function validateDraftDataSet(data: DraftDataSet, fixtures: DraftFixture[] = []): ValidationResult {
@@ -414,6 +415,14 @@ function validateFixtures(
         addIssue(issues, "error", `${path}.expected.reasonIncludes.depth`, `invalid explanation depth "${assertion.depth}"`);
       }
       requireString(assertion.value, `${path}.expected.reasonIncludes.value`, issues);
+    }
+
+    for (const assertion of fixture.expected?.reasonExcludes ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.reasonExcludes.cardId`, issues);
+      if (!EXPLANATION_DEPTHS.has(assertion.depth)) {
+        addIssue(issues, "error", `${path}.expected.reasonExcludes.depth`, `invalid explanation depth "${assertion.depth}"`);
+      }
+      requireString(assertion.value, `${path}.expected.reasonExcludes.value`, issues);
     }
   });
 }

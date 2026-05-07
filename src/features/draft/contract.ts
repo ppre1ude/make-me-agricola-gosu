@@ -288,6 +288,7 @@ export type DraftFixtureExpected = {
   trackingSignalIncludes?: TrackingSignalAssertion[];
   planShiftIncludes?: TextIncludesAssertion[];
   reasonIncludes?: ReasonIncludesAssertion[];
+  reasonExcludes?: ReasonIncludesAssertion[];
 };
 
 export type DraftFixture = {

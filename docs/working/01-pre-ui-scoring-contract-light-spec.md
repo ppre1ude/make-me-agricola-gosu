@@ -371,6 +371,7 @@ type DraftFixtureExpected = {
   trackingSignalIncludes?: Array<{ cardId?: string; role?: string; value: string }>;
   planShiftIncludes?: Array<{ cardId: string; value: string }>;
   reasonIncludes?: Array<{ cardId: string; depth: ExplanationDepth; value: string }>;
+  reasonExcludes?: Array<{ cardId: string; depth: ExplanationDepth; value: string }>;
 };
 ```
 

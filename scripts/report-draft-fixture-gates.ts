@@ -66,10 +66,9 @@ const schemaGate: Gate = {
     },
     {
       id: "warnings-and-evaluation-meta-do-not-pollute-reasons",
-      coverage: "partial",
+      coverage: "direct",
       fixtureIds: ["missing-profile-warning-and-evaluation-meta"],
-      evidence: ["warnings and evaluationMeta are asserted separately"],
-      reviewNote: "There is no negative reasonExcludes assertion or runtime check yet."
+      evidence: ["warnings, evaluationMeta, and reasonExcludes assertions"]
     }
   ]
 };
@@ -305,7 +304,8 @@ function printAssertionCoverage(fixtures: DraftFixture[]): void {
     "evaluationMetaIncludes",
     "trackingSignalIncludes",
     "planShiftIncludes",
-    "reasonIncludes"
+    "reasonIncludes",
+    "reasonExcludes"
   ];
   const usedExpectedKeys = new Set(fixtures.flatMap((fixture) => Object.keys(fixture.expected ?? {})));
   const missingExpectedKeys = supportedExpectedKeys.filter((key) => !usedExpectedKeys.has(key));

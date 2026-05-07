@@ -198,6 +198,14 @@ function validateFixture(
     }
   }
 
+  for (const assertion of expected.reasonExcludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.reasons[assertion.depth].join(" ") ?? "";
+    if (actual.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} ${assertion.depth} reasons not to include "${assertion.value}"`);
+    }
+  }
+
   return { ok: messages.length === 0, messages };
 }
 

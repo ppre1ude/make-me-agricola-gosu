@@ -15,6 +15,10 @@
     "evaluationMetaIncludes": [
       { "cardId": "occ-open-pantry", "confidence": "low" },
       { "cardId": "occ-open-pantry", "missingDataIncludes": "strategy_profile" }
+    ],
+    "reasonExcludes": [
+      { "cardId": "occ-open-pantry", "depth": "standard", "value": "strategy profile" },
+      { "cardId": "occ-open-pantry", "depth": "compact", "value": "strategy profile" }
     ]
   }
 }
