@@ -6,6 +6,7 @@ This repo uses two external skill systems as recurring workflow tools:
 
 - `mattpocock/skills`: small engineering skills for alignment, TDD, diagnosis, architecture improvement, and shared language.
 - `garrytan/gstack`: product, planning, engineering review, design review, QA, release, and retrospective workflow skills.
+- `obra/superpowers`: agentic software-development workflow skills for brainstorming, spec approval, planning, TDD, review, and development-branch completion.
 
 Use these skills as process guides, not as authority over the project. Project docs and current user instructions take precedence.
 
@@ -35,8 +36,50 @@ Primary docs:
 - `docs/core/04-feature-specs.md`
 - `docs/core/05-roadmap.md`
 - `docs/working/00-pre-ui-engineering-review.md`
+- `docs/agents/00-agent-operating-model.md`
 
 ## Skill Routing
+
+This project uses three workflow layers:
+
+```text
+Superpowers: spec and execution discipline
+gstack: product, strategy, engineering/design review, QA, ship
+mattpocock: alignment, domain language, TDD, diagnosis, architecture maintenance
+```
+
+When more than one skill system fits, choose one driver workflow and use the others only as supporting checks. Do not stack multiple long interactive workflows unless the user asks for that depth.
+
+If the official Superpowers plugin is installed, use its skills directly. If it is not available in the active skill list, follow the project fallback workflow in `docs/agents/00-agent-operating-model.md`.
+
+### Superpowers Workflow Layer
+
+Use `brainstorming` from Superpowers when:
+
+- the user wants to brainstorm
+- the user wants a light spec before implementation
+- the request is a rough feature idea and should not jump straight to code
+- we need to compare 2-3 approaches before choosing a build path
+
+For this project, Superpowers brainstorming should write light specs under `docs/working/` unless the user requests another location.
+
+Use `writing-plans` from Superpowers after:
+
+- the light spec is approved
+- implementation should be broken into small, verifiable tasks
+- exact file paths, tests, and acceptance criteria are needed
+
+Use Superpowers TDD/review/finishing workflows as supporting discipline when:
+
+- executing an approved plan
+- checking a branch before merge or PR
+- deciding whether to keep, merge, or discard a development branch
+
+Do not let Superpowers planning override this repo's current gate:
+
+```text
+Before UI work, close scoring contract, data validation, and fixture matrix.
+```
 
 ### Product and Scope
 
