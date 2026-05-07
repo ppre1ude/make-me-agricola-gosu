@@ -74,13 +74,18 @@ const CONFIDENCE_SCORE: Record<ConfidenceLevel, number> = {
   unverified: 2
 };
 
+const FOOD_STABILITY_ROLES = new Set(["food_engine", "food_support", "food_conversion", "food_self_sufficiency", "bake_bread_access"]);
+
 type HandContext = {
   pickedCardIds: Set<string>;
   pickedProfiles: CardStrategyProfile[];
   solvedRoles: Set<string>;
+  supportedRoles: Set<string>;
   neededRoles: Map<string, number>;
+  roleCounts: Map<string, number>;
   saturationTargets: Set<string>;
   missingRolePressure: Map<string, number>;
+  dataIndex: DraftDataIndex;
 };
 
 export function buildDraftDataIndex(data: DraftDataSet): DraftDataIndex {
@@ -182,12 +187,18 @@ function buildHandContext(input: DraftScoringInput, dataIndex: DraftDataIndex): 
     .map((cardId) => dataIndex.profilesByCardId.get(cardId))
     .filter((profile): profile is CardStrategyProfile => profile !== undefined);
   const solvedRoles = new Set<string>();
+  const supportedRoles = new Set<string>();
   const neededRoles = new Map<string, number>();
+  const roleCounts = new Map<string, number>();
   const saturationTargets = new Set<string>();
   const missingRolePressure = new Map<string, number>();
 
   for (const profile of pickedProfiles) {
+    for (const role of unique([...profile.roles, ...profile.solves])) {
+      roleCounts.set(role, (roleCounts.get(role) ?? 0) + 1);
+    }
     for (const role of profile.solves) solvedRoles.add(role);
+    for (const role of [...(profile.supports ?? []), ...(profile.partialSolves ?? [])]) supportedRoles.add(role);
     for (const target of profile.saturationPenaltyTo) saturationTargets.add(target);
   }
 
@@ -200,7 +211,12 @@ function buildHandContext(input: DraftScoringInput, dataIndex: DraftDataIndex): 
   }
 
   if (input.trackingMode === "full_pack") {
-    for (const cardId of input.missingFromPreviousPack ?? []) {
+    const missingCardIds =
+      input.missingFromPreviousPack ??
+      input.previousPackCardIds?.filter((cardId) => !input.offeredCardIds.includes(cardId)) ??
+      [];
+
+    for (const cardId of missingCardIds) {
       const profile = dataIndex.profilesByCardId.get(cardId);
       for (const role of profile?.roles ?? []) {
         missingRolePressure.set(role, (missingRolePressure.get(role) ?? 0) + 1);
@@ -215,9 +231,12 @@ function buildHandContext(input: DraftScoringInput, dataIndex: DraftDataIndex): 
     pickedCardIds: new Set(input.pickedCardIds),
     pickedProfiles,
     solvedRoles,
+    supportedRoles,
     neededRoles,
+    roleCounts,
     saturationTargets,
-    missingRolePressure
+    missingRolePressure,
+    dataIndex
   };
 }
 
@@ -247,7 +266,24 @@ function computeRoleCoverage(profile: CardStrategyProfile | undefined, handConte
     score += handContext.neededRoles.has(role) ? 4 : 2;
   }
 
-  for (const role of profile.roles) {
+  for (const role of profile.partialSolves ?? []) {
+    if (handContext.solvedRoles.has(role)) continue;
+    score += handContext.neededRoles.has(role) ? 2.5 : 1.25;
+  }
+
+  for (const role of profile.supports ?? []) {
+    if (handContext.solvedRoles.has(role) || handContext.supportedRoles.has(role)) continue;
+    score += handContext.neededRoles.has(role) ? 1.5 : 0.75;
+  }
+
+  const roleOnly = profile.roles.filter(
+    (role) =>
+      !profile.solves.includes(role) &&
+      !(profile.partialSolves ?? []).includes(role) &&
+      !(profile.supports ?? []).includes(role)
+  );
+
+  for (const role of roleOnly) {
     if (handContext.solvedRoles.has(role)) continue;
     score += handContext.neededRoles.has(role) ? 1.5 : 0.75;
   }
@@ -267,12 +303,27 @@ function computeSynergy(cardId: string, profile: CardStrategyProfile | undefined
     if (pickedProfile.synergyWith.includes(cardId)) score += 2;
   }
 
-  for (const role of profile.roles) {
+  const roleOnly = profile.roles.filter(
+    (role) =>
+      !profile.solves.includes(role) &&
+      !(profile.partialSolves ?? []).includes(role) &&
+      !(profile.supports ?? []).includes(role)
+  );
+
+  for (const role of roleOnly) {
     if (handContext.neededRoles.has(role)) score += 2;
   }
 
   for (const role of profile.solves) {
     if (handContext.neededRoles.has(role)) score += 2;
+  }
+
+  for (const role of profile.partialSolves ?? []) {
+    if (handContext.neededRoles.has(role)) score += 1.25;
+  }
+
+  for (const role of profile.supports ?? []) {
+    if (handContext.neededRoles.has(role)) score += 0.75;
   }
 
   return clamp(score, 0, 10);
@@ -368,7 +419,7 @@ function computeRoleAvailabilityPressure(
   if (!profile) return 0;
   let pressure = 0;
 
-  for (const role of [...profile.roles, ...profile.solves]) {
+  for (const role of unique([...profile.roles, ...profile.solves])) {
     pressure += handContext.missingRolePressure.get(role) ?? 0;
   }
 
@@ -394,12 +445,33 @@ function computeSaturationPenalty(
   if (handContext.saturationTargets.has(cardId)) penalty += 5;
 
   for (const role of [...profile.roles, ...profile.solves]) {
+    const strategyRole = handContext.dataIndex.rolesById.get(role);
+    const count = handContext.roleCounts.get(role) ?? 0;
+    const limit = strategyRole?.defaultSaturationLimit ?? 1;
+
     if (handContext.solvedRoles.has(role)) penalty += 3;
     if (handContext.saturationTargets.has(role)) penalty += 3;
+    if (count >= limit) penalty += getSaturationBehaviorPenalty(strategyRole?.saturationBehavior, role, handContext);
   }
 
   if (profile.isBroken) penalty *= 0.5;
   return clamp(penalty, 0, 10);
+}
+
+function getSaturationBehaviorPenalty(
+  behavior: string | undefined,
+  role: string,
+  handContext: HandContext
+): number {
+  if (behavior === "stackable") return 1;
+  if (behavior === "soft_cap") {
+    const sinkRoles = handContext.dataIndex.rolesById.get(role)?.sinkRoleIds ?? [];
+    const hasSink = sinkRoles.some((sinkRole) => handContext.solvedRoles.has(sinkRole) || handContext.supportedRoles.has(sinkRole));
+    return hasSink ? 1.5 : 3;
+  }
+  if (behavior === "resource_convertible") return 2;
+  if (behavior === "condition_based") return 2.5;
+  return 4;
 }
 
 function computeRiskPenalty(
@@ -498,8 +570,12 @@ function buildCandidateGroups(
   if (components.statStrength >= 7) groups.push("premium_candidate");
   if (profile?.isPlanAnchor || profile?.roles.includes("plan_anchor")) groups.push("plan_anchor_candidate");
   if (components.roleCoverage >= 4) groups.push("role_completion_candidate");
-  if (components.synergy >= 4) groups.push("support_candidate");
-  if ((profile?.solves ?? []).some((role) => role.includes("food") || role === "bake_bread_access")) {
+  if (components.synergy >= 4 || (profile?.supports ?? []).length > 0 || (profile?.partialSolves ?? []).length > 0) {
+    groups.push("support_candidate");
+  }
+  if ([...(profile?.solves ?? []), ...(profile?.partialSolves ?? []), ...(profile?.supports ?? [])].some((role) =>
+    FOOD_STABILITY_ROLES.has(role)
+  )) {
     groups.push("food_stability_candidate");
   }
   if ((profile?.roles ?? []).includes("late_bonus_points")) groups.push("ready_bonus_points_candidate");
@@ -592,7 +668,7 @@ function buildPlanShiftHints(
     pickNumber >= 2 &&
     pickNumber <= 4 &&
     components.conflictCost < 5 &&
-    (profile?.isBroken || profile?.isPlanAnchor || components.passRegret >= 8);
+    (profile?.isBroken || profile?.isPlanAnchor || components.passRegret >= 7);
 
   if (!shouldShow) return [];
 
@@ -616,6 +692,10 @@ function indexById<T extends { id: string }>(items: T[]): Map<string, T> {
 function indexByString<T extends object>(items: T[], key: keyof T): Map<string, T> {
   const entries = items.map((item): [string, T] => [String(item[key]), item]);
   return new Map(entries);
+}
+
+function unique<T>(values: T[]): T[] {
+  return [...new Set(values)];
 }
 
 function normalize(value: number | undefined, min: number, max: number): number {

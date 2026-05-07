@@ -1,0 +1,23 @@
+{
+  "id": "solved-role-downranks-high-stat-duplicate",
+  "description": "A strong duplicate field role should fall below food follow-up after field access is already solved.",
+  "input": {
+    "pickNumber": 3,
+    "pickedCardIds": ["occ-field-watchman"],
+    "seenCardIds": ["occ-field-watchman", "minor-swing-plow", "occ-food-engine"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-swing-plow", "occ-food-engine"]
+  },
+  "expected": {
+    "topCardId": "occ-food-engine",
+    "downrankedBelow": [
+      { "cardId": "minor-swing-plow", "belowCardId": "occ-food-engine" }
+    ],
+    "componentAtLeast": [
+      { "cardId": "minor-swing-plow", "component": "saturationPenalty", "value": 5 }
+    ],
+    "hasRisk": [
+      { "cardId": "minor-swing-plow", "risk": "role_saturation" }
+    ]
+  }
+}

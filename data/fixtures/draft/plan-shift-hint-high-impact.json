@@ -1,0 +1,20 @@
+{
+  "id": "plan-shift-hint-high-impact",
+  "description": "A high-impact pick 3 anchor should emit a plan shift hint for the future UI.",
+  "input": {
+    "pickNumber": 3,
+    "pickedCardIds": ["minor-late-points"],
+    "seenCardIds": ["minor-late-points", "occ-field-watchman", "minor-snack-basket"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-field-watchman", "minor-snack-basket"]
+  },
+  "expected": {
+    "topCardId": "occ-field-watchman",
+    "planShiftIncludes": [
+      { "cardId": "occ-field-watchman", "value": "new_center_plan_candidate" }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "occ-field-watchman", "value": "plan_anchor_candidate" }
+    ]
+  }
+}

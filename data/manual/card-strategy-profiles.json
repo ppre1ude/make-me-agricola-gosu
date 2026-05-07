@@ -168,5 +168,78 @@
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-clay-detour",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["late_bonus_points"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["late_bonus_points"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["late_bonus_points"],
+    "synergyWith": [],
+    "conflictsWith": ["occ-field-watchman"],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": ["engine_completion"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "High-value prototype that pulls away from the field-food plan." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-seed-cart",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["grain_supply"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["grain_supply"],
+    "increasesNeedFor": ["bake_bread_access"],
+    "saturationPenaltyTo": ["grain_supply"],
+    "synergyWith": ["occ-field-watchman", "minor-bake-access"],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["bake_bread_access", "food_engine"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Second prototype grain role card for full tracking pressure." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-snack-basket",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["food_support"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [],
+    "supports": ["food_support"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["food_support"],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": ["food_engine"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Small food help, not a complete food engine." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
   }
 ]

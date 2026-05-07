@@ -1,0 +1,22 @@
+{
+  "id": "full-tracking-role-pressure",
+  "description": "Full tracking should turn disappeared same-role cards into weak role availability pressure.",
+  "input": {
+    "pickNumber": 5,
+    "trackingMode": "full_pack",
+    "pickedCardIds": ["occ-field-watchman"],
+    "seenCardIds": ["occ-field-watchman", "minor-seed-cart", "minor-grain-supply", "occ-food-engine"],
+    "passedCardIds": [],
+    "previousPackCardIds": ["minor-seed-cart", "minor-late-points", "occ-food-engine"],
+    "offeredCardIds": ["minor-grain-supply", "occ-food-engine"]
+  },
+  "expected": {
+    "topCardId": "minor-grain-supply",
+    "componentAtLeast": [
+      { "cardId": "minor-grain-supply", "component": "roleAvailabilityPressure", "value": 2 }
+    ],
+    "trackingSignalIncludes": [
+      { "cardId": "minor-grain-supply", "role": "grain_supply", "value": "availability_pressure" }
+    ]
+  }
+}

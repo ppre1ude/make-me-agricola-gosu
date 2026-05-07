@@ -216,6 +216,12 @@ function validateStrategyRoles(roles: StrategyRole[], issues: ValidationIssue[])
     if (role.saturationBehavior !== undefined && !SATURATION_BEHAVIORS.has(role.saturationBehavior)) {
       addIssue(issues, "error", `${path}.saturationBehavior`, `invalid saturation behavior "${role.saturationBehavior}"`);
     }
+    if (
+      role.defaultSaturationLimit !== undefined &&
+      (!Number.isInteger(role.defaultSaturationLimit) || role.defaultSaturationLimit <= 0)
+    ) {
+      addIssue(issues, "error", `${path}.defaultSaturationLimit`, "expected positive integer");
+    }
     if (role.sinkRoleIds !== undefined) requireArray(role.sinkRoleIds, `${path}.sinkRoleIds`, issues);
   });
 
@@ -290,6 +296,22 @@ function validateFixtures(
 
     if (input.trackingMode !== undefined && !TRACKING_MODES.has(input.trackingMode)) {
       addIssue(issues, "error", `${path}.input.trackingMode`, `invalid tracking mode "${input.trackingMode}"`);
+    }
+    if (input.trackingMode === "selected_only" && (input.previousPackCardIds !== undefined || input.missingFromPreviousPack !== undefined)) {
+      addIssue(issues, "error", `${path}.input.trackingMode`, "selected_only fixtures cannot include full-pack tracking fields");
+    }
+    if (input.previousPackCardIds !== undefined && input.missingFromPreviousPack !== undefined) {
+      const previousPackCardIds = new Set(input.previousPackCardIds);
+      for (const cardId of input.missingFromPreviousPack) {
+        if (!previousPackCardIds.has(cardId)) {
+          addIssue(
+            issues,
+            "error",
+            `${path}.input.missingFromPreviousPack`,
+            `missing card id "${cardId}" was not present in previousPackCardIds`
+          );
+        }
+      }
     }
 
     for (const key of Object.keys(fixture.expected ?? {})) {

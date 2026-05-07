@@ -1,11 +1,55 @@
 [
-  { "id": "plan_anchor", "labels": { "ko-KR": "플랜 앵커", "en": "Plan anchor" }, "defaultSaturationLimit": 1 },
-  { "id": "broken", "labels": { "ko-KR": "브로큰 카드", "en": "Broken card" }, "defaultSaturationLimit": 1 },
-  { "id": "field_engine", "labels": { "ko-KR": "밭 엔진", "en": "Field engine" }, "defaultSaturationLimit": 1 },
-  { "id": "grain_supply", "labels": { "ko-KR": "곡식 공급", "en": "Grain supply" }, "defaultSaturationLimit": 1 },
-  { "id": "grain_seeds_action_upgrade", "labels": { "ko-KR": "곡식 종자 행동 강화", "en": "Grain Seeds action upgrade" }, "defaultSaturationLimit": 1 },
-  { "id": "food_engine", "labels": { "ko-KR": "음식 엔진", "en": "Food engine" }, "defaultSaturationLimit": 1 },
-  { "id": "bake_bread_access", "labels": { "ko-KR": "빵굽기 접근", "en": "Bake bread access" }, "defaultSaturationLimit": 1 },
-  { "id": "late_bonus_points", "labels": { "ko-KR": "후반 보너스 점수", "en": "Late bonus points" }, "defaultSaturationLimit": 2 },
-  { "id": "risk_conditional", "labels": { "ko-KR": "조건부 리스크", "en": "Conditional risk" }, "defaultSaturationLimit": 99 }
+  {
+    "id": "plan_anchor",
+    "labels": { "ko-KR": "Plan anchor", "en": "Plan anchor" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "broken",
+    "labels": { "ko-KR": "Broken card", "en": "Broken card" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "field_engine",
+    "labels": { "ko-KR": "Field engine", "en": "Field engine" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "grain_supply",
+    "labels": { "ko-KR": "Grain supply", "en": "Grain supply" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "grain_seeds_action_upgrade",
+    "labels": {
+      "ko-KR": "Grain Seeds action upgrade",
+      "en": "Grain Seeds action upgrade"
+    },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "food_engine",
+    "labels": { "ko-KR": "Food engine", "en": "Food engine" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "food_support",
+    "labels": { "ko-KR": "Food support", "en": "Food support" },
+    "defaultSaturationLimit": 2
+  },
+  {
+    "id": "bake_bread_access",
+    "labels": { "ko-KR": "Bake bread access", "en": "Bake bread access" },
+    "defaultSaturationLimit": 1
+  },
+  {
+    "id": "late_bonus_points",
+    "labels": { "ko-KR": "Late bonus points", "en": "Late bonus points" },
+    "defaultSaturationLimit": 2
+  },
+  {
+    "id": "risk_conditional",
+    "labels": { "ko-KR": "Conditional risk", "en": "Conditional risk" },
+    "defaultSaturationLimit": 99
+  }
 ]

@@ -208,6 +208,7 @@ Use `retro` from gstack after a meaningful development milestone.
 - Each sub-agent checkpoint report must include changed files, proposed commit message, tests run, unresolved risks, and whether the next step depends on human approval.
 - At every checkpoint, recommend both a one-line and a multi-line Conventional Commit message for the work completed so far.
 - Multi-line commit message body lines must stay at or below 72 characters and should explain what changed or why it matters, not narrate implementation mechanics.
+- Prefer Korean commit messages unless the user asks for English or the surrounding repository convention clearly favors English for that change.
 - If a sub-agent needs direct commit authority, it must work on a separate branch or worktree, such as `agent/api-contract`, `agent/db-validation`, or `agent/ui-draft`, and the orchestrator merges or cherry-picks later.
 - Preferred checkpoint and commit gate order for this project is: scoring contract -> data validation -> fixture matrix -> implementation -> docs.
 

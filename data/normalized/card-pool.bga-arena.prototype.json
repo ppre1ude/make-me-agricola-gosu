@@ -12,7 +12,10 @@
     "occ-food-engine": "active",
     "minor-late-points": "active",
     "occ-open-pantry": "active",
-    "minor-pantry-stall": "active"
+    "minor-pantry-stall": "active",
+    "occ-clay-detour": "active",
+    "minor-seed-cart": "active",
+    "minor-snack-basket": "active"
   },
   "notes": "Prototype pool for validating draft scoring behavior before importing the real BGA Arena snapshot."
 }

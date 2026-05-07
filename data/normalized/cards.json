@@ -94,5 +94,41 @@
     "sourceRefs": ["manual-prototype-seed"],
     "createdAt": "2026-05-08",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "occ-clay-detour",
+    "type": "occupation",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["conflict", "tempo"],
+    "timingTagIds": ["on_play_occupation"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "minor-seed-cart",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["grain", "supply"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "minor-snack-basket",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["food", "support"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
   }
 ]

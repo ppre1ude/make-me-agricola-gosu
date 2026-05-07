@@ -2,6 +2,13 @@
 
 Status: Draft
 
+Latest checkpoint:
+
+```text
+Schema Stabilization Gate: closed by 7 passing fixtures.
+Domain Logic Gate: in progress with 12 passing fixtures.
+```
+
 ## Scope
 
 This plan routes work for the pre-UI scoring-contract phase using parallel subagents.
@@ -58,6 +65,7 @@ sub-agent edits/tests -> checkpoint report -> human review -> orchestrator commi
 
 Every checkpoint report must include changed files, proposed commit message, tests run, unresolved risks, and whether the next step depends on human approval.
 The orchestrator must also recommend both one-line and multi-line Conventional Commit messages for the checkpoint. Multi-line body lines must stay within 72 characters and explain what changed or why it matters.
+Prefer Korean commit messages unless the user asks for English or a specific existing convention requires English.
 
 1. After contract shape changes
    - Confirm the contract still matches the light spec.

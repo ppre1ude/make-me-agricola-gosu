@@ -1,0 +1,21 @@
+{
+  "id": "food-engine-and-food-support-distinct",
+  "description": "A small food support card should not outrank a complete food engine when the hand needs food stability.",
+  "input": {
+    "pickNumber": 5,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "occ-food-engine", "minor-snack-basket"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-food-engine", "minor-snack-basket"]
+  },
+  "expected": {
+    "topCardId": "occ-food-engine",
+    "downrankedBelow": [
+      { "cardId": "minor-snack-basket", "belowCardId": "occ-food-engine" }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "minor-snack-basket", "value": "support_candidate" },
+      { "cardId": "occ-food-engine", "value": "food_stability_candidate" }
+    ]
+  }
+}

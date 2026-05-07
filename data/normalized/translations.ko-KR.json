@@ -71,5 +71,32 @@
     "shortText": "Prototype food support card used for missing-stat and next-pick fixtures.",
     "sourceRefs": ["manual-prototype-seed"],
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-clay-detour",
+    "locale": "ko-KR",
+    "name": "Clay Detour",
+    "aliases": ["Clay Detour"],
+    "shortText": "Prototype conflict card for current-plan collision fixtures.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-seed-cart",
+    "locale": "ko-KR",
+    "name": "Seed Cart",
+    "aliases": ["Seed Cart"],
+    "shortText": "Prototype grain role card for tracking-pressure fixtures.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-snack-basket",
+    "locale": "ko-KR",
+    "name": "Snack Basket",
+    "aliases": ["Snack Basket"],
+    "shortText": "Prototype food support card distinct from a food engine.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
   }
 ]

@@ -1,0 +1,20 @@
+{
+  "id": "conflict-card-downranked",
+  "description": "A high-stat card that fights the current field-food plan should be downranked by conflict cost.",
+  "input": {
+    "pickNumber": 4,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "occ-clay-detour", "minor-bake-access"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-clay-detour", "minor-bake-access"]
+  },
+  "expected": {
+    "topCardId": "minor-bake-access",
+    "downrankedBelow": [
+      { "cardId": "occ-clay-detour", "belowCardId": "minor-bake-access" }
+    ],
+    "componentAtLeast": [
+      { "cardId": "occ-clay-detour", "component": "conflictCost", "value": 4 }
+    ]
+  }
+}

@@ -89,5 +89,44 @@
     "plays": 690,
     "wtdPwr": 6.4,
     "tier": "A"
+  },
+  {
+    "snapshotId": "prototype-2026-05-08",
+    "cardId": "occ-clay-detour",
+    "rank": 22,
+    "pwr": 4.0,
+    "adp": 3.0,
+    "apr": 2.6,
+    "deals": 1000,
+    "drafted": 700,
+    "plays": 620,
+    "wtdPwr": 6.0,
+    "tier": "A"
+  },
+  {
+    "snapshotId": "prototype-2026-05-08",
+    "cardId": "minor-seed-cart",
+    "rank": 62,
+    "pwr": 2.4,
+    "adp": 4.8,
+    "apr": 3.4,
+    "deals": 1000,
+    "drafted": 530,
+    "plays": 460,
+    "wtdPwr": 4.3,
+    "tier": "B"
+  },
+  {
+    "snapshotId": "prototype-2026-05-08",
+    "cardId": "minor-snack-basket",
+    "rank": 92,
+    "pwr": 1.5,
+    "adp": 6.5,
+    "apr": 2.8,
+    "deals": 1000,
+    "drafted": 350,
+    "plays": 300,
+    "wtdPwr": 3.0,
+    "tier": "C"
   }
 ]
