@@ -3,7 +3,7 @@ export type LocaleCode = string;
 export type CardType = "occupation" | "minor_improvement" | "major_improvement";
 export type DraftCardType = "occupation" | "minor_improvement";
 export type DraftFormat = "10-to-7" | "9-to-7" | "8-to-7";
-export type DraftPickPhase = "early_anchor" | "middle_direction" | "late_completion";
+export type DraftPickBand = "early_anchor" | "middle_direction" | "late_completion";
 export type ExplanationDepth = "compact" | "standard" | "deep";
 export type ReturnLikelihood = "unlikely" | "possible" | "likely" | "unknown";
 
@@ -142,7 +142,7 @@ export type ScoreComponents = {
   roleCoverage: number;
   synergy: number;
   returnUrgency: number;
-  phaseFit: number;
+  draftPickBandFit: number;
   confidence: number;
   saturationPenalty: number;
   riskPenalty: number;
@@ -152,7 +152,7 @@ export type DraftRecommendation = {
   cardId: string;
   rank: number;
   score: number;
-  phase: DraftPickPhase;
+  draftPickBand: DraftPickBand;
   components: ScoreComponents;
   returnLikelihood: ReturnLikelihood;
   reasons: Record<ExplanationDepth, string[]>;
@@ -168,7 +168,7 @@ export type DraftDataIndex = {
   rolesById: Map<string, StrategyRole>;
 };
 
-export type DraftFixtureSession = Partial<DraftScoringInput> &
+export type DraftFixtureInput = Partial<DraftScoringInput> &
   Pick<DraftScoringInput, "pickNumber" | "offeredCardIds">;
 
 export type ComponentAssertion = {
@@ -206,6 +206,6 @@ export type DraftFixtureExpected = {
 export type DraftFixture = {
   id: string;
   description: string;
-  session: DraftFixtureSession;
+  input: DraftFixtureInput;
   expected?: DraftFixtureExpected;
 };

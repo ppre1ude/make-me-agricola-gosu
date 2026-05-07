@@ -185,16 +185,16 @@ function validateCardPoolProfile(profile: CardPoolProfile, cardIds: Set<string>,
 function validateFixtures(fixtures: DraftFixture[], cardIds: Set<string>, issues: ValidationIssue[]): void {
   fixtures.forEach((fixture, index) => {
     const path = `fixtures[${index}]`;
-    const session = fixture.session;
+    const input = fixture.input;
 
-    if (!isPickNumber(session.pickNumber)) {
-      addIssue(issues, "error", `${path}.session.pickNumber`, `invalid pick number "${session.pickNumber}"`);
+    if (!isPickNumber(input.pickNumber)) {
+      addIssue(issues, "error", `${path}.input.pickNumber`, `invalid pick number "${input.pickNumber}"`);
     }
 
-    validateCardReferences(session.offeredCardIds, cardIds, `${path}.session.offeredCardIds`, issues);
-    validateCardReferences(session.pickedCardIds ?? [], cardIds, `${path}.session.pickedCardIds`, issues);
-    validateCardReferences(session.seenCardIds ?? [], cardIds, `${path}.session.seenCardIds`, issues);
-    validateCardReferences(session.passedCardIds ?? [], cardIds, `${path}.session.passedCardIds`, issues);
+    validateCardReferences(input.offeredCardIds, cardIds, `${path}.input.offeredCardIds`, issues);
+    validateCardReferences(input.pickedCardIds ?? [], cardIds, `${path}.input.pickedCardIds`, issues);
+    validateCardReferences(input.seenCardIds ?? [], cardIds, `${path}.input.seenCardIds`, issues);
+    validateCardReferences(input.passedCardIds ?? [], cardIds, `${path}.input.passedCardIds`, issues);
 
     if (fixture.expected?.topCardId && !cardIds.has(fixture.expected.topCardId)) {
       addIssue(issues, "error", `${path}.expected.topCardId`, `unknown card id "${fixture.expected.topCardId}"`);

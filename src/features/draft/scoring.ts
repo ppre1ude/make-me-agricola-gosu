@@ -4,7 +4,7 @@ import type {
   ConfidenceLevel,
   DraftDataIndex,
   DraftDataSet,
-  DraftPickPhase,
+  DraftPickBand,
   DraftRecommendation,
   DraftScoringInput,
   ExplanationDepth,
@@ -12,14 +12,14 @@ import type {
   ScoreComponents
 } from "./contract.ts";
 
-const PHASE_WEIGHTS: Record<DraftPickPhase, ScoreComponents> = {
+const DRAFT_PICK_BAND_WEIGHTS: Record<DraftPickBand, ScoreComponents> = {
   early_anchor: {
     statStrength: 2.2,
     brokenOrAnchor: 3.0,
     roleCoverage: 1.0,
     synergy: 0.7,
     returnUrgency: 1.3,
-    phaseFit: 0.8,
+    draftPickBandFit: 0.8,
     confidence: 0.4,
     saturationPenalty: 1.1,
     riskPenalty: 0.8
@@ -30,7 +30,7 @@ const PHASE_WEIGHTS: Record<DraftPickPhase, ScoreComponents> = {
     roleCoverage: 2.0,
     synergy: 1.5,
     returnUrgency: 0.9,
-    phaseFit: 1.0,
+    draftPickBandFit: 1.0,
     confidence: 0.4,
     saturationPenalty: 2.0,
     riskPenalty: 1.1
@@ -41,7 +41,7 @@ const PHASE_WEIGHTS: Record<DraftPickPhase, ScoreComponents> = {
     roleCoverage: 2.2,
     synergy: 1.2,
     returnUrgency: 0.5,
-    phaseFit: 1.4,
+    draftPickBandFit: 1.4,
     confidence: 0.4,
     saturationPenalty: 2.4,
     riskPenalty: 1.5
@@ -76,12 +76,12 @@ export function buildDraftDataIndex(data: DraftDataSet): DraftDataIndex {
   };
 }
 
-export function rankDraftOptions(session: DraftScoringInput, dataIndex: DraftDataIndex): DraftRecommendation[] {
-  const phase = getPickPhase(session.pickNumber);
-  const handContext = buildHandContext(session.pickedCardIds, dataIndex);
+export function rankDraftOptions(input: DraftScoringInput, dataIndex: DraftDataIndex): DraftRecommendation[] {
+  const draftPickBand = getDraftPickBand(input.pickNumber);
+  const handContext = buildHandContext(input.pickedCardIds, dataIndex);
 
-  return session.offeredCardIds
-    .map((cardId) => scoreCard(cardId, session, dataIndex, handContext, phase))
+  return input.offeredCardIds
+    .map((cardId) => scoreCard(cardId, input, dataIndex, handContext, draftPickBand))
     .sort((a, b) => b.score - a.score)
     .map((recommendation, index) => ({
       ...recommendation,
@@ -89,7 +89,7 @@ export function rankDraftOptions(session: DraftScoringInput, dataIndex: DraftDat
     }));
 }
 
-export function getPickPhase(pickNumber: number): DraftPickPhase {
+export function getDraftPickBand(pickNumber: number): DraftPickBand {
   if (pickNumber <= 2) return "early_anchor";
   if (pickNumber <= 4) return "middle_direction";
   return "late_completion";
@@ -97,21 +97,21 @@ export function getPickPhase(pickNumber: number): DraftPickPhase {
 
 function scoreCard(
   cardId: string,
-  session: DraftScoringInput,
+  input: DraftScoringInput,
   dataIndex: DraftDataIndex,
   handContext: HandContext,
-  phase: DraftPickPhase
+  draftPickBand: DraftPickBand
 ): DraftRecommendation {
   const profile = dataIndex.profilesByCardId.get(cardId);
   const stat = dataIndex.statsByCardId.get(cardId);
-  const weights = PHASE_WEIGHTS[phase];
+  const weights = DRAFT_PICK_BAND_WEIGHTS[draftPickBand];
   const components: ScoreComponents = {
     statStrength: computeStatStrength(stat),
     brokenOrAnchor: computeBrokenOrAnchor(profile),
     roleCoverage: computeRoleCoverage(profile, handContext),
     synergy: computeSynergy(cardId, profile, handContext),
-    returnUrgency: computeReturnUrgency(stat, session.pickNumber),
-    phaseFit: computePhaseFit(profile, phase),
+    returnUrgency: computeReturnUrgency(stat, input.pickNumber),
+    draftPickBandFit: computeDraftPickBandFit(profile, draftPickBand),
     confidence: computeConfidence(profile, stat),
     saturationPenalty: computeSaturationPenalty(cardId, profile, handContext),
     riskPenalty: computeRiskPenalty(profile, stat, handContext)
@@ -123,7 +123,7 @@ function scoreCard(
     components.roleCoverage * weights.roleCoverage +
     components.synergy * weights.synergy +
     components.returnUrgency * weights.returnUrgency +
-    components.phaseFit * weights.phaseFit +
+    components.draftPickBandFit * weights.draftPickBandFit +
     components.confidence * weights.confidence -
     components.saturationPenalty * weights.saturationPenalty -
     components.riskPenalty * weights.riskPenalty;
@@ -132,9 +132,9 @@ function scoreCard(
     cardId,
     rank: 0,
     score: round(score),
-    phase,
+    draftPickBand,
     components: roundComponents(components),
-    returnLikelihood: estimateReturnLikelihood(stat, session.pickNumber),
+    returnLikelihood: estimateReturnLikelihood(stat, input.pickNumber),
     reasons: buildReasons(cardId, profile, stat, components, handContext, dataIndex),
     risks: buildRisks(profile, components),
     nextPickDirection: buildNextPickDirection(profile, handContext)
@@ -247,17 +247,17 @@ function estimateReturnLikelihood(stat: CardStatRow | undefined, pickNumber: num
   return "likely";
 }
 
-function computePhaseFit(profile: CardStrategyProfile | undefined, phase: DraftPickPhase): number {
+function computeDraftPickBandFit(profile: CardStrategyProfile | undefined, draftPickBand: DraftPickBand): number {
   const timingWindow = profile?.timingWindow ?? "anytime";
   if (timingWindow === "anytime") return 8;
 
-  if (phase === "early_anchor") {
+  if (draftPickBand === "early_anchor") {
     if (timingWindow === "early") return 10;
     if (timingWindow === "mid") return 6;
     return 2;
   }
 
-  if (phase === "middle_direction") {
+  if (draftPickBand === "middle_direction") {
     if (timingWindow === "mid") return 10;
     if (timingWindow === "early") return 8;
     return 6;
@@ -413,7 +413,7 @@ function roundComponents(components: ScoreComponents): ScoreComponents {
     roleCoverage: round(components.roleCoverage),
     synergy: round(components.synergy),
     returnUrgency: round(components.returnUrgency),
-    phaseFit: round(components.phaseFit),
+    draftPickBandFit: round(components.draftPickBandFit),
     confidence: round(components.confidence),
     saturationPenalty: round(components.saturationPenalty),
     riskPenalty: round(components.riskPenalty)

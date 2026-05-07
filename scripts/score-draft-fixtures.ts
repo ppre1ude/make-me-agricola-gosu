@@ -29,8 +29,8 @@ let failures = 0;
 
 for (const file of fixtureFiles) {
   const fixture: DraftFixture = await readJson(path.join("data/fixtures/draft", file));
-  const session = normalizeFixtureSession(fixture, data);
-  const recommendations = rankDraftOptions(session, dataIndex);
+  const input = normalizeFixtureInput(fixture, data);
+  const recommendations = rankDraftOptions(input, dataIndex);
   const result = validateFixture(fixture, recommendations);
 
   if (result.ok) {
@@ -54,18 +54,18 @@ async function readJson<T>(relativePath: string): Promise<T> {
   return JSON.parse(await readFile(absolutePath, "utf8")) as T;
 }
 
-function normalizeFixtureSession(fixture: DraftFixture, data: DraftDataSet): DraftScoringInput {
+function normalizeFixtureInput(fixture: DraftFixture, data: DraftDataSet): DraftScoringInput {
   return {
-    playerCount: fixture.session.playerCount ?? 4,
-    draftCardType: fixture.session.draftCardType ?? "occupation",
-    pickNumber: fixture.session.pickNumber,
-    offeredCardIds: fixture.session.offeredCardIds,
-    pickedCardIds: fixture.session.pickedCardIds ?? [],
-    seenCardIds: fixture.session.seenCardIds ?? [],
-    passedCardIds: fixture.session.passedCardIds ?? [],
-    draftFormat: fixture.session.draftFormat ?? "10-to-7",
-    cardPoolProfileId: fixture.session.cardPoolProfileId ?? data.cardPoolProfile.id,
-    explanationDepth: fixture.session.explanationDepth ?? "standard"
+    playerCount: fixture.input.playerCount ?? 4,
+    draftCardType: fixture.input.draftCardType ?? "occupation",
+    pickNumber: fixture.input.pickNumber,
+    offeredCardIds: fixture.input.offeredCardIds,
+    pickedCardIds: fixture.input.pickedCardIds ?? [],
+    seenCardIds: fixture.input.seenCardIds ?? [],
+    passedCardIds: fixture.input.passedCardIds ?? [],
+    draftFormat: fixture.input.draftFormat ?? "10-to-7",
+    cardPoolProfileId: fixture.input.cardPoolProfileId ?? data.cardPoolProfile.id,
+    explanationDepth: fixture.input.explanationDepth ?? "standard"
   };
 }
 

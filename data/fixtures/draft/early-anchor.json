@@ -1,7 +1,7 @@
 {
   "id": "early-anchor",
   "description": "Pick 1 should prioritize a broken plan anchor over medium support cards.",
-  "session": {
+  "input": {
     "pickNumber": 1,
     "pickedCardIds": [],
     "seenCardIds": [],

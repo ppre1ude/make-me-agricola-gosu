@@ -1,7 +1,7 @@
 {
   "id": "late-completion",
   "description": "Late picks should prefer filling food/bake needs over a low-impact late points card when the hand has field direction.",
-  "session": {
+  "input": {
     "pickNumber": 6,
     "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
     "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-bake-access", "minor-late-points"],
