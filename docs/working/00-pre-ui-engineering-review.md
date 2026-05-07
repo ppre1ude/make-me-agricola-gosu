@@ -77,8 +77,9 @@ scripts/score-draft-fixtures.ts
 
 2. broken card끼리 비교할 때는 유연성, follow-up 부담, 테이블 의존성, 통계 강도를 본다.
 
-3. `premiumDenial` 또는 `passRegret` 개념을 둔다.
-   - 의미는 "상대 플랜 추론"이 아니라 "범용 강도/ADP/티어가 높아 넘기기 아까운 카드"다.
+3. `passRegret` 개념을 둔다.
+   - boolean이 아니라 0~10 수치형 component다.
+   - 의미는 "상대 플랜 추론"이 아니라 "범용 강도/ADP/티어/희소성 때문에 넘기기 아까운 카드"다.
    - 추천 문구는 "상대에게 주면 위험"보다 "넘기기 아까운 범용 강카드"로 표현한다.
 
 4. 부족 역할은 "없음/미충족"으로 단정하지 않는다.
@@ -102,6 +103,33 @@ scripts/score-draft-fixtures.ts
    - deep explanation
    에 사용한다.
    - 특정 상대 플랜이나 특정 상대의 행동은 확정하지 않는다.
+
+8. 높은 passRegret 카드는 기존 플랜을 재편할 수 있다.
+   - `pivotPotential`은 새 중심 플랜을 만들 수 있는 정도다.
+   - `conflictCost`는 기존 손패와 충돌하거나 역할이 과하게 중복되는 비용이다.
+   - v0에서는 plan graph를 만들지 않고, high tier + plan anchor + low conflict 정도를 rule-based로 본다.
+
+9. after-pick plan shift는 조건부로만 표시한다.
+   - 기본은 현재 손패 진단이다.
+   - Pick 2~4에서 broken, plan anchor, high passRegret 카드가 추천될 때만 추천 카드와 대안 일부에 대해 가볍게 보여준다.
+   - 확률/베이즈 모델은 쓰지 않는다.
+
+10. 내부 component 숫자는 deep/debug에서만 보여준다.
+    - 기본 UI는 높음/중간/낮음과 문장으로 표현한다.
+    - 숫자는 승률 확률이 아니라 같은 pick 안 비교용 내부 평가값이다.
+
+11. 데이터 구축 순서는 C -> B -> A다.
+    - C: fixture matrix에 필요한 카드만 깊게 태깅
+    - B: BGA Arena 고영향 카드 50~100장 깊게 태깅
+    - A: 전체 A~E 카드 최소 태그 확장
+
+12. 모델 추천과 사용자 선택의 차이는 `model_user_disagreement`로 저장한다.
+    - 차이가 있다고 해서 모델이 틀렸다고 자동 판정하지 않는다.
+    - 유저 실력, 화면 밖 정보, 실험적 선택, 데이터 낡음 여부를 모르기 때문이다.
+
+13. `skillLevel`과 `goalMode`는 사용자가 직접 설정한다.
+    - 설명과 UI 우선순위에 반영한다.
+    - 추천 순위 자체를 실력별 안전픽 중심으로 크게 바꾸지는 않는다.
 
 ## Scoring Contract
 
@@ -186,7 +214,9 @@ type ScoreComponents = {
   synergy: number;
   returnUrgency: number;
   phaseFit: number;
-  premiumDenial?: number;
+  passRegret?: number;
+  pivotPotential?: number;
+  conflictCost?: number;
   roleAvailabilityPressure?: number;
   confidence: number;
   saturationPenalty: number;
@@ -200,6 +230,8 @@ type ScoreComponents = {
 - final score는 같은 pick 안에서 비교하기 위한 숫자다.
 - final score를 카드의 절대 강도로 표시하지 않는다.
 - UI는 component를 설명과 디버깅에만 사용한다.
+
+`passRegret`, `pivotPotential`, `conflictCost`는 확률값이 아니다. 같은 pick 안에서 후보를 비교하기 위한 내부 평가값이며, standard UI에서는 숫자가 아니라 등급과 문장으로 표시한다.
 
 ## Data Validation
 
@@ -317,11 +349,14 @@ fixture 15~20개
 13. food_engine과 food_support를 구분한다
 14. card with next-pick guidance emits nextPickDirection
 15. broken card resists but does not fully ignore saturation
-16. Pick 3~4 premiumDenial/passRegret can beat weak support
+16. Pick 3~4 high passRegret can beat weak support
 17. Pick 5~7 candidate set first, tier/stat second
 18. wood_supply soft cap applies only after enough supply or without sink
 19. full tracking detects missing field cards and raises role availability pressure weakly
 20. missing cards produce role/tier summary without opponent-plan certainty
+21. high passRegret + pivotPotential card can create a new plan candidate
+22. after-pick plan shift appears only for selected high-impact recommendations
+23. model_user_disagreement is logged without labeling model wrong
 
 ### Fixture Assertion 확장
 
@@ -361,7 +396,37 @@ fixture 15~20개
   ],
   "trackingSignalIncludes": [
     { "role": "field_engine", "value": "availability_pressure" }
+  ],
+  "planShiftIncludes": [
+    { "cardId": "occ-plan-anchor", "value": "new_center_plan_candidate" }
   ]
+}
+```
+
+### Fixture 정답 기준
+
+fixture expected는 통계/티어와 수동 전략 판단을 함께 사용한다.
+
+```text
+fixture expected = stat/tier reference + manual strategic judgment
+```
+
+원칙:
+
+- 통계/티어는 기본 참고값이다.
+- role saturation, phase objective, hand context, pivotPotential은 수동 전략 판단으로 고정한다.
+- 모델 추천과 사용자 선택이 달랐던 상황은 fixture 후보가 될 수 있다.
+
+fixture에는 가능하면 판단 근거를 함께 적는다.
+
+```json
+{
+  "judgmentBasis": {
+    "statReference": "prototype or Lumin_S",
+    "manualReason": "밭일 감독 이후 추가 밭갈기 카드는 포화되고, 점수 전환이나 food self-sufficiency 보완이 더 중요함",
+    "phaseRule": "middle_direction",
+    "expectedTradeoff": "high tier card remains high passRegret but not top"
+  }
 }
 ```
 
@@ -590,11 +655,20 @@ Draft input ──▶│ draft scoring engine │
    - role/tier 요약
    - role availability pressure 약한 반영
 
-4. data validation 확장 범위
+4. passRegret / pivotPotential 구현 범위
+   - passRegret은 0~10 component
+   - pivotPotential은 high tier + plan anchor + low conflict 중심으로 약하게 시작
+   - conflictCost는 saturation/conflict를 합쳐 설명한다
+
+5. feedback loop 범위
+   - v0 제품 UI는 사후 복기 중심
+   - 내부적으로 model_user_disagreement를 fixture 후보로 전환할 수 있게 한다
+
+6. data validation 확장 범위
    - 직접 JS/TS 검증 함수
    - Zod 같은 schema library 사용
 
-5. package manager
+7. package manager
    - yarn 유지
    - npm 복구 후 npm 기준
 
@@ -605,10 +679,12 @@ Draft input ──▶│ draft scoring engine │
 1. fixture assertion 확장
 2. role saturation behavior를 `strategy-roles.json`에 추가
 3. `food_engine`, `food_support`, `food_conversion`을 분리
-4. full tracking signal 타입과 계산 함수 추가
-5. fixture 10~15개로 확대
-6. missing data 정책을 fixture로 고정
-7. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
-8. 그 다음 `/draft` UI 시작
+4. `passRegret`, `pivotPotential`, `conflictCost` 기준을 scoring contract에 반영
+5. full tracking signal 타입과 계산 함수 추가
+6. fixture 10~15개로 확대
+7. missing data 정책을 fixture로 고정
+8. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
+9. `model_user_disagreement` feedback event 후보 설계
+10. 그 다음 `/draft` UI 시작
 
 이 순서를 지키면 UI는 실험용 화면이 아니라, 이미 계약과 검증을 가진 추천 엔진을 렌더링하는 화면이 된다.

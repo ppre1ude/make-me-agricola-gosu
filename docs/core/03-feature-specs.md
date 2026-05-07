@@ -166,9 +166,12 @@ score =
 + synergy
 + returnUrgency
 + phaseFit
++ passRegret
++ pivotPotential
 + confidence
 - saturationPenalty
 - riskPenalty
+- conflictCost
 ```
 
 각 항목:
@@ -182,7 +185,24 @@ score =
 - `confidence`: 통계 표본과 전략 프로필 신뢰도
 - `saturationPenalty`: 이미 해결한 역할과 중복되는 정도
 - `riskPenalty`: 조건부 카드, 비용 압박, 낮은 play rate, 충돌 태그
-- `premiumDenial` 또는 `passRegret`: 내 플랜과 완전히 맞지 않아도 범용 강도/ADP/티어 때문에 넘기기 아까운 정도. v0에서는 별도 component 후보이며, 표현은 "상대 플랜 추론"이 아니라 "넘기기 아까움"에 둔다.
+- `passRegret`: 내 플랜과 완전히 맞지 않아도 범용 강도, 티어, ADP, 희소성, 플랜 재편 가능성 때문에 넘기기 아까운 정도. boolean이 아니라 0~10 수치형 component다.
+- `pivotPotential`: 후보 카드가 새 중심 플랜을 만들 수 있는 정도
+- `conflictCost`: 후보 카드가 기존 손패와 충돌하거나 이미 해결한 역할을 과하게 중복하는 비용
+
+`passRegret`은 항상 scoring에 반영한다. 다만 phase별 weight가 다르다.
+
+```text
+Pick 1-2:
+  매우 강함. premium/broken/open-ended anchor 평가와 많이 겹친다.
+
+Pick 3-4:
+  강함. 높은 passRegret 카드는 기존 플랜을 재편할 수 있다.
+
+Pick 5-7:
+  여전히 반영한다. 다만 실행 가능성, 감점 방지, 조건 충족된 점수 카드와 함께 평가한다.
+```
+
+높은 passRegret 카드는 "현재 플랜에 안 맞음"으로 끝내지 않는다. 이 카드가 새 중심 플랜이 될 수 있는지, 기존 손패와 충돌하는지, 필요한 follow-up이 얼마나 무거운지를 함께 본다.
 
 ### Role saturation
 
@@ -333,6 +353,105 @@ type ExplanationDepth = "compact" | "standard" | "deep";
 현재 정보에서는 이 픽이 가장 유리합니다.
 다만 식량 플랜의 카드 기반 자립성이 낮아, 주요 설비나 행동 칸을 통한 음식 전환을 확보해야 합니다.
 ```
+
+### 숫자 표시 정책
+
+내부 component는 숫자지만, 기본 UI는 숫자를 확률처럼 보여주지 않는다.
+
+Standard:
+
+- 넘기기 아까움: 높음/중간/낮음
+- 돌아올 가능성: 낮음/상황에 따라/있음/알 수 없음
+- 플랜 적합: 높음/중간/낮음
+- 리스크: 짧은 문장
+
+Deep/debug:
+
+- `statStrength`
+- `brokenOrAnchor`
+- `roleCoverage`
+- `synergy`
+- `passRegret`
+- `pivotPotential`
+- `roleAvailabilityPressure`
+- `saturationPenalty`
+- `riskPenalty`
+- `conflictCost`
+
+component 숫자는 승률 확률이 아니다. 같은 pick 안에서 카드 간 비교와 설명을 위한 내부 평가값이다.
+
+### After-Pick Plan Shift
+
+기본 화면은 현재 손패 진단을 보여준다. 단, Pick 2~4에서 추천 카드가 broken, plan anchor, high passRegret이면 가벼운 after-pick plan shift를 표시할 수 있다.
+
+v0에서는 베이즈 모델이나 확률 그래프를 쓰지 않는다.
+
+```text
+현재 hand profile 계산
+후보 카드 1장을 임시 추가
+hand profile을 다시 계산
+차이를 요약
+```
+
+표시 조건:
+
+- pick 2~4
+- 후보 카드가 broken, plan anchor, high passRegret 중 하나
+- 기존 손패와 conflictCost가 낮거나 중간 이하
+- 새 nextPickDirection이 실제로 바뀜
+
+표현 예:
+
+```text
+이 카드를 집으면 기존 농경 중심 손패에 목축/울타리 pivot 후보가 생깁니다.
+다음 픽에서는 fence_support 또는 animal_housing을 보면 좋습니다.
+```
+
+변화가 약하면 표시하지 않는다.
+
+### User Settings
+
+v0는 사용자가 직접 실력과 목표를 설정할 수 있게 한다.
+
+```ts
+type SkillLevel = "beginner" | "intermediate" | "advanced";
+
+type GoalMode =
+  | "quick_pick"
+  | "learn"
+  | "review"
+  | "high_ceiling";
+```
+
+정책:
+
+- `beginner`: 용어를 풀어서 설명하고 리스크와 운영 순서를 더 크게 표시한다.
+- `intermediate`: 추천, 대안, 리스크, 다음 픽 방향을 균형 있게 보여준다.
+- `advanced`: 후보군 분류, component breakdown, tracking signal 접근을 쉽게 한다.
+- `quick_pick`: compact 위주
+- `learn`: standard/deep 위주
+- `review`: 선택 차이, 이유, fixture 후보화에 초점
+- `high_ceiling`: 고점, 플랜 전환, 조건부 강카드 설명을 더 강조
+
+추천 순위를 beginner라서 안전픽 위주로 강하게 바꾸지는 않는다.
+
+### Feedback Loop
+
+모델 추천과 사용자 선택이 다르면 `model_user_disagreement`로 기록할 수 있어야 한다. disagreement는 모델 오류를 뜻하지 않는다.
+
+초기 제품에서는 피드백 UI를 크게 만들지 않는다. 사후 복기에서 추천과 실제 선택의 차이를 보고, 개발자용 데이터로 fixture 후보를 만들 수 있게 한다.
+
+초기 저장 방식:
+
+- local JSON export
+- localStorage
+- manual fixture conversion
+
+서버가 붙은 뒤:
+
+- `feedback_events`
+- `model_disagreements`
+- `fixture_candidates`
 
 ## 카드 검색
 

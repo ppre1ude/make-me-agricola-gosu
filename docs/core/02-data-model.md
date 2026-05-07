@@ -521,7 +521,9 @@ type DraftRecommendation = {
     saturationPenalty?: number;
     riskPenalty?: number;
     returnUrgency?: number;
-    premiumDenial?: number;
+    passRegret?: number;
+    pivotPotential?: number;
+    conflictCost?: number;
     roleAvailabilityPressure?: number;
     confidence?: number;
   };
@@ -530,8 +532,78 @@ type DraftRecommendation = {
   risks: string[];
   nextPickDirection: string[];
   candidateGroups?: string[];
+  afterPickPlanShift?: AfterPickPlanShift;
 };
 ```
+
+`passRegret`은 0~10 수치형 component다. 내 손패와 완벽히 맞지 않더라도 범용 강도, 티어, ADP, 희소성, 플랜 재편 가능성 때문에 넘기면 후회할 가능성을 나타낸다.
+
+`pivotPotential`은 후보 카드가 기존 손패와 직접 맞지 않아도 새 중심 플랜을 만들 수 있는 정도다. v0에서는 plan graph를 만들지 않고, high tier + plan anchor + low conflict인 경우 약하게 반영한다.
+
+`conflictCost`는 후보 카드가 기존 손패와 충돌하거나 이미 해결한 역할을 과하게 중복하는 비용이다.
+
+```ts
+type AfterPickPlanShift = {
+  shown: boolean;
+  summary: Record<LocaleCode, string>;
+  newCenterPlanCandidates?: string[];
+  nextPickDirection: string[];
+};
+```
+
+after-pick plan shift는 모든 후보에 대해 보여주지 않는다. Pick 2~4에서 broken, plan anchor, high passRegret 후보가 추천될 때만 가볍게 계산해 표시한다.
+
+## User Settings
+
+추천 순위 자체를 유저 실력별로 크게 바꾸지는 않는다. 대신 설명 밀도, 용어 수준, 기본 화면 강조를 조정한다.
+
+```ts
+type SkillLevel = "beginner" | "intermediate" | "advanced";
+
+type GoalMode =
+  | "quick_pick"
+  | "learn"
+  | "review"
+  | "high_ceiling";
+
+type DraftCoachSettings = {
+  skillLevel: SkillLevel;
+  goalMode: GoalMode;
+  explanationDepth: ExplanationDepth;
+  inputModeDefault: "full_tracking" | "quick";
+};
+```
+
+`skillLevel`은 사용자가 직접 선택한다. 시스템이 유저 실력을 추정하거나 강제로 고정하지 않는다.
+
+## Feedback Event
+
+모델 추천과 사용자 선택이 다르다고 해서 모델이 틀렸다고 자동 판정하지 않는다. 유저의 ELO, 화면 밖 정보, 실험적 선택, 데이터 낡음 여부를 모르기 때문이다.
+
+```ts
+type DraftDecisionFeedback = {
+  kind: "model_user_disagreement";
+  sessionId: string;
+  pickNumber: number;
+  offeredCardIds: string[];
+  recommendedCardId: string;
+  selectedCardId: string;
+  recommendationsSnapshot: DraftRecommendation[];
+  userSkillEstimate?: "unknown" | "beginner" | "intermediate" | "advanced";
+  reasonCategory?:
+    | "unknown"
+    | "user_preference"
+    | "new_information"
+    | "model_missing_synergy"
+    | "model_missing_ruling"
+    | "data_outdated"
+    | "misclick";
+  userNote?: string;
+  createdAt: string;
+};
+```
+
+초기값은 `userSkillEstimate: "unknown"`과 `reasonCategory: "unknown"`이다. 이 이벤트는 나중에 사후 복기, fixture 후보화, 데이터 큐레이션으로 이어질 수 있어야 한다.
 
 ## Combo
 
