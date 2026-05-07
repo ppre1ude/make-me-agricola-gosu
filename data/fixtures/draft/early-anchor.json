@@ -9,6 +9,13 @@
     "offeredCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-late-points"]
   },
   "expected": {
-    "topCardId": "occ-field-watchman"
+    "topCardId": "occ-field-watchman",
+    "candidateGroupIncludes": [
+      { "cardId": "occ-field-watchman", "value": "broken_candidate" },
+      { "cardId": "occ-field-watchman", "value": "plan_anchor_candidate" }
+    ],
+    "returnLikelihood": [
+      { "cardId": "occ-field-watchman", "value": "unlikely" }
+    ]
   }
 }

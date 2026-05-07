@@ -14,16 +14,16 @@
     "riskTags": ["needs_followup_grain_or_bake"],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["곡식 공급", "빵굽기 접근", "첫 수확 음식 안정성"]
+      "ko-KR": ["grain_supply", "bake_bread_access", "food_engine"]
     },
     "explanation": {
-      "compact": { "ko-KR": "밭 접근을 해결하는 초반 플랜 앵커입니다." },
-      "standard": { "ko-KR": "밭일 감독은 밭 접근을 해결하므로 초반에 강합니다. 이후 곡식 공급과 빵굽기 접근을 찾아야 합니다." },
-      "deep": { "ko-KR": "이 카드는 밭 행동 부담을 줄여 액션 압축을 만듭니다. 다만 밭만 해결하고 곡식/음식 전환을 확보하지 못하면 고점으로 이어지지 않습니다." }
+      "compact": { "ko-KR": "Early anchor that solves field access and opens a food follow-up plan." },
+      "standard": { "ko-KR": "Field Watchman is a premium early anchor. After taking it, prioritize grain, bake, or food follow-up." },
+      "deep": { "ko-KR": "Prototype profile: strong field access, high follow-up demand, and light saturation resistance." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
   },
   {
     "cardId": "minor-swing-plow",
@@ -40,14 +40,14 @@
     "riskTags": ["redundant_if_field_access_solved"],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["곡식 공급"]
+      "ko-KR": ["grain_supply"]
     },
     "explanation": {
-      "compact": { "ko-KR": "밭 접근을 돕지만 이미 해결된 손패에서는 중복될 수 있습니다." }
+      "compact": { "ko-KR": "Field support is fine early, but redundant after field access is already solved." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
   },
   {
     "cardId": "minor-grain-supply",
@@ -64,14 +64,14 @@
     "riskTags": [],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["빵굽기 접근", "음식 엔진"]
+      "ko-KR": ["bake_bread_access", "food_engine"]
     },
     "explanation": {
-      "compact": { "ko-KR": "밭 엔진 이후 실제로 뿌릴 곡식을 공급합니다." }
+      "compact": { "ko-KR": "Grain support makes the field plan real and points toward bake access next." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
   },
   {
     "cardId": "minor-bake-access",
@@ -88,14 +88,14 @@
     "riskTags": ["needs_grain"],
     "timingWindow": "mid",
     "nextPickGuidance": {
-      "ko-KR": ["곡식 공급", "첫 수확 음식"]
+      "ko-KR": ["grain_supply", "food_engine"]
     },
     "explanation": {
-      "compact": { "ko-KR": "곡식을 음식으로 바꾸는 경로를 엽니다." }
+      "compact": { "ko-KR": "Converts grain into reliable food once the grain plan exists." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
   },
   {
     "cardId": "occ-food-engine",
@@ -112,14 +112,14 @@
     "riskTags": [],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["점수 전환", "가족성장 준비"]
+      "ko-KR": ["tempo_conversion", "family_growth_setup"]
     },
     "explanation": {
-      "compact": { "ko-KR": "초반 음식 압박을 줄여 카드/방 자원 행동 여유를 만듭니다." }
+      "compact": { "ko-KR": "Early food stability reduces pressure and improves later flexibility." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
   },
   {
     "cardId": "minor-late-points",
@@ -136,13 +136,37 @@
     "riskTags": ["low_early_impact"],
     "timingWindow": "late",
     "nextPickGuidance": {
-      "ko-KR": ["생존 플랜", "성장 플랜"]
+      "ko-KR": ["survival_plan", "engine_completion"]
     },
     "explanation": {
-      "compact": { "ko-KR": "후반 점수 전환 카드라 초반 플랜 앵커보다 우선도가 낮습니다." }
+      "compact": { "ko-KR": "Late points matter less than survival and engine completion in the early draft." }
     },
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
-    "updatedAt": "2026-05-07"
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-pantry-stall",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["food_engine"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["food_engine"],
+    "increasesNeedFor": ["grain_supply"],
+    "saturationPenaltyTo": ["food_engine"],
+    "synergyWith": ["occ-field-watchman", "minor-grain-supply"],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": ["grain_supply", "bake_bread_access"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Manual prototype support card for food stability follow-up." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
   }
 ]

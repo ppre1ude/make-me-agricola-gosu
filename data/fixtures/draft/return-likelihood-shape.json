@@ -1,0 +1,18 @@
+{
+  "id": "return-likelihood-shape",
+  "description": "Low ADP cards should read as unlikely to return while high ADP cards remain likely to wheel in the same pack.",
+  "input": {
+    "pickNumber": 2,
+    "pickedCardIds": [],
+    "seenCardIds": [],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-field-watchman", "minor-late-points"]
+  },
+  "expected": {
+    "topCardId": "occ-field-watchman",
+    "returnLikelihood": [
+      { "cardId": "occ-field-watchman", "value": "unlikely" },
+      { "cardId": "minor-late-points", "value": "likely" }
+    ]
+  }
+}

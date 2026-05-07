@@ -199,6 +199,18 @@ Use `retro` from gstack after a meaningful development milestone.
 - Use `apply_patch` for manual file edits.
 - Do not vendor external skill repositories into this repo unless the user explicitly asks.
 
+## Commit and Checkpoint Policy
+
+- The main orchestrator owns commits on the integration branch.
+- Sub-agents must not commit to the integration branch unless explicitly instructed.
+- Sub-agents may edit files within their assigned write scope and propose commit boundaries.
+- Stop for human review before schema, migration, scoring contract, fixture matrix, or user-visible behavior changes.
+- Each sub-agent checkpoint report must include changed files, proposed commit message, tests run, unresolved risks, and whether the next step depends on human approval.
+- At every checkpoint, recommend both a one-line and a multi-line Conventional Commit message for the work completed so far.
+- Multi-line commit message body lines must stay at or below 72 characters and should explain what changed or why it matters, not narrate implementation mechanics.
+- If a sub-agent needs direct commit authority, it must work on a separate branch or worktree, such as `agent/api-contract`, `agent/db-validation`, or `agent/ui-draft`, and the orchestrator merges or cherry-picks later.
+- Preferred checkpoint and commit gate order for this project is: scoring contract -> data validation -> fixture matrix -> implementation -> docs.
+
 ## Data and Domain Rules
 
 - Treat external Agricola data as source material, not as blindly trusted truth.

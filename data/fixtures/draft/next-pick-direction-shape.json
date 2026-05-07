@@ -1,0 +1,18 @@
+{
+  "id": "next-pick-direction-shape",
+  "description": "A food follow-up recommendation should emit stable next-pick direction strings from both profile guidance and remaining role needs.",
+  "input": {
+    "pickNumber": 4,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-pantry-stall", "minor-late-points"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-pantry-stall", "minor-late-points"]
+  },
+  "expected": {
+    "topCardId": "minor-pantry-stall",
+    "nextPickIncludes": [
+      { "cardId": "minor-pantry-stall", "value": "grain_supply" },
+      { "cardId": "minor-pantry-stall", "value": "bake_bread_access" }
+    ]
+  }
+}

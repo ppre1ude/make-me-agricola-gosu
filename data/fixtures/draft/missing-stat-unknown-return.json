@@ -1,0 +1,19 @@
+{
+  "id": "missing-stat-unknown-return",
+  "description": "A card without stat coverage should still rank, but return likelihood becomes unknown and evaluation meta records missing stat data.",
+  "input": {
+    "pickNumber": 5,
+    "pickedCardIds": ["occ-field-watchman", "minor-grain-supply"],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-pantry-stall", "minor-late-points"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-pantry-stall", "minor-late-points"]
+  },
+  "expected": {
+    "returnLikelihood": [
+      { "cardId": "minor-pantry-stall", "value": "unknown" }
+    ],
+    "evaluationMetaIncludes": [
+      { "cardId": "minor-pantry-stall", "missingDataIncludes": "stat" }
+    ]
+  }
+}

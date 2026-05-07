@@ -1,0 +1,20 @@
+{
+  "id": "missing-profile-warning-and-evaluation-meta",
+  "description": "A card without a strategy profile stays evaluable, but it must surface warning and evaluation metadata instead of pretending to have full reasoning.",
+  "input": {
+    "pickNumber": 3,
+    "pickedCardIds": ["occ-field-watchman"],
+    "seenCardIds": ["occ-field-watchman", "occ-open-pantry", "minor-late-points"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-open-pantry", "minor-late-points"]
+  },
+  "expected": {
+    "warningIncludes": [
+      { "cardId": "occ-open-pantry", "value": "strategy profile" }
+    ],
+    "evaluationMetaIncludes": [
+      { "cardId": "occ-open-pantry", "confidence": "low" },
+      { "cardId": "occ-open-pantry", "missingDataIncludes": "strategy_profile" }
+    ]
+  }
+}

@@ -2,11 +2,15 @@ import type {
   CardStatRow,
   CardStrategyProfile,
   ConfidenceLevel,
+  DraftCandidateGroup,
   DraftDataIndex,
   DraftDataSet,
+  DraftEvaluationMeta,
   DraftPickBand,
   DraftRecommendation,
   DraftScoringInput,
+  DraftTrackingSignal,
+  DraftWarning,
   ExplanationDepth,
   ReturnLikelihood,
   ScoreComponents
@@ -20,6 +24,10 @@ const DRAFT_PICK_BAND_WEIGHTS: Record<DraftPickBand, ScoreComponents> = {
     synergy: 0.7,
     returnUrgency: 1.3,
     draftPickBandFit: 0.8,
+    passRegret: 1.7,
+    pivotPotential: 1.1,
+    conflictCost: 0.8,
+    roleAvailabilityPressure: 0.4,
     confidence: 0.4,
     saturationPenalty: 1.1,
     riskPenalty: 0.8
@@ -31,6 +39,10 @@ const DRAFT_PICK_BAND_WEIGHTS: Record<DraftPickBand, ScoreComponents> = {
     synergy: 1.5,
     returnUrgency: 0.9,
     draftPickBandFit: 1.0,
+    passRegret: 1.4,
+    pivotPotential: 0.9,
+    conflictCost: 1.3,
+    roleAvailabilityPressure: 0.7,
     confidence: 0.4,
     saturationPenalty: 2.0,
     riskPenalty: 1.1
@@ -42,6 +54,10 @@ const DRAFT_PICK_BAND_WEIGHTS: Record<DraftPickBand, ScoreComponents> = {
     synergy: 1.2,
     returnUrgency: 0.5,
     draftPickBandFit: 1.4,
+    passRegret: 0.7,
+    pivotPotential: 0.3,
+    conflictCost: 1.1,
+    roleAvailabilityPressure: 0.9,
     confidence: 0.4,
     saturationPenalty: 2.4,
     riskPenalty: 1.5
@@ -64,6 +80,7 @@ type HandContext = {
   solvedRoles: Set<string>;
   neededRoles: Map<string, number>;
   saturationTargets: Set<string>;
+  missingRolePressure: Map<string, number>;
 };
 
 export function buildDraftDataIndex(data: DraftDataSet): DraftDataIndex {
@@ -78,14 +95,18 @@ export function buildDraftDataIndex(data: DraftDataSet): DraftDataIndex {
 
 export function rankDraftOptions(input: DraftScoringInput, dataIndex: DraftDataIndex): DraftRecommendation[] {
   const draftPickBand = getDraftPickBand(input.pickNumber);
-  const handContext = buildHandContext(input.pickedCardIds, dataIndex);
+  const handContext = buildHandContext(input, dataIndex);
 
   return input.offeredCardIds
     .map((cardId) => scoreCard(cardId, input, dataIndex, handContext, draftPickBand))
     .sort((a, b) => b.score - a.score)
     .map((recommendation, index) => ({
       ...recommendation,
-      rank: index + 1
+      rank: index + 1,
+      candidateGroups:
+        index === 0 && recommendation.candidateGroups.length === 0
+          ? [recommendation.evaluationMeta.method === "fallback_basic" ? "fallback_filler_candidate" : "general_value_candidate"]
+          : recommendation.candidateGroups
     }));
 }
 
@@ -112,10 +133,16 @@ function scoreCard(
     synergy: computeSynergy(cardId, profile, handContext),
     returnUrgency: computeReturnUrgency(stat, input.pickNumber),
     draftPickBandFit: computeDraftPickBandFit(profile, draftPickBand),
+    passRegret: computePassRegret(profile, stat, input.pickNumber),
+    pivotPotential: computePivotPotential(profile, stat, handContext),
+    conflictCost: computeConflictCost(cardId, profile, handContext),
+    roleAvailabilityPressure: computeRoleAvailabilityPressure(profile, handContext),
     confidence: computeConfidence(profile, stat),
     saturationPenalty: computeSaturationPenalty(cardId, profile, handContext),
     riskPenalty: computeRiskPenalty(profile, stat, handContext)
   };
+  const evaluationMeta = buildEvaluationMeta(profile, stat, dataIndex, cardId);
+  const trackingSignals = buildTrackingSignals(profile, handContext);
 
   const score =
     components.statStrength * weights.statStrength +
@@ -124,30 +151,40 @@ function scoreCard(
     components.synergy * weights.synergy +
     components.returnUrgency * weights.returnUrgency +
     components.draftPickBandFit * weights.draftPickBandFit +
+    components.passRegret * weights.passRegret +
+    components.pivotPotential * weights.pivotPotential +
+    components.roleAvailabilityPressure * weights.roleAvailabilityPressure +
     components.confidence * weights.confidence -
     components.saturationPenalty * weights.saturationPenalty -
-    components.riskPenalty * weights.riskPenalty;
+    components.riskPenalty * weights.riskPenalty -
+    components.conflictCost * weights.conflictCost;
 
   return {
     cardId,
     rank: 0,
     score: round(score),
     draftPickBand,
+    candidateGroups: buildCandidateGroups(profile, stat, components),
     components: roundComponents(components),
     returnLikelihood: estimateReturnLikelihood(stat, input.pickNumber),
+    evaluationMeta,
     reasons: buildReasons(cardId, profile, stat, components, handContext, dataIndex),
     risks: buildRisks(profile, components),
-    nextPickDirection: buildNextPickDirection(profile, handContext)
+    warnings: buildWarnings(evaluationMeta),
+    nextPickDirection: buildNextPickDirection(profile, handContext),
+    trackingSignals,
+    planShiftHints: buildPlanShiftHints(cardId, profile, components, input.pickNumber)
   };
 }
 
-function buildHandContext(pickedCardIds: string[], dataIndex: DraftDataIndex): HandContext {
-  const pickedProfiles = pickedCardIds
+function buildHandContext(input: DraftScoringInput, dataIndex: DraftDataIndex): HandContext {
+  const pickedProfiles = input.pickedCardIds
     .map((cardId) => dataIndex.profilesByCardId.get(cardId))
     .filter((profile): profile is CardStrategyProfile => profile !== undefined);
   const solvedRoles = new Set<string>();
   const neededRoles = new Map<string, number>();
   const saturationTargets = new Set<string>();
+  const missingRolePressure = new Map<string, number>();
 
   for (const profile of pickedProfiles) {
     for (const role of profile.solves) solvedRoles.add(role);
@@ -162,12 +199,25 @@ function buildHandContext(pickedCardIds: string[], dataIndex: DraftDataIndex): H
     }
   }
 
+  if (input.trackingMode === "full_pack") {
+    for (const cardId of input.missingFromPreviousPack ?? []) {
+      const profile = dataIndex.profilesByCardId.get(cardId);
+      for (const role of profile?.roles ?? []) {
+        missingRolePressure.set(role, (missingRolePressure.get(role) ?? 0) + 1);
+      }
+      for (const role of profile?.solves ?? []) {
+        missingRolePressure.set(role, (missingRolePressure.get(role) ?? 0) + 1);
+      }
+    }
+  }
+
   return {
-    pickedCardIds: new Set(pickedCardIds),
+    pickedCardIds: new Set(input.pickedCardIds),
     pickedProfiles,
     solvedRoles,
     neededRoles,
-    saturationTargets
+    saturationTargets,
+    missingRolePressure
   };
 }
 
@@ -266,6 +316,63 @@ function computeDraftPickBandFit(profile: CardStrategyProfile | undefined, draft
   if (timingWindow === "late") return 10;
   if (timingWindow === "mid") return 8;
   return 5;
+}
+
+function computePassRegret(
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  pickNumber: number
+): number {
+  const broadStrength = computeStatStrength(stat);
+  const scarcity = computeReturnUrgency(stat, pickNumber);
+  const anchor = computeBrokenOrAnchor(profile);
+  return clamp(broadStrength * 0.45 + scarcity * 0.35 + anchor * 0.2, 0, 10);
+}
+
+function computePivotPotential(
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  handContext: HandContext
+): number {
+  if (!profile) return 0;
+
+  const anchor = computeBrokenOrAnchor(profile);
+  const broadStrength = computeStatStrength(stat);
+  const conflict = computeConflictCost(profile.cardId, profile, handContext);
+  return clamp(anchor * 0.55 + broadStrength * 0.35 - conflict * 0.25, 0, 10);
+}
+
+function computeConflictCost(
+  cardId: string,
+  profile: CardStrategyProfile | undefined,
+  handContext: HandContext
+): number {
+  if (!profile) return 0;
+  let cost = 0;
+
+  for (const pickedCardId of handContext.pickedCardIds) {
+    if (profile.conflictsWith.includes(pickedCardId)) cost += 4;
+  }
+
+  for (const pickedProfile of handContext.pickedProfiles) {
+    if (pickedProfile.conflictsWith.includes(cardId)) cost += 3;
+  }
+
+  return clamp(cost, 0, 10);
+}
+
+function computeRoleAvailabilityPressure(
+  profile: CardStrategyProfile | undefined,
+  handContext: HandContext
+): number {
+  if (!profile) return 0;
+  let pressure = 0;
+
+  for (const role of [...profile.roles, ...profile.solves]) {
+    pressure += handContext.missingRolePressure.get(role) ?? 0;
+  }
+
+  return clamp(pressure * 2, 0, 10);
 }
 
 function computeConfidence(profile: CardStrategyProfile | undefined, stat: CardStatRow | undefined): number {
@@ -380,6 +487,124 @@ function buildNextPickDirection(profile: CardStrategyProfile | undefined, handCo
   return [...new Set([...direct, ...needs])];
 }
 
+function buildCandidateGroups(
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  components: ScoreComponents
+): DraftCandidateGroup[] {
+  const groups: DraftCandidateGroup[] = [];
+
+  if (profile?.isBroken) groups.push("broken_candidate");
+  if (components.statStrength >= 7) groups.push("premium_candidate");
+  if (profile?.isPlanAnchor || profile?.roles.includes("plan_anchor")) groups.push("plan_anchor_candidate");
+  if (components.roleCoverage >= 4) groups.push("role_completion_candidate");
+  if (components.synergy >= 4) groups.push("support_candidate");
+  if ((profile?.solves ?? []).some((role) => role.includes("food") || role === "bake_bread_access")) {
+    groups.push("food_stability_candidate");
+  }
+  if ((profile?.roles ?? []).includes("late_bonus_points")) groups.push("ready_bonus_points_candidate");
+  if (components.passRegret >= 7) groups.push("high_pass_regret_candidate");
+  if ((profile?.riskTags ?? []).length > 0 || components.riskPenalty >= 5) groups.push("risky_conditional_candidate");
+  if (groups.length === 0 && stat) groups.push("general_value_candidate");
+
+  return [...new Set(groups)];
+}
+
+function buildEvaluationMeta(
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  dataIndex: DraftDataIndex,
+  cardId: string
+): DraftEvaluationMeta {
+  const missingData: DraftEvaluationMeta["missingData"] = [];
+  if (!stat) missingData.push("stat");
+  if (!profile) missingData.push("strategy_profile");
+  if (!dataIndex.translationsByCardId.has(cardId)) missingData.push("translation");
+
+  if (profile && stat) {
+    return {
+      confidence: CONFIDENCE_SCORE[profile.confidence] >= 7 ? "high" : "medium",
+      method: "full_profile",
+      missingData
+    };
+  }
+
+  if (profile) {
+    return {
+      confidence: "medium",
+      method: "profile_limited",
+      missingData
+    };
+  }
+
+  if (stat) {
+    return {
+      confidence: "low",
+      method: "stats_only",
+      missingData
+    };
+  }
+
+  return {
+    confidence: "low",
+    method: "fallback_basic",
+    missingData
+  };
+}
+
+function buildWarnings(evaluationMeta: DraftEvaluationMeta): DraftWarning[] {
+  return evaluationMeta.missingData.map((missing) => ({
+    code: `missing_${missing}`,
+    message: `Evaluation is missing ${missing.replace("_", " ")} data.`
+  }));
+}
+
+function buildTrackingSignals(
+  profile: CardStrategyProfile | undefined,
+  handContext: HandContext
+): DraftTrackingSignal[] {
+  if (!profile) return [];
+
+  const signals: DraftTrackingSignal[] = [];
+  const roles = new Set([...profile.roles, ...profile.solves]);
+
+  for (const role of roles) {
+    const pressure = handContext.missingRolePressure.get(role) ?? 0;
+    if (pressure === 0) continue;
+    signals.push({
+      code: "availability_pressure",
+      roleId: role,
+      strength: pressure >= 2 ? "medium" : "weak",
+      message: `${role} options have disappeared from a previously seen pack.`
+    });
+  }
+
+  return signals;
+}
+
+function buildPlanShiftHints(
+  cardId: string,
+  profile: CardStrategyProfile | undefined,
+  components: ScoreComponents,
+  pickNumber: number
+): DraftRecommendation["planShiftHints"] {
+  const shouldShow =
+    pickNumber >= 2 &&
+    pickNumber <= 4 &&
+    components.conflictCost < 5 &&
+    (profile?.isBroken || profile?.isPlanAnchor || components.passRegret >= 8);
+
+  if (!shouldShow) return [];
+
+  return [
+    {
+      code: "new_center_plan_candidate",
+      cardId,
+      message: "This card can become a new center plan without heavily fighting the current hand."
+    }
+  ];
+}
+
 function getCardName(cardId: string, dataIndex: DraftDataIndex): string {
   return dataIndex.translationsByCardId.get(cardId)?.name ?? cardId;
 }
@@ -414,6 +639,10 @@ function roundComponents(components: ScoreComponents): ScoreComponents {
     synergy: round(components.synergy),
     returnUrgency: round(components.returnUrgency),
     draftPickBandFit: round(components.draftPickBandFit),
+    passRegret: round(components.passRegret),
+    pivotPotential: round(components.pivotPotential),
+    conflictCost: round(components.conflictCost),
+    roleAvailabilityPressure: round(components.roleAvailabilityPressure),
     confidence: round(components.confidence),
     saturationPenalty: round(components.saturationPenalty),
     riskPenalty: round(components.riskPenalty)

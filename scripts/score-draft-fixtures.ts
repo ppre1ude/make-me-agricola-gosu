@@ -55,7 +55,7 @@ async function readJson<T>(relativePath: string): Promise<T> {
 }
 
 function normalizeFixtureInput(fixture: DraftFixture, data: DraftDataSet): DraftScoringInput {
-  return {
+  const input: DraftScoringInput = {
     playerCount: fixture.input.playerCount ?? 4,
     draftCardType: fixture.input.draftCardType ?? "occupation",
     pickNumber: fixture.input.pickNumber,
@@ -64,9 +64,15 @@ function normalizeFixtureInput(fixture: DraftFixture, data: DraftDataSet): Draft
     seenCardIds: fixture.input.seenCardIds ?? [],
     passedCardIds: fixture.input.passedCardIds ?? [],
     draftFormat: fixture.input.draftFormat ?? "10-to-7",
+    trackingMode: fixture.input.trackingMode ?? "selected_only",
     cardPoolProfileId: fixture.input.cardPoolProfileId ?? data.cardPoolProfile.id,
     explanationDepth: fixture.input.explanationDepth ?? "standard"
   };
+
+  if (fixture.input.previousPackCardIds !== undefined) input.previousPackCardIds = fixture.input.previousPackCardIds;
+  if (fixture.input.missingFromPreviousPack !== undefined) input.missingFromPreviousPack = fixture.input.missingFromPreviousPack;
+
+  return input;
 }
 
 function validateFixture(
@@ -129,6 +135,66 @@ function validateFixture(
     const recommendation = findRecommendation(recommendations, assertion.cardId);
     if (!recommendation?.nextPickDirection.includes(assertion.value)) {
       messages.push(`expected ${assertion.cardId} nextPickDirection to include "${assertion.value}"`);
+    }
+  }
+
+  for (const assertion of expected.candidateGroupIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    if (!recommendation?.candidateGroups.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} candidateGroups to include "${assertion.value}"`);
+    }
+  }
+
+  for (const assertion of expected.warningIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.warnings.map((warning) => `${warning.code} ${warning.message}`).join(" ") ?? "";
+    if (!actual.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} warnings to include "${assertion.value}"`);
+    }
+  }
+
+  for (const assertion of expected.evaluationMetaIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.evaluationMeta;
+    if (assertion.confidence !== undefined && actual?.confidence !== assertion.confidence) {
+      messages.push(`expected ${assertion.cardId} evaluationMeta.confidence ${assertion.confidence}, got ${actual?.confidence}`);
+    }
+    if (assertion.method !== undefined && actual?.method !== assertion.method) {
+      messages.push(`expected ${assertion.cardId} evaluationMeta.method ${assertion.method}, got ${actual?.method}`);
+    }
+    if (assertion.missingDataIncludes !== undefined && !actual?.missingData.includes(assertion.missingDataIncludes)) {
+      messages.push(`expected ${assertion.cardId} evaluationMeta.missingData to include ${assertion.missingDataIncludes}`);
+    }
+  }
+
+  for (const assertion of expected.trackingSignalIncludes ?? []) {
+    const scopedRecommendations = assertion.cardId
+      ? recommendations.filter((recommendation) => recommendation.cardId === assertion.cardId)
+      : recommendations;
+    const matches = scopedRecommendations.some((recommendation) =>
+      recommendation.trackingSignals.some((signal) => {
+        const text = `${signal.code} ${signal.roleId ?? ""} ${signal.cardId ?? ""} ${signal.message}`;
+        return (assertion.role === undefined || signal.roleId === assertion.role) && text.includes(assertion.value);
+      })
+    );
+    if (!matches) {
+      messages.push(`expected tracking signal to include "${assertion.value}"`);
+    }
+  }
+
+  for (const assertion of expected.planShiftIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.planShiftHints.map((hint) => `${hint.code} ${hint.message}`).join(" ") ?? "";
+    if (!actual.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} planShiftHints to include "${assertion.value}"`);
+    }
+  }
+
+  for (const assertion of expected.reasonIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.reasons[assertion.depth].join(" ") ?? "";
+    if (!actual.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} ${assertion.depth} reasons to include "${assertion.value}"`);
     }
   }
 

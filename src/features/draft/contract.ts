@@ -6,6 +6,46 @@ export type DraftFormat = "10-to-7" | "9-to-7" | "8-to-7";
 export type DraftPickBand = "early_anchor" | "middle_direction" | "late_completion";
 export type ExplanationDepth = "compact" | "standard" | "deep";
 export type ReturnLikelihood = "unlikely" | "possible" | "likely" | "unknown";
+export type TrackingMode = "full_pack" | "selected_only";
+
+export type DraftCandidateGroup =
+  | "broken_candidate"
+  | "premium_candidate"
+  | "plan_anchor_candidate"
+  | "role_completion_candidate"
+  | "support_candidate"
+  | "penalty_prevention_candidate"
+  | "ready_bonus_points_candidate"
+  | "food_stability_candidate"
+  | "high_pass_regret_candidate"
+  | "risky_conditional_candidate"
+  | "general_value_candidate"
+  | "fallback_filler_candidate";
+
+export type DraftWarning = {
+  code: string;
+  message: string;
+};
+
+export type DraftEvaluationMeta = {
+  confidence: "high" | "medium" | "low";
+  method: "full_profile" | "stats_only" | "profile_limited" | "fallback_basic";
+  missingData: Array<"stat" | "strategy_profile" | "translation">;
+};
+
+export type DraftTrackingSignal = {
+  code: string;
+  roleId?: string;
+  cardId?: string;
+  strength: "weak" | "medium" | "strong";
+  message: string;
+};
+
+export type DraftPlanShiftHint = {
+  code: string;
+  cardId: string;
+  message: string;
+};
 
 export type ConfidenceLevel =
   | "manual_verified"
@@ -17,6 +57,7 @@ export type ConfidenceLevel =
   | "unverified";
 
 export type CardPoolStatus = "active" | "weak_excluded" | "strong_excluded" | "banned" | "inactive";
+export type SaturationBehavior = "hard_cap" | "soft_cap" | "stackable" | "resource_convertible" | "condition_based";
 
 export type PickNumber = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
@@ -63,6 +104,8 @@ export type StrategyRole = {
   description?: Record<LocaleCode, string>;
   parentId?: string;
   defaultSaturationLimit?: number;
+  saturationBehavior?: SaturationBehavior;
+  sinkRoleIds?: string[];
 };
 
 export type CardStatRow = {
@@ -101,6 +144,8 @@ export type CardStrategyProfile = {
   brokenReasonTags?: string[];
   brokenReasonNote?: Partial<Record<LocaleCode, string>>;
   solves: string[];
+  supports?: string[];
+  partialSolves?: string[];
   increasesNeedFor: string[];
   saturationPenaltyTo: string[];
   synergyWith: string[];
@@ -122,7 +167,10 @@ export type DraftScoringInput = {
   pickedCardIds: string[];
   seenCardIds: string[];
   passedCardIds: string[];
+  previousPackCardIds?: string[];
+  missingFromPreviousPack?: string[];
   draftFormat: DraftFormat;
+  trackingMode: TrackingMode;
   cardPoolProfileId: string;
   explanationDepth: ExplanationDepth;
 };
@@ -143,6 +191,10 @@ export type ScoreComponents = {
   synergy: number;
   returnUrgency: number;
   draftPickBandFit: number;
+  passRegret: number;
+  pivotPotential: number;
+  conflictCost: number;
+  roleAvailabilityPressure: number;
   confidence: number;
   saturationPenalty: number;
   riskPenalty: number;
@@ -153,11 +205,16 @@ export type DraftRecommendation = {
   rank: number;
   score: number;
   draftPickBand: DraftPickBand;
+  candidateGroups: DraftCandidateGroup[];
   components: ScoreComponents;
   returnLikelihood: ReturnLikelihood;
+  evaluationMeta: DraftEvaluationMeta;
   reasons: Record<ExplanationDepth, string[]>;
   risks: string[];
+  warnings: DraftWarning[];
   nextPickDirection: string[];
+  trackingSignals: DraftTrackingSignal[];
+  planShiftHints: DraftPlanShiftHint[];
 };
 
 export type DraftDataIndex = {
@@ -192,6 +249,30 @@ export type RiskAssertion = {
   risk: string;
 };
 
+export type CandidateGroupAssertion = {
+  cardId: string;
+  value: DraftCandidateGroup;
+};
+
+export type EvaluationMetaAssertion = {
+  cardId: string;
+  confidence?: DraftEvaluationMeta["confidence"];
+  method?: DraftEvaluationMeta["method"];
+  missingDataIncludes?: DraftEvaluationMeta["missingData"][number];
+};
+
+export type TrackingSignalAssertion = {
+  cardId?: string;
+  role?: string;
+  value: string;
+};
+
+export type ReasonIncludesAssertion = {
+  cardId: string;
+  depth: ExplanationDepth;
+  value: string;
+};
+
 export type DraftFixtureExpected = {
   topCardId?: string;
   notTopCardIds?: string[];
@@ -201,6 +282,12 @@ export type DraftFixtureExpected = {
   returnLikelihood?: ReturnLikelihoodAssertion[];
   hasRisk?: RiskAssertion[];
   nextPickIncludes?: TextIncludesAssertion[];
+  candidateGroupIncludes?: CandidateGroupAssertion[];
+  warningIncludes?: TextIncludesAssertion[];
+  evaluationMetaIncludes?: EvaluationMetaAssertion[];
+  trackingSignalIncludes?: TrackingSignalAssertion[];
+  planShiftIncludes?: TextIncludesAssertion[];
+  reasonIncludes?: ReasonIncludesAssertion[];
 };
 
 export type DraftFixture = {

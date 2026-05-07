@@ -6,8 +6,14 @@ import type {
   CardStrategyProfile,
   CardTranslation,
   ConfidenceLevel,
+  DraftCandidateGroup,
   DraftDataSet,
+  DraftEvaluationMeta,
   DraftFixture,
+  ExplanationDepth,
+  ReturnLikelihood,
+  SaturationBehavior,
+  TrackingMode,
   PickNumber,
   StrategyRole
 } from "./contract.ts";
@@ -44,6 +50,73 @@ const CARD_POOL_STATUSES = new Set<CardPoolStatus>([
   "banned",
   "inactive"
 ]);
+const TRACKING_MODES = new Set<TrackingMode>(["full_pack", "selected_only"]);
+const SATURATION_BEHAVIORS = new Set<SaturationBehavior>([
+  "hard_cap",
+  "soft_cap",
+  "stackable",
+  "resource_convertible",
+  "condition_based"
+]);
+const SCORE_COMPONENTS = new Set([
+  "statStrength",
+  "brokenOrAnchor",
+  "roleCoverage",
+  "synergy",
+  "returnUrgency",
+  "draftPickBandFit",
+  "passRegret",
+  "pivotPotential",
+  "conflictCost",
+  "roleAvailabilityPressure",
+  "confidence",
+  "saturationPenalty",
+  "riskPenalty"
+]);
+const RETURN_LIKELIHOODS = new Set<ReturnLikelihood>(["unlikely", "possible", "likely", "unknown"]);
+const EXPLANATION_DEPTHS = new Set<ExplanationDepth>(["compact", "standard", "deep"]);
+const CANDIDATE_GROUPS = new Set<DraftCandidateGroup>([
+  "broken_candidate",
+  "premium_candidate",
+  "plan_anchor_candidate",
+  "role_completion_candidate",
+  "support_candidate",
+  "penalty_prevention_candidate",
+  "ready_bonus_points_candidate",
+  "food_stability_candidate",
+  "high_pass_regret_candidate",
+  "risky_conditional_candidate",
+  "general_value_candidate",
+  "fallback_filler_candidate"
+]);
+const EVALUATION_CONFIDENCES = new Set<DraftEvaluationMeta["confidence"]>(["high", "medium", "low"]);
+const EVALUATION_METHODS = new Set<DraftEvaluationMeta["method"]>([
+  "full_profile",
+  "stats_only",
+  "profile_limited",
+  "fallback_basic"
+]);
+const MISSING_DATA_TYPES = new Set<DraftEvaluationMeta["missingData"][number]>([
+  "stat",
+  "strategy_profile",
+  "translation"
+]);
+const FIXTURE_EXPECTED_KEYS = new Set([
+  "topCardId",
+  "notTopCardIds",
+  "downrankedBelow",
+  "componentAtLeast",
+  "componentBelow",
+  "returnLikelihood",
+  "hasRisk",
+  "nextPickIncludes",
+  "candidateGroupIncludes",
+  "warningIncludes",
+  "evaluationMetaIncludes",
+  "trackingSignalIncludes",
+  "planShiftIncludes",
+  "reasonIncludes"
+]);
 
 export function validateDraftDataSet(data: DraftDataSet, fixtures: DraftFixture[] = []): ValidationResult {
   const issues: ValidationIssue[] = [];
@@ -54,7 +127,7 @@ export function validateDraftDataSet(data: DraftDataSet, fixtures: DraftFixture[
   validateStats(data.stats, cardIds, issues);
   validateStrategyProfiles(data.strategyProfiles, cardIds, roleIds, issues);
   validateCardPoolProfile(data.cardPoolProfile, cardIds, issues);
-  validateFixtures(fixtures, cardIds, issues);
+  validateFixtures(fixtures, cardIds, roleIds, issues);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
   const warningCount = issues.length - errorCount;
@@ -140,6 +213,14 @@ function validateStrategyRoles(roles: StrategyRole[], issues: ValidationIssue[])
     requireString(role.id, `${path}.id`, issues);
     if (ids.has(role.id)) addIssue(issues, "error", `${path}.id`, `duplicate strategy role id "${role.id}"`);
     ids.add(role.id);
+    if (role.saturationBehavior !== undefined && !SATURATION_BEHAVIORS.has(role.saturationBehavior)) {
+      addIssue(issues, "error", `${path}.saturationBehavior`, `invalid saturation behavior "${role.saturationBehavior}"`);
+    }
+    if (role.sinkRoleIds !== undefined) requireArray(role.sinkRoleIds, `${path}.sinkRoleIds`, issues);
+  });
+
+  roles.forEach((role, index) => {
+    if (role.sinkRoleIds !== undefined) validateRoleReferences(role.sinkRoleIds, ids, `strategyRoles[${index}].sinkRoleIds`, issues);
   });
 
   return ids;
@@ -160,6 +241,10 @@ function validateStrategyProfiles(
 
     validateRoleReferences(profile.roles, roleIds, `${path}.roles`, issues);
     validateRoleReferences(profile.solves, roleIds, `${path}.solves`, issues);
+    if (profile.supports !== undefined) validateRoleReferences(profile.supports, roleIds, `${path}.supports`, issues);
+    if (profile.partialSolves !== undefined) {
+      validateRoleReferences(profile.partialSolves, roleIds, `${path}.partialSolves`, issues);
+    }
     validateRoleReferences(profile.increasesNeedFor, roleIds, `${path}.increasesNeedFor`, issues);
     validateCardReferences(profile.synergyWith, cardIds, `${path}.synergyWith`, issues);
     validateCardReferences(profile.conflictsWith, cardIds, `${path}.conflictsWith`, issues);
@@ -182,7 +267,12 @@ function validateCardPoolProfile(profile: CardPoolProfile, cardIds: Set<string>,
   }
 }
 
-function validateFixtures(fixtures: DraftFixture[], cardIds: Set<string>, issues: ValidationIssue[]): void {
+function validateFixtures(
+  fixtures: DraftFixture[],
+  cardIds: Set<string>,
+  roleIds: Set<string>,
+  issues: ValidationIssue[]
+): void {
   fixtures.forEach((fixture, index) => {
     const path = `fixtures[${index}]`;
     const input = fixture.input;
@@ -195,6 +285,18 @@ function validateFixtures(fixtures: DraftFixture[], cardIds: Set<string>, issues
     validateCardReferences(input.pickedCardIds ?? [], cardIds, `${path}.input.pickedCardIds`, issues);
     validateCardReferences(input.seenCardIds ?? [], cardIds, `${path}.input.seenCardIds`, issues);
     validateCardReferences(input.passedCardIds ?? [], cardIds, `${path}.input.passedCardIds`, issues);
+    validateCardReferences(input.previousPackCardIds ?? [], cardIds, `${path}.input.previousPackCardIds`, issues);
+    validateCardReferences(input.missingFromPreviousPack ?? [], cardIds, `${path}.input.missingFromPreviousPack`, issues);
+
+    if (input.trackingMode !== undefined && !TRACKING_MODES.has(input.trackingMode)) {
+      addIssue(issues, "error", `${path}.input.trackingMode`, `invalid tracking mode "${input.trackingMode}"`);
+    }
+
+    for (const key of Object.keys(fixture.expected ?? {})) {
+      if (!FIXTURE_EXPECTED_KEYS.has(key)) {
+        addIssue(issues, "error", `${path}.expected.${key}`, `unsupported fixture assertion "${key}"`);
+      }
+    }
 
     if (fixture.expected?.topCardId && !cardIds.has(fixture.expected.topCardId)) {
       addIssue(issues, "error", `${path}.expected.topCardId`, `unknown card id "${fixture.expected.topCardId}"`);
@@ -209,6 +311,87 @@ function validateFixtures(fixtures: DraftFixture[], cardIds: Set<string>, issues
       if (!cardIds.has(pair.belowCardId)) {
         addIssue(issues, "error", `${path}.expected.downrankedBelow`, `unknown card id "${pair.belowCardId}"`);
       }
+    }
+
+    for (const assertion of fixture.expected?.componentAtLeast ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.componentAtLeast.cardId`, issues);
+      if (!SCORE_COMPONENTS.has(String(assertion.component))) {
+        addIssue(issues, "error", `${path}.expected.componentAtLeast.component`, `unknown score component "${String(assertion.component)}"`);
+      }
+      requireOptionalNumber(assertion.value, `${path}.expected.componentAtLeast.value`, issues);
+    }
+
+    for (const assertion of fixture.expected?.componentBelow ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.componentBelow.cardId`, issues);
+      if (!SCORE_COMPONENTS.has(String(assertion.component))) {
+        addIssue(issues, "error", `${path}.expected.componentBelow.component`, `unknown score component "${String(assertion.component)}"`);
+      }
+      requireOptionalNumber(assertion.value, `${path}.expected.componentBelow.value`, issues);
+    }
+
+    for (const assertion of fixture.expected?.returnLikelihood ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.returnLikelihood.cardId`, issues);
+      if (!RETURN_LIKELIHOODS.has(assertion.value)) {
+        addIssue(issues, "error", `${path}.expected.returnLikelihood.value`, `invalid return likelihood "${assertion.value}"`);
+      }
+    }
+
+    for (const assertion of fixture.expected?.hasRisk ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.hasRisk.cardId`, issues);
+      requireString(assertion.risk, `${path}.expected.hasRisk.risk`, issues);
+    }
+
+    for (const assertion of fixture.expected?.nextPickIncludes ?? []) {
+      validateTextIncludesAssertion(assertion, cardIds, `${path}.expected.nextPickIncludes`, issues);
+    }
+
+    for (const assertion of fixture.expected?.candidateGroupIncludes ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.candidateGroupIncludes.cardId`, issues);
+      if (!CANDIDATE_GROUPS.has(assertion.value)) {
+        addIssue(issues, "error", `${path}.expected.candidateGroupIncludes.value`, `invalid candidate group "${assertion.value}"`);
+      }
+    }
+
+    for (const assertion of fixture.expected?.warningIncludes ?? []) {
+      validateTextIncludesAssertion(assertion, cardIds, `${path}.expected.warningIncludes`, issues);
+    }
+
+    for (const assertion of fixture.expected?.evaluationMetaIncludes ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.evaluationMetaIncludes.cardId`, issues);
+      if (assertion.confidence !== undefined && !EVALUATION_CONFIDENCES.has(assertion.confidence)) {
+        addIssue(issues, "error", `${path}.expected.evaluationMetaIncludes.confidence`, `invalid evaluation confidence "${assertion.confidence}"`);
+      }
+      if (assertion.method !== undefined && !EVALUATION_METHODS.has(assertion.method)) {
+        addIssue(issues, "error", `${path}.expected.evaluationMetaIncludes.method`, `invalid evaluation method "${assertion.method}"`);
+      }
+      if (assertion.missingDataIncludes !== undefined && !MISSING_DATA_TYPES.has(assertion.missingDataIncludes)) {
+        addIssue(
+          issues,
+          "error",
+          `${path}.expected.evaluationMetaIncludes.missingDataIncludes`,
+          `invalid missing data type "${assertion.missingDataIncludes}"`
+        );
+      }
+    }
+
+    for (const assertion of fixture.expected?.trackingSignalIncludes ?? []) {
+      if (assertion.cardId !== undefined) validateCardReference(assertion.cardId, cardIds, `${path}.expected.trackingSignalIncludes.cardId`, issues);
+      if (assertion.role !== undefined && !roleIds.has(assertion.role)) {
+        addIssue(issues, "error", `${path}.expected.trackingSignalIncludes.role`, `unknown strategy role id "${assertion.role}"`);
+      }
+      requireString(assertion.value, `${path}.expected.trackingSignalIncludes.value`, issues);
+    }
+
+    for (const assertion of fixture.expected?.planShiftIncludes ?? []) {
+      validateTextIncludesAssertion(assertion, cardIds, `${path}.expected.planShiftIncludes`, issues);
+    }
+
+    for (const assertion of fixture.expected?.reasonIncludes ?? []) {
+      validateCardReference(assertion.cardId, cardIds, `${path}.expected.reasonIncludes.cardId`, issues);
+      if (!EXPLANATION_DEPTHS.has(assertion.depth)) {
+        addIssue(issues, "error", `${path}.expected.reasonIncludes.depth`, `invalid explanation depth "${assertion.depth}"`);
+      }
+      requireString(assertion.value, `${path}.expected.reasonIncludes.value`, issues);
     }
   });
 }
@@ -225,6 +408,20 @@ function validateCardReferences(values: string[], cardIds: Set<string>, path: st
   for (const cardId of values) {
     if (!cardIds.has(cardId)) addIssue(issues, "error", path, `unknown card id "${cardId}"`);
   }
+}
+
+function validateCardReference(cardId: string, cardIds: Set<string>, path: string, issues: ValidationIssue[]): void {
+  if (!cardIds.has(cardId)) addIssue(issues, "error", path, `unknown card id "${cardId}"`);
+}
+
+function validateTextIncludesAssertion(
+  assertion: { cardId: string; value: string },
+  cardIds: Set<string>,
+  path: string,
+  issues: ValidationIssue[]
+): void {
+  validateCardReference(assertion.cardId, cardIds, `${path}.cardId`, issues);
+  requireString(assertion.value, `${path}.value`, issues);
 }
 
 function validateSaturationTargets(

@@ -76,5 +76,18 @@
     "plays": 330,
     "wtdPwr": 3.5,
     "tier": "C"
+  },
+  {
+    "snapshotId": "prototype-2026-05-08",
+    "cardId": "occ-open-pantry",
+    "rank": 18,
+    "pwr": 4.2,
+    "adp": 2.7,
+    "apr": 2.5,
+    "deals": 1000,
+    "drafted": 760,
+    "plays": 690,
+    "wtdPwr": 6.4,
+    "tier": "A"
   }
 ]

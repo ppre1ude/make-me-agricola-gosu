@@ -53,4 +53,23 @@
     "sourceRefs": ["manual-prototype-seed"],
     "updatedAt": "2026-05-07"
   }
+  ,
+  {
+    "cardId": "occ-open-pantry",
+    "locale": "ko-KR",
+    "name": "Open Pantry",
+    "aliases": ["Open Pantry"],
+    "shortText": "Prototype high-stat food card used for missing-profile fixture coverage.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-pantry-stall",
+    "locale": "ko-KR",
+    "name": "Pantry Stall",
+    "aliases": ["Pantry Stall"],
+    "shortText": "Prototype food support card used for missing-stat and next-pick fixtures.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
+  }
 ]
