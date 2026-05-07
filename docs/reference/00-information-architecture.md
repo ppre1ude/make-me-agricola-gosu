@@ -42,6 +42,9 @@
 - 카드 풀: Arena active pool snapshot
 - draft size: 10-to-7, 9-to-7, 8-to-7
 - 카드 타입: 직업, 보조 설비
+- 입력 모드 기본값: full tracking 또는 quick
+- skill level: beginner, intermediate, advanced
+- goal mode: quick pick, learn, review, high ceiling
 - 설명 깊이: compact, standard, deep
 
 v0 기본값:
@@ -50,6 +53,9 @@ v0 기본값:
 playerCount: 4
 cardPool: bga-arena-active
 draftSize: 10-to-7
+inputModeDefault: full_tracking
+skillLevel: advanced
+goalMode: learn
 explanationDepth: deep
 ```
 
@@ -62,9 +68,9 @@ explanationDepth: deep
 ```text
 상단: pick number, draft size, 입력 모드, 설명 깊이
 좌측: 현재 visible pack 입력
-중앙: 추천 순위와 카드별 근거
+중앙: 추천 순위, 카드별 근거, passRegret/리스크 label
 우측: 내 픽, 역할 커버리지, 부족한 전략축
-하단: 본 카드/넘긴 카드/돌아올 가능성
+하단: 본 카드/넘긴 카드/사라진 카드/돌아올 가능성
 ```
 
 입력 방식:
@@ -74,16 +80,24 @@ explanationDepth: deep
 - clipboard paste
 - 추후 OCR 결과 import
 
-첫 4픽:
+새 카드 정보가 많은 구간:
 
 - 현재 보이는 full pack을 입력한다.
 - 선택 카드와 passed card를 모두 기록한다.
 
-마지막 3픽:
+돌아온 pack을 비교하는 구간:
 
 - 이미 본 카드가 돌아오는 구간으로 취급한다.
-- 기본적으로 내가 고른 카드만 빠르게 기록한다.
-- 필요하면 현재 visible pack을 수정 입력할 수 있다.
+- 고수용 기본값은 현재 visible pack을 다시 입력해 사라진 카드를 기록한다.
+- 사라진 카드는 특정 상대 손패 확정이 아니라 role availability pressure로 표시한다.
+- 시간 압박이 크면 내가 고른 카드만 빠르게 기록하는 quick fallback을 쓴다.
+
+추천 표시:
+
+- 기본 화면은 카드별 점수 숫자보다 이유, 리스크, 다음 픽 방향을 우선한다.
+- `passRegret`은 "넘기기 아까움" label과 설명으로 보여준다.
+- component 숫자는 deep/debug에서만 펼쳐 보이며 승률로 표현하지 않는다.
+- Pick 2~4에서 broken, plan anchor, high passRegret 후보가 새 중심 플랜을 만들 수 있으면 after-pick plan shift를 짧게 표시한다.
 
 ### 카드 목록
 

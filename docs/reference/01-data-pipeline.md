@@ -110,12 +110,16 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 - 역할 중복과 포화도 계산
 - 콤보, 리스크, 다음 픽 방향 설명
 - 초보자/고급자 설명 분리
+- passRegret, pivotPotential, conflictCost 판단 근거 축적
+- model_user_disagreement를 fixture 후보로 전환할 수 있는 근거 저장
 
 저장 방식:
 
 - `data/manual/card-strategy-profiles.json`을 수동 큐레이션 source of truth로 둔다.
 - 카드 효과 텍스트에서 추론 가능한 태그는 importer가 초안을 만들 수 있지만, 추천에 직접 쓰기 전 수동 검수를 거친다.
-- 처음부터 전체 A~E 카드를 완성하지 않고, BGA Arena에서 영향이 큰 50~100장부터 태깅한다.
+- 처음부터 전체 A~E 카드를 완성하지 않는다.
+- 우선순위는 fixture에 필요한 카드, BGA Arena에서 영향이 큰 50~100장, 전체 A~E 최소 태깅 순서다.
+- 모델 추천과 사용자 선택이 다를 때는 모델 오류로 확정하지 않고 `model_user_disagreement` 이벤트로 남긴다.
 
 ### Agricola Cards
 
@@ -199,7 +203,10 @@ raw source
 - 모든 CardStatRow는 존재하는 cardId를 참조해야 한다.
 - tagIds는 사전에 존재해야 한다.
 - CardStrategyProfile.roles는 StrategyRole 사전에 존재해야 한다.
+- CardStrategyProfile.solves/supports/partialSolves/increasesNeedFor는 StrategyRole 사전을 참조해야 한다.
 - CardStrategyProfile의 synergy/conflict/saturation 대상은 존재하는 cardId 또는 role id여야 한다.
+- StrategyRole.saturationBehavior는 허용된 enum이어야 한다.
+- StrategyRole.sinkRoleIds는 존재하는 role id여야 한다.
 - CardPoolProfile의 cardStatuses는 존재하는 cardId를 참조해야 한다.
 - timingTagIds는 사전에 존재해야 한다.
 - 중복 alias가 있으면 warning을 낸다.
@@ -229,7 +236,11 @@ raw source
 
 - already solved role이 반복되면 saturation penalty가 적용된다.
 - broken/plan anchor는 초반 픽에서 충분히 높은 가중치를 받는다.
+- 높은 passRegret 카드는 Pick 1~4에서 약한 보완 카드보다 앞설 수 있다.
+- pivotPotential은 high tier + plan anchor + low conflict 상황에서만 약하게 반영된다.
+- conflictCost는 이미 해결한 역할과 충돌하는 후보를 설명한다.
 - ADP가 낮은 카드는 return likelihood가 낮게 나온다.
+- full tracking fixture에서는 사라진 카드가 role availability pressure로 반영된다.
 - 조건부 카드는 deep 설명에 리스크가 포함된다.
 - 추천 결과가 단순 WtdPWR 정렬과 다른 이유를 설명할 수 있다.
 

@@ -44,11 +44,14 @@
 - A~E 중 현재 BGA Arena에서 쓰이는 카드 풀 기준
 - draft size 설정: 10-to-7, 9-to-7, 8-to-7 등
 - 수동 카드 입력과 autocomplete
-- 첫 4픽 full visible pack 입력
-- 마지막 3픽은 선택 카드 중심의 경량 입력
+- 1~7픽 full visible pack 입력
+- 시간 압박용 selected-only quick fallback
 - 내가 고른 카드, 본 카드, 지나간 카드 기록
+- 5~7픽에서 이전 pack 대비 사라진 카드 기록
 - 현재 픽 추천 순위
 - 추천 이유, 리스크, 돌아올 가능성, 다음 픽 방향 표시
+- 역할 포화도, 역할 공백, role availability pressure 표시
+- 사용자 설정: skill level, goal mode, explanation depth
 - 카드 검색과 카드 상세
 - 카드별 통계, 역할 태그, 전략 메모 표시
 - 설명 깊이 설정: compact, standard, deep
@@ -82,6 +85,8 @@
 - 현재 visible pack
 - 내가 이미 고른 카드
 - 내가 본 뒤 넘긴 카드
+- 이전에 봤지만 이번에 사라진 카드
+- skill level과 goal mode
 - 설명 깊이
 
 출력:
@@ -92,7 +97,17 @@
 - 리스크
 - 돌아올 가능성
 - 역할 중복 또는 역할 공백
+- 강카드를 넘길 때의 passRegret
+- 새 중심 플랜으로 바뀔 수 있는 경우의 after-pick plan shift
 - 다음 픽에서 찾을 카드 역할
+
+추천 정책:
+
+- Pick 1~2는 broken card, premium card, open-ended plan anchor를 우선한다.
+- Pick 3~4는 범용 강도, passRegret, 현재 손패의 부족 역할을 함께 본다.
+- Pick 5~7은 먼저 현재 손패 기준 후보군을 만들고, 그 안에서 티어와 통계를 반영한다.
+- 사라진 카드는 상대 플랜 확정이 아니라 role availability pressure로 사용한다.
+- 모델 추천과 사용자 선택의 차이는 `model_user_disagreement`로 기록하고, 곧바로 모델 오류로 판단하지 않는다.
 
 ### 카드 검색
 
@@ -155,14 +170,19 @@
 - plan anchor
 - strategy role
 - solves
+- supports
+- partial solves
 - increases need for
 - saturation penalty
+- saturation behavior
 - synergy/conflict
+- passRegret 판단 근거
+- pivotPotential/conflictCost 판단 근거
 - risk note
 - next-pick guidance
 - beginner/advanced explanation
 
-초기에는 모든 카드를 완벽히 태깅하지 않는다. BGA Arena에서 자주 나오고 판단 영향이 큰 카드 50~100장부터 시작한다.
+초기에는 모든 카드를 완벽히 태깅하지 않는다. fixture에 필요한 카드, BGA Arena에서 자주 나오고 판단 영향이 큰 카드 50~100장, 전체 A~E 최소 태깅 순서로 확장한다.
 
 ## 비기능 요구사항
 

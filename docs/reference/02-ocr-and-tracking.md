@@ -131,44 +131,63 @@ type DraftSession = {
   seenCardIds: string[];
   pickedCardIds: string[];
   passedCardIds: string[];
+  missingFromPreviousPacks?: DraftTrackingSignal[];
 };
 
 type DraftPick = {
   pickNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   inputMode: "full_pack" | "selected_only" | "corrected_pack";
   offeredCardIds: string[];
+  previousPackCardIds?: string[];
+  missingFromPreviousPack?: string[];
   selectedCardId?: string;
   passedCardIds?: string[];
   source: "manual" | "ocr" | "prediction";
+};
+
+type DraftTrackingSignal = {
+  pickNumber: number;
+  previousPickNumber?: number;
+  missingCardIds: string[];
+  missingRoleCounts: Record<string, number>;
+  premiumMissingCount: number;
+  roleAvailabilityPressure: Record<string, number>;
+  notes: string[];
 };
 ```
 
 ### 초기 기능
 
-- 1~4픽 full visible pack 저장
-- 5~7픽 selected card 중심 저장
-- 필요 시 반환 pack 수정 입력
+- 1~7픽 full visible pack 저장
+- 시간 압박용 selected-only quick fallback
+- 5~7픽에서 이전 pack 대비 사라진 카드 계산
+- 필요 시 반환 pack corrected pack 입력
 - 내가 고른 카드 저장
 - 지나간 카드 목록 보기
 - 지나간 카드 중 위험한 콤보/역할 카드 표시
 - 내 손패 전략 역할 분포 업데이트
 - 이미 해결한 역할과 부족한 역할 표시
+- role availability pressure 표시
 - 돌아올 가능성 힌트 표시
 
-### 첫 4픽과 마지막 3픽
+### Full Tracking과 Quick Fallback
 
-BGA Arena 드래프트에서는 첫 4픽이 새 정보를 가장 많이 만든다.
+BGA Arena 드래프트에서는 앞쪽 픽이 새 정보를 가장 많이 만들지만, 5~7픽에서 어떤 카드가 사라졌는지도 고수용 판단에는 중요하다.
 
 ```text
-Pick 1-4:
+Full tracking:
+  Pick 1-7 full visible pack 입력
   full visible pack 입력
   selected card + passed cards 기록
+  5~7픽에서는 이전 pack 대비 missing card 기록
 
-Pick 5-7:
-  돌아온 카드 중심
+Quick fallback:
+  시간 압박이 큰 경우
   selected card만 빠르게 기록
   예측이 틀리면 corrected pack 입력
 ```
+
+사라진 카드는 "상대가 이 카드를 집었다"로 확정하지 않는다. 추천 엔진은 사라진 카드의 tier, role, premium 여부를 약하게 반영해 role availability pressure와 return urgency를 조정한다.
 
 이 구조는 OCR이 없어도 동작해야 한다. OCR은 입력 부담을 줄이는 보조 기능이다.
 
@@ -187,6 +206,7 @@ Pick 5-7:
 허용:
 
 - 사용자가 입력한 visible pack 기반의 seen/passed 기록
+- 이전 pack 대비 사라진 카드의 불확실한 tracking signal
 - ADP와 seen card 기반의 확률적 return likelihood
 - "이 역할을 누군가 가져갔을 수 있음" 수준의 불확실한 신호 표시
 

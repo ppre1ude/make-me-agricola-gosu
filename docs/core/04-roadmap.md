@@ -42,6 +42,7 @@ draft scoring module skeleton
 - DraftSession, DraftPick 타입 작성
 - BGA Arena card pool profile 형식 작성
 - seed JSON 최소 샘플 생성
+- grill-me에서 닫은 domain/scoring 용어를 TypeScript contract와 동기화
 
 산출물:
 
@@ -69,7 +70,11 @@ data/manual/card-strategy-profiles.json
 - 추천 점수 component 구현
 - pick phase weighting 구현
 - role coverage와 saturation penalty 구현
+- saturationBehavior와 sinkRoleIds 반영
 - return likelihood 구현
+- passRegret, pivotPotential, conflictCost 구현
+- full tracking 기반 role availability pressure 구현
+- model_user_disagreement 이벤트 초안
 - explanation depth별 문장 생성
 - fixture 기반 검증
 
@@ -87,6 +92,8 @@ scripts/score-draft-fixture.ts
 - strong card라도 이미 해결된 역할과 겹치면 내려간다.
 - broken/plan anchor는 초반에 충분히 우선된다.
 - 3~4픽부터 콤보와 역할 보완이 점수에 반영된다.
+- 높은 passRegret 카드가 약한 보완 카드보다 앞서는 fixture가 있다.
+- 이미 해결한 역할과 충돌하는 후보는 conflictCost 또는 saturationPenalty로 설명된다.
 - 추천 결과가 단순 WtdPWR 정렬과 다른 이유를 설명한다.
 
 ### Phase 3: Draft Memory Coach UI
@@ -94,11 +101,13 @@ scripts/score-draft-fixture.ts
 목표:
 
 - 새 드래프트 세션 생성
-- 1~4픽 full visible pack 입력
-- 5~7픽 selected card 중심 입력
+- 1~7픽 full visible pack 입력
+- selected-only quick fallback
 - 추천 순위와 설명 표시
 - 내 픽/본 카드/넘긴 카드 기록 표시
+- 5~7픽에서 사라진 카드와 role availability pressure 표시
 - 역할 커버리지와 다음 픽 방향 표시
+- skill level과 goal mode 설정
 
 산출물:
 
@@ -247,13 +256,15 @@ DB가 필요한 시점에 도입한다.
 ### Day 11-12
 
 - `/draft` UI
-- 1~4픽 full pack 입력
-- 5~7픽 selected card 입력
+- 1~7픽 full pack 입력
+- selected-only quick fallback
+- 역할 커버리지와 사라진 카드 요약
 
 ### Day 13-14
 
 - 카드 검색/상세 최소 구현
 - 문서/데이터 검증
+- model_user_disagreement 로컬 기록 또는 export 초안
 - 내부 사용 가능한 배포 준비
 
 ## 성공 기준
@@ -264,6 +275,8 @@ MVP 성공 기준:
 - 첫 50~100장 큐레이션 카드에 대해서 raw tier list보다 납득 가능한 추천이 나온다.
 - 이미 해결한 역할의 중복 카드를 downrank한다.
 - 강한 카드가 현재 손패에 맞지 않는 이유를 설명한다.
+- 강한 카드를 넘기기 아까운 이유를 passRegret으로 설명한다.
 - ADP와 seen-card memory로 단순 return likelihood를 설명한다.
+- full tracking 입력에서는 사라진 카드가 role availability pressure로 반영된다.
 - standard 설명은 초중급자가 이해할 수 있다.
 - deep 설명은 사후 학습에 도움이 된다.

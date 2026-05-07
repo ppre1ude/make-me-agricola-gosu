@@ -121,9 +121,11 @@ Lumin_S 통계는 강력하지만 완전한 진실은 아니다.
 추가 정책:
 
 - score component를 숨기지 않는다.
+- score component를 승률이나 객관적 정답 확률처럼 표현하지 않는다.
 - 통계 기반 추천과 수동 전략 프로필 기반 추천을 구분한다.
 - confidence가 낮은 카드에는 "데이터 부족"을 표시한다.
 - deep 설명에서도 단정 대신 조건부 문장으로 쓴다.
+- 모델 추천과 사용자 선택이 다르면 `model_user_disagreement`로 기록하되, 곧바로 모델 오류로 판정하지 않는다.
 
 ## 전략 프로필 리스크
 
@@ -140,9 +142,10 @@ Lumin_S 통계는 강력하지만 완전한 진실은 아니다.
 대응:
 
 - CardStrategyProfile에 confidence와 sourceRefs를 둔다.
-- 최소 50~100장부터 시작하고 전체 A~E 완성을 v0 조건으로 두지 않는다.
+- fixture에 필요한 카드와 BGA Arena high-impact 50~100장부터 시작하고 전체 A~E 완성을 v0 조건으로 두지 않는다.
 - fixture로 추천 결과를 검증한다.
 - 통계와 수동 판단이 충돌하면 UI에서 충돌 자체를 설명한다.
+- `brokenReasonTags`는 충분한 fixture가 쌓이기 전까지 설명과 분류 중심으로 사용한다.
 
 ## 다국어 확장 리스크
 

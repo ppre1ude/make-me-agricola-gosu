@@ -11,6 +11,18 @@ Data-building flow: Strategy Knowledge Base
 
 즉 사용자가 보는 제품은 드래프트 중 현재 픽을 판단해주는 도구이고, 내부 데이터 구축은 카드별 전략 역할, 룰링, 콤보, 통계, 운영 시퀀스를 쌓는 지식 베이스입니다.
 
+## 최신 Grill-Me 결론
+
+구현 전 인터뷰에서 닫은 현재 기준은 다음입니다.
+
+- v0의 중심 기능은 Draft Memory Coach이며, 카드 검색은 드래프트 판단과 전략 학습을 돕는 기반 기능입니다.
+- 추천의 정답 기준은 pick phase에 따라 다릅니다. Pick 1~2는 broken/premium/open-ended anchor, Pick 3~4는 강카드와 보완 역할의 균형, Pick 5~7은 현재 손패 완성도를 우선합니다.
+- 고수용 기본 입력은 1~7픽 모두 full visible pack tracking입니다. selected-only 입력은 시간 압박이 큰 quick fallback입니다.
+- 사라진 카드는 특정 상대의 플랜으로 확정하지 않고, role availability pressure와 사후 복기 신호로 약하게 사용합니다.
+- `passRegret`은 boolean이 아니라 0~10 수치형 component입니다. 강카드를 넘겼을 때의 기회비용, 플랜 재편 가능성, 희소성을 표현합니다.
+- 추천 숫자는 승률이 아닙니다. 기본 UI는 label과 설명을 우선하고, deep/debug에서 component breakdown을 보여줍니다.
+- 모델 추천과 사용자 선택이 다르면 `model_user_disagreement`로 기록합니다. 이를 곧바로 모델 오류로 판정하지 않습니다.
+
 ## 문서 계층 기준
 
 - Core Docs: 제품과 구현이 계속 의존하는 상위 계약입니다. 제품 방향, 요구사항, 데이터 모델, 기능 계약, 로드맵만 둡니다.
