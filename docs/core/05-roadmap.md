@@ -66,6 +66,7 @@ data/manual/card-strategy-profiles.json
 
 목표:
 
+- 최신 light spec과 현재 prototype 사이의 contract gap 닫기
 - Schema Stabilization Gate 통과
 - Domain Logic / Product Readiness Gate 설계와 일부 구현
 - `DraftRecommendation` 출력 계약 고정
@@ -81,6 +82,16 @@ data/manual/card-strategy-profiles.json
 - explanation depth별 문장 생성
 - fixture 기반 검증
 
+구현 순서:
+
+1. `contract.ts`를 최신 light spec에 맞춰 확장한다.
+2. fixture runner와 validation이 새 assertion을 검증하고 unsupported assertion을 실패시키게 만든다.
+3. Schema Stabilization fixture 5~7개를 먼저 작성한다.
+4. `candidateGroups`, `warnings`, `evaluationMeta`를 최소 구현한다.
+5. missing stat/profile 정책을 fixture로 고정한다.
+6. `passRegret`, `pivotPotential`, `conflictCost`, `roleAvailabilityPressure`를 추가한다.
+7. Domain Logic / Product Readiness fixture를 15개 이상으로 확장한다.
+
 산출물:
 
 ```text
@@ -92,6 +103,7 @@ scripts/score-draft-fixtures.ts
 
 성공 기준:
 
+- 현재 `yarn test` 통과만으로는 Milestone 2 완료로 보지 않는다.
 - Schema Stabilization fixture 5~7개가 통과한다.
 - rank 1 추천은 항상 non-empty `candidateGroups`를 가진다.
 - missing stat/profile은 `warnings`와 `evaluationMeta`로 표현하고 `reasons`를 오염시키지 않는다.
@@ -117,6 +129,13 @@ scripts/score-draft-fixtures.ts
 - 5~7픽에서 사라진 카드와 role availability pressure 표시
 - 역할 커버리지와 다음 픽 방향 표시
 - skill level과 explanation depth 설정
+
+진입 조건:
+
+```text
+Schema Stabilization Gate 통과 전에는 `/draft` UI scaffold를 시작하지 않는다.
+Domain Logic / Product Readiness Gate 통과 전에는 UI를 product-ready 또는 merge-ready로 보지 않는다.
+```
 
 산출물:
 
@@ -266,17 +285,19 @@ DB가 필요한 시점에 도입한다.
 
 ### Day 11-12
 
-- `/draft` UI
-- 1~7픽 full pack 입력
-- selected-only quick fallback
-- 역할 커버리지와 사라진 카드 요약
+- Schema Stabilization Gate가 통과한 경우에만 `/draft` UI scaffold 시작
+- 1~7픽 full pack 입력 skeleton
+- selected-only quick fallback skeleton
+- 역할 커버리지와 사라진 카드 요약 렌더링 skeleton
+- Schema Stabilization Gate가 아직 열려 있으면 UI 대신 contract, assertion, validation, fixture 작업을 계속한다.
 
 ### Day 13-14
 
-- 카드 검색/상세 최소 구현
+- Domain Logic fixture 확장 또는 카드 검색/상세 최소 구현
 - 문서/데이터 검증
 - model_user_disagreement 로컬 기록 또는 export 초안
 - 내부 사용 가능한 배포 준비
+- Domain Logic / Product Readiness Gate가 아직 열려 있으면 UI를 product-ready로 부르지 않는다.
 
 ## 성공 기준
 

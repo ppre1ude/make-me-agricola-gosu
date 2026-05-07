@@ -77,6 +77,52 @@ scripts/score-draft-fixtures.ts
 
 남은 일은 TypeScript 전환 자체가 아니라 fixture matrix와 데이터 검증 범위를 넓히는 것이다.
 
+### 2. 최신 light spec과 현재 코드 계약 사이의 간극이 핵심 위험
+
+2026-05-08 재점검 결과, 현재 `yarn test`는 통과한다. 그러나 이는 현재 3개 fixture와 prototype 계약이 통과한다는 뜻이지, 최신 light spec의 gate가 닫혔다는 뜻은 아니다.
+
+현재 코드에는 다음 기반이 이미 있다.
+
+- 순수 TypeScript draft module
+- React/Next.js에 의존하지 않는 scoring 함수
+- validation CLI
+- fixture scoring CLI
+- 3개 seed fixture
+- manual strategy profile thin slice
+
+하지만 최신 light spec은 현재 코드보다 넓은 계약을 요구한다.
+
+- `DraftScoringInput`: `trackingMode`, `previousPackCardIds`, `missingFromPreviousPack`
+- `DraftRecommendation`: `candidateGroups`, `warnings`, `evaluationMeta`, `trackingSignals`, `planShiftHints`
+- `ScoreComponents`: `passRegret`, `pivotPotential`, `conflictCost`, `roleAvailabilityPressure`
+- fixture assertions: candidate group, warning, evaluation meta, tracking signal, plan shift, reason assertion
+
+따라서 다음 구현은 scoring heuristic을 먼저 늘리는 것이 아니라, UI가 의존할 계약과 fixture assertion을 먼저 넓혀야 한다.
+
+### 3. Fixture gate는 아직 닫히지 않았다
+
+현재 fixture는 3개다.
+
+- `early-anchor`
+- `field-watchman-saturation`
+- `late-completion`
+
+이 fixture들은 방향 확인용으로는 유효하지만, Schema Stabilization Gate를 충족하지 않는다. Schema Stabilization Gate는 5~7개의 purpose-built fixture로 `DraftRecommendation` 출력 shape, missing data, warning/evaluation meta 분리, return likelihood, next-pick direction을 검증해야 한다.
+
+Domain Logic / Product Readiness Gate는 product-ready 또는 merge-ready UI 전에 15개 이상의 고품질 전략 fixture가 필요하다.
+
+### 4. Validation은 unsupported assertion을 실패시켜야 한다
+
+현재 validation은 카드/역할 참조의 기본 품질을 지키는 데 유용하다. 다음 단계에서는 fixture expected에 지원하지 않는 assertion이 들어갔을 때 조용히 무시하지 말고 validation error로 실패해야 한다.
+
+특히 다음을 검증해야 한다.
+
+- 새 fixture assertion field가 지원되는지
+- component assertion의 component 이름이 실제 `ScoreComponents` key인지
+- role saturation 관련 `saturationBehavior`, `sinkRoleIds`가 사전에 맞는지
+- `supports`, `partialSolves`를 도입한다면 role reference가 유효한지
+- missing stat/profile은 허용하되 `warnings`와 `evaluationMeta` fixture로 고정되는지
+
 ## Grill-Me 결정 요약
 
 구현 전 인터뷰에서 다음 결정을 추가로 닫았다.
@@ -713,16 +759,18 @@ Draft input ──▶│ draft scoring engine │
 
 추천 순서:
 
-1. fixture assertion 확장
-2. role saturation behavior를 `strategy-roles.json`에 추가
-3. `food_engine`, `food_support`, `food_conversion`을 분리
-4. `passRegret`, `pivotPotential`, `conflictCost` 기준을 scoring contract에 반영
-5. full tracking signal 타입과 계산 함수 추가
-6. Schema Stabilization fixture 5~7개 작성
-7. Domain Logic fixture를 15개 이상으로 확대
-8. missing data 정책을 fixture로 고정
-9. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
-10. `model_user_disagreement` feedback event 후보 설계
-11. Schema Stabilization Gate 이후 `/draft` UI scaffold 시작
+1. `src/features/draft/contract.ts`를 최신 light spec에 맞춰 확장
+2. fixture runner와 validation이 새 assertion을 검증하고 unsupported assertion을 실패시키게 수정
+3. Schema Stabilization fixture 5~7개 작성
+4. `candidateGroups`, `warnings`, `evaluationMeta` 최소 구현
+5. missing stat/profile 정책을 fixture로 고정
+6. `passRegret`, `pivotPotential`, `conflictCost`, `roleAvailabilityPressure`를 contract와 scoring에 반영
+7. role saturation behavior를 `strategy-roles.json`에 추가
+8. `food_engine`, `food_support`, `food_conversion`을 분리
+9. full tracking signal 타입과 계산 함수 추가
+10. Domain Logic fixture를 15개 이상으로 확대
+11. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
+12. `model_user_disagreement` feedback event 후보 설계
+13. Schema Stabilization Gate 이후 `/draft` UI scaffold 시작
 
 이 순서를 지키면 UI는 실험용 화면이 아니라, 이미 계약과 검증을 가진 추천 엔진을 렌더링하는 화면이 된다.

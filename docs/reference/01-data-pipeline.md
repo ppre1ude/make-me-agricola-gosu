@@ -234,7 +234,9 @@ raw source
 }
 ```
 
-`score-draft-fixtures.ts`는 두 단계 fixture gate를 확인한다.
+`score-draft-fixtures.ts`는 다음 구현 단계에서 두 단계 fixture gate를 확인해야 한다.
+
+현재 baseline은 3개 prototype fixture 통과 상태다. 이것은 추천 방향 확인에는 유효하지만, Schema Stabilization Gate 또는 Domain Logic / Product Readiness Gate 통과를 뜻하지 않는다. 다음 작업은 새 fixture assertion을 validation과 fixture runner에 먼저 반영해, 지원하지 않는 assertion이 조용히 무시되지 않게 만드는 것이다.
 
 Schema Stabilization Gate:
 

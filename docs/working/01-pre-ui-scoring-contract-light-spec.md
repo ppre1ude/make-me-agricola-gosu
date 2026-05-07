@@ -526,12 +526,35 @@ Completion criteria:
 4. Missing strategy profile uses `warnings` plus `evaluationMeta`. It must not insert disclaimer text into `reasons`.
 5. UI readiness uses phase-based gates: Schema Stabilization unlocks initial UI scaffold; Domain Logic / Product Readiness requires 15+ strategy fixtures before product-ready or merge-ready status.
 
+## Accepted Engineering Review Update
+
+The follow-up engineering review accepted one important correction to the implementation plan:
+
+```text
+Current `yarn test` success proves the prototype baseline only.
+It does not prove that the Schema Stabilization Gate or Domain Logic Gate is closed.
+```
+
+The current code has a useful TypeScript scoring prototype, validation CLI, fixture scoring CLI, and 3 passing fixtures. The latest contract in this spec is broader than the current implementation. Implementation should therefore close the contract gap before any UI scaffold.
+
+Required implementation order:
+
+1. Update `src/features/draft/contract.ts` to match this light spec.
+2. Extend `scripts/score-draft-fixtures.ts` and `src/features/draft/validation.ts` so new fixture assertions are enforced and unsupported assertions fail validation.
+3. Add Schema Stabilization fixtures before adding broad domain behavior.
+4. Implement minimal `candidateGroups`, `warnings`, and `evaluationMeta` behavior, including the rank 1 non-empty candidate group invariant.
+5. Pin missing stat and missing strategy profile behavior with fixtures.
+6. Add `passRegret`, `pivotPotential`, `conflictCost`, and `roleAvailabilityPressure`.
+7. Expand the Domain Logic / Product Readiness fixture matrix to 15+ passing fixtures.
+8. Start `/draft` UI scaffold only after Schema Stabilization passes.
+
 ## Recommended Approval Decision
 
 This light spec is approved with one pragmatic constraint:
 
 ```text
-Build schema stabilization fixtures first, then expand into the 15+ domain logic fixture matrix.
+Close the contract/assertion/validation gap first, build schema stabilization fixtures next,
+then expand into the 15+ domain logic fixture matrix.
 ```
 
 After approval, the next document should be an implementation plan using:
