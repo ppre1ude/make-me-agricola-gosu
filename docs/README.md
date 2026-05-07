@@ -25,6 +25,7 @@ Data-building flow: Strategy Knowledge Base
 - [09 Open Questions](./09-open-questions.md): 구현 전 추가 결정이 필요한 질문
 - [10 Official Core Rules](./10-official-core-rules.md): 공식 룰북 기반 개발용 핵심 규칙 명세
 - [11 Advanced Strategy Framework](./11-advanced-strategy-framework.md): 공략글 기반 고수용 전략 판단 프레임워크
+- [12 Pre-UI Engineering Review](./12-pre-ui-engineering-review.md): UI 구현 전 scoring contract, data validation, fixture matrix 검토
 
 ## 현재 결론
 
