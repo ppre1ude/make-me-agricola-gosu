@@ -38,13 +38,15 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
     combos.ko-KR.json
     card-rulings.ko-KR.json
     guide-card-links.json
-    draft-fixtures.json
+  /fixtures
+    /draft
+      *.json
 /scripts
   import-woong-xlsx.ts
   import-lumin-stats.ts
   normalize-cards.ts
   validate-strategy-profiles.ts
-  score-draft-fixture.ts
+  score-draft-fixtures.ts
   validate-data.ts
   seed-firestore.ts
 ```
@@ -232,7 +234,16 @@ raw source
 }
 ```
 
-`score-draft-fixture.ts`는 최소한 다음을 확인한다.
+`score-draft-fixtures.ts`는 두 단계 fixture gate를 확인한다.
+
+Schema Stabilization Gate:
+
+- `candidateGroups`는 항상 배열이고 rank 1에서는 비어 있지 않다.
+- `warnings`와 `evaluationMeta`가 `reasons`와 분리된다.
+- missing stat/profile은 데이터 경고와 평가 메타로 표현된다.
+- `returnLikelihood`, `nextPickDirection`, `trackingSignals`, `planShiftHints`의 출력 shape이 안정적이다.
+
+Domain Logic / Product Readiness Gate:
 
 - already solved role이 반복되면 saturation penalty가 적용된다.
 - broken/plan anchor는 초반 픽에서 충분히 높은 가중치를 받는다.

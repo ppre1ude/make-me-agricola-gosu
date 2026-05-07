@@ -17,8 +17,7 @@ Data-building flow: Strategy Knowledge Base
 
 목표:
 
-- Next.js 프로젝트 생성
-- TypeScript, ESLint, Tailwind 설정
+- TypeScript 기반 draft scoring module 위치 확정
 - docs 유지
 - data 디렉터리 생성
 - 추천 엔진을 순수 TypeScript 함수로 둘 위치 확정
@@ -26,10 +25,9 @@ Data-building flow: Strategy Knowledge Base
 산출물:
 
 ```text
-Next.js 앱 실행
-기본 레이아웃
+TypeScript draft scoring module skeleton
 data 디렉터리 구조
-draft scoring module skeleton
+검증 스크립트 기본 구조
 ```
 
 ### Milestone 1: 데이터 스키마와 seed
@@ -61,12 +59,17 @@ data/manual/card-strategy-profiles.json
 2. Lumin_S 또는 Agricola Norge 계열 통계 import
 3. 웅이님 엑셀 한국어명/효과/티어 mapping
 4. card-id-map 수동 보정
-5. strategy profile 초안 50~100장
+5. fixture matrix에 필요한 thin strategy profile slice
+6. broad strategy profile 50~100장은 Schema Stabilization 이후 확장
 
 ### Milestone 2: 비UI 드래프트 추천 프로토타입
 
 목표:
 
+- Schema Stabilization Gate 통과
+- Domain Logic / Product Readiness Gate 설계와 일부 구현
+- `DraftRecommendation` 출력 계약 고정
+- `trackingMode`, `candidateGroups`, `warnings`, `evaluationMeta` 반영
 - 추천 점수 component 구현
 - draftPickBand weighting 구현
 - role coverage와 saturation penalty 구현
@@ -82,13 +85,17 @@ data/manual/card-strategy-profiles.json
 
 ```text
 src/features/draft/scoring.ts
-src/features/draft/explain.ts
-src/features/draft/fixtures/*.json
-scripts/score-draft-fixture.ts
+src/features/draft/explanation.ts
+data/fixtures/draft/*.json
+scripts/score-draft-fixtures.ts
 ```
 
 성공 기준:
 
+- Schema Stabilization fixture 5~7개가 통과한다.
+- rank 1 추천은 항상 non-empty `candidateGroups`를 가진다.
+- missing stat/profile은 `warnings`와 `evaluationMeta`로 표현하고 `reasons`를 오염시키지 않는다.
+- Domain Logic / Product Readiness는 15개 이상의 고품질 전략 fixture를 목표로 한다.
 - strong card라도 이미 해결된 역할과 겹치면 내려간다.
 - broken/plan anchor는 초반에 충분히 우선된다.
 - 3~4픽부터 콤보와 역할 보완이 점수에 반영된다.
@@ -100,6 +107,8 @@ scripts/score-draft-fixture.ts
 
 목표:
 
+- Next.js 프로젝트 생성
+- TypeScript, ESLint, Tailwind 설정
 - 새 DraftSet 생성
 - 1~7픽 full visible pack 입력
 - selected-only quick fallback
@@ -229,10 +238,10 @@ DB가 필요한 시점에 도입한다.
 
 ### Day 1-2
 
-- Next.js 생성
 - docs 정리
 - data 디렉터리 생성
 - 타입 정의
+- draft scoring module skeleton 정리
 
 ### Day 3-4
 
@@ -243,14 +252,16 @@ DB가 필요한 시점에 도입한다.
 
 ### Day 5-7
 
-- CardStrategyProfile 50~100장 초안
-- fixture 10~20개 작성
+- Schema Stabilization에 필요한 CardStrategyProfile thin slice
+- Schema Stabilization fixture 5~7개 작성
+- Domain Logic fixture matrix 초안 작성
 - scoring prototype 구현
 
 ### Day 8-10
 
 - role coverage, saturation, return likelihood 구현
 - standard/deep explanation 구현
+- Domain Logic fixture를 15개 이상으로 확장
 - fixture 검증
 
 ### Day 11-12

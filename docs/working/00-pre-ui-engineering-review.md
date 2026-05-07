@@ -2,6 +2,16 @@
 
 ## 목적
 
+Update note:
+
+```text
+The approved light spec in 01-pre-ui-scoring-contract-light-spec.md supersedes
+the older single "10 fixtures before UI" gate in this document.
+Use the two-gate model:
+Schema Stabilization Gate -> initial UI scaffold
+Domain Logic / Product Readiness Gate -> product-ready or merge-ready UI
+```
+
 이 문서는 Draft Memory Coach UI 구현 전에 닫아야 할 엔지니어링 결정을 정리한다.
 
 현재 제품 방향은 충분히 선명하다. 문제는 제품 방향이 아니라, UI가 붙기 전에 추천 엔진과 데이터 계약을 얼마나 단단하게 만들 것인가다.
@@ -166,6 +176,7 @@ type DraftScoringInput = {
   seenCardIds: string[];
   passedCardIds: string[];
   draftFormat: DraftFormat;
+  trackingMode: "full_pack" | "selected_only";
   cardPoolProfileId: string;
   explanationDepth: ExplanationDepth;
 };
@@ -196,13 +207,26 @@ type DraftRecommendation = {
   rank: number;
   score: number;
   draftPickBand: DraftPickBand;
+  candidateGroups: DraftCandidateGroup[];
   components: ScoreComponents;
   returnLikelihood: ReturnLikelihood;
+  evaluationMeta: DraftEvaluationMeta;
   reasons: Record<ExplanationDepth, string[]>;
   risks: string[];
+  warnings: DraftWarning[];
   nextPickDirection: string[];
+  trackingSignals: DraftTrackingSignal[];
+  planShiftHints: DraftPlanShiftHint[];
 };
 ```
+
+정책:
+
+- `candidateGroups`는 항상 배열이다.
+- Phase 1에서 UI-highlighted recommendation은 rank 1을 뜻한다.
+- rank 1 추천은 `candidateGroups.length > 0`이어야 한다.
+- `risks`는 전략 리스크, `warnings`는 데이터/입력 경고다.
+- missing profile/stat은 `warnings`와 `evaluationMeta`로 표현하고 `reasons`에 disclaimer를 넣지 않는다.
 
 ### ScoreComponents
 
@@ -317,20 +341,25 @@ Fixture:
 
 이는 방향 확인용으로는 충분하지만 UI 전 계약 검증으로는 부족하다.
 
-### 최소 기준
+### Gate 기준
 
-UI 시작 전:
-
-```text
-fixture 10개 이상
-ranking뿐 아니라 component/risk/return/nextPick 검증
-```
-
-권장:
+초기 `/draft` UI scaffold와 UX exploration 시작 전:
 
 ```text
-fixture 15~20개
+Schema Stabilization Gate
+5~7개의 purpose-built fixture
+DraftRecommendation output contract shape 검증
 ```
+
+UI를 product-ready 또는 merge-ready로 보기 전:
+
+```text
+Domain Logic / Product Readiness Gate
+15개 이상의 고품질 strategy fixture
+scoring engine의 전략 판단 품질 검증
+```
+
+fixture는 여러 엣지 케이스를 한 파일에 억지로 우겨 넣지 않는다. 각 fixture는 실제 게임에서 가능한 상태와 하나의 주요 검증 목적을 가져야 한다.
 
 ### 추가 fixture 후보
 
@@ -624,18 +653,24 @@ Draft input ──▶│ draft scoring engine │
 
 ## UI 시작 조건
 
-다음 조건을 만족하면 `/draft` UI 구현을 시작해도 된다.
+다음 조건을 만족하면 초기 `/draft` UI scaffold와 UX exploration을 시작해도 된다.
 
 ```text
 - TypeScript scoring contract가 있다. 완료
 - scoring prototype이 TypeScript로 전환되어 있다. 완료
 - validate-data가 존재한다. 완료
 - yarn test가 validate-data와 score fixtures를 모두 실행한다.
-- fixture가 10개 이상이다.
-- fixture가 ranking, component, risk, return likelihood, nextPickDirection을 검증한다.
+- Schema Stabilization Gate fixture가 통과했다.
+- fixture가 ranking, component, risk, warning, evaluationMeta, return likelihood, nextPickDirection을 검증한다.
 - missing data 정책이 구현되어 있다.
 - brokenReasonTags/brokenReasonNote 도입 여부를 결정했다. 완료: 설명/분류 우선, 강한 scoring modifier 아님
 - full tracking mode와 quick mode 정책이 문서화되어 있다. 완료
+```
+
+다음 조건을 만족해야 UI를 product-ready 또는 merge-ready로 볼 수 있다.
+
+```text
+- Domain Logic / Product Readiness Gate fixture가 15개 이상이다.
 - role saturation behavior와 food role 분리가 fixture에 반영되어 있다.
 - table pressure/role availability pressure fixture가 최소 1~2개 있다.
 ```
@@ -645,8 +680,8 @@ Draft input ──▶│ draft scoring engine │
 우선순위 순서:
 
 1. fixture matrix 범위
-   - 최소 10개
-   - 권장 15~20개
+   - Schema Stabilization Gate: 5~7개
+   - Domain Logic / Product Readiness Gate: 15개 이상
 
 2. role saturation behavior 구현 범위
    - hard_cap / soft_cap / stackable 우선
@@ -683,10 +718,11 @@ Draft input ──▶│ draft scoring engine │
 3. `food_engine`, `food_support`, `food_conversion`을 분리
 4. `passRegret`, `pivotPotential`, `conflictCost` 기준을 scoring contract에 반영
 5. full tracking signal 타입과 계산 함수 추가
-6. fixture 10~15개로 확대
-7. missing data 정책을 fixture로 고정
-8. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
-9. `model_user_disagreement` feedback event 후보 설계
-10. 그 다음 `/draft` UI 시작
+6. Schema Stabilization fixture 5~7개 작성
+7. Domain Logic fixture를 15개 이상으로 확대
+8. missing data 정책을 fixture로 고정
+9. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
+10. `model_user_disagreement` feedback event 후보 설계
+11. Schema Stabilization Gate 이후 `/draft` UI scaffold 시작
 
 이 순서를 지키면 UI는 실험용 화면이 아니라, 이미 계약과 검증을 가진 추천 엔진을 렌더링하는 화면이 된다.

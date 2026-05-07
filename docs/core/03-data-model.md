@@ -516,34 +516,90 @@ type DraftTrackingSignal = {
 ```ts
 type ReturnLikelihood = "unlikely" | "possible" | "likely" | "unknown";
 
+type DraftCandidateGroup =
+  | "broken_candidate"
+  | "premium_candidate"
+  | "plan_anchor_candidate"
+  | "role_completion_candidate"
+  | "support_candidate"
+  | "penalty_prevention_candidate"
+  | "ready_bonus_points_candidate"
+  | "food_stability_candidate"
+  | "high_pass_regret_candidate"
+  | "risky_conditional_candidate"
+  | "general_value_candidate"
+  | "fallback_filler_candidate";
+
+type DraftWarning = {
+  code: string;
+  message: string;
+};
+
+type DraftEvaluationMeta = {
+  confidence: "high" | "medium" | "low";
+  method: "full_profile" | "stats_only" | "profile_limited" | "fallback_basic";
+  missingData: Array<"stat" | "strategy_profile" | "translation">;
+};
+
+type DraftRecommendationTrackingSignal = {
+  code: string;
+  roleId?: string;
+  cardId?: string;
+  strength: "weak" | "medium" | "strong";
+  message: string;
+};
+
+type DraftPlanShiftHint = {
+  code: string;
+  cardId: string;
+  message: string;
+};
+
 type DraftRecommendation = {
   draftSequenceId: string;
   pickNumber: number;
   cardId: string;
   rank: number;
   score: number;
+  draftPickBand: DraftPickBand;
+  candidateGroups: DraftCandidateGroup[];
   components: {
-    statStrength?: number;
-    brokenOrAnchor?: number;
-    synergy?: number;
-    roleCoverage?: number;
-    saturationPenalty?: number;
-    riskPenalty?: number;
-    returnUrgency?: number;
-    passRegret?: number;
-    pivotPotential?: number;
-    conflictCost?: number;
-    roleAvailabilityPressure?: number;
-    confidence?: number;
+    statStrength: number;
+    brokenOrAnchor: number;
+    synergy: number;
+    roleCoverage: number;
+    saturationPenalty: number;
+    riskPenalty: number;
+    returnUrgency: number;
+    passRegret: number;
+    pivotPotential: number;
+    conflictCost: number;
+    roleAvailabilityPressure: number;
+    confidence: number;
   };
   returnLikelihood: ReturnLikelihood;
+  evaluationMeta: DraftEvaluationMeta;
   reasons: Record<ExplanationDepth, string[]>;
   risks: string[];
+  warnings: DraftWarning[];
   nextPickDirection: string[];
-  candidateGroups?: string[];
-  afterPickPlanShift?: AfterPickPlanShift;
+  trackingSignals: DraftRecommendationTrackingSignal[];
+  planShiftHints: DraftPlanShiftHint[];
 };
 ```
+
+`candidateGroups`는 항상 배열이다. Rank 1과 UI에서 강조되는 추천은 빈 배열일 수 없다. Phase 1에서 UI-highlighted recommendation은 rank 1을 뜻한다. 나중에 UI가 Top N 또는 pinned comparison row를 만들면 이 불변식을 확장한다.
+
+하위 ranked row는 추천이라기보다 현재 pack 안의 평가 결과에 가깝다. 이 row들에는 `candidateGroups: []`가 허용된다.
+
+`general_value_candidate`와 `fallback_filler_candidate`는 최상위 추천이 의미론적으로 비어 있는 상태를 막기 위한 fallback 후보군이다.
+
+`risks`와 `warnings`는 분리한다.
+
+- `risks`: 추천을 따를 때의 전략적 tradeoff
+- `warnings`: 데이터, 입력, tracking mode 같은 시스템 상태 문제
+
+`evaluationMeta`는 추천 엔진이 어떤 방식과 신뢰도로 평가했는지 나타낸다. missing stat이나 missing strategy profile 같은 데이터 상태는 `evaluationMeta.missingData`와 `warnings`로 표현한다. 이런 한계 설명을 `reasons`에 넣지 않는다.
 
 `passRegret`은 0~10 수치형 component다. 내 손패와 완벽히 맞지 않더라도 범용 강도, 티어, ADP, 희소성, 플랜 재편 가능성 때문에 넘기면 후회할 가능성을 나타낸다.
 
@@ -551,16 +607,7 @@ type DraftRecommendation = {
 
 `conflictCost`는 후보 카드가 기존 손패와 단순히 역할이 겹치는 정도가 아니라, 실제 실행 자원, 액션 타이밍, 조건, payoff 방향을 충돌시켜 기존 플랜과 후보 카드를 함께 살리기 어렵게 만드는 비용이다.
 
-```ts
-type AfterPickPlanShift = {
-  shown: boolean;
-  summary: Record<LocaleCode, string>;
-  newCenterPlanCandidates?: string[];
-  nextPickDirection: string[];
-};
-```
-
-after-pick plan shift는 모든 후보에 대해 보여주지 않는다. Pick 2~4에서 broken, plan anchor, high passRegret 후보가 추천될 때만 가볍게 계산해 표시한다.
+`planShiftHints`는 모든 후보에 대해 보여주지 않는다. Pick 2~4에서 broken, plan anchor, high passRegret 후보가 추천될 때만 가볍게 계산해 표시한다.
 
 ## User Settings
 

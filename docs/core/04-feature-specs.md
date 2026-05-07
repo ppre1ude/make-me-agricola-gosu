@@ -66,6 +66,8 @@ BGA Arena 드래프트 중 현재 보이는 카드와 내가 이미 고른 카�
 - 대안 카드 2~3개
 - 추천 이유
 - 리스크
+- 데이터/입력 경고
+- 평가 신뢰도와 평가 방식
 - 돌아올 가능성
 - 후보군 분류
   - 티어/통계가 높은 카드
@@ -80,6 +82,16 @@ BGA Arena 드래프트 중 현재 보이는 카드와 내가 이미 고른 카�
   - 카드 기반 지원이 낮은 축
 - 다음 픽 방향
 - deep mode에서는 score component breakdown과 사라진 카드 요약
+
+출력 계약 원칙:
+
+- `candidateGroups`는 항상 배열이다.
+- Rank 1 추천은 반드시 하나 이상의 `candidateGroups`를 가져야 한다.
+- Phase 1에서 UI-highlighted recommendation은 rank 1을 뜻한다.
+- `general_value_candidate`와 `fallback_filler_candidate`는 최상위 추천이 설명 없이 비는 일을 막는 fallback 후보군이다.
+- `risks`는 전략적 tradeoff이고, `warnings`는 데이터/입력 상태 문제다.
+- missing stat, missing strategy profile 같은 문제는 `warnings`와 `evaluationMeta`로 표시한다.
+- `reasons`에는 추천 근거만 넣고, 엔진 한계나 데이터 누락 disclaimer는 넣지 않는다.
 
 ### 기본 화면 구조
 

@@ -61,7 +61,7 @@ Recommended drivers:
 | Data model, validation, scoring contract | gstack plan-eng-review | Superpowers writing-plans, mattpocock tdd |
 | Scoring or fixture implementation | mattpocock tdd | Superpowers TDD/review discipline |
 | Ambiguous domain terms | mattpocock grill-with-docs | Superpowers spec after terms settle |
-| UI after pre-UI gate closes | gstack plan-eng-review + plan-design-review | Superpowers writing-plans |
+| UI after Schema Stabilization Gate closes | gstack plan-eng-review + plan-design-review | Superpowers writing-plans |
 | Bug with unclear cause | diagnose or investigate | Superpowers verification-before-completion |
 | Pre-merge check | gstack review | Superpowers requesting-code-review |
 
@@ -109,7 +109,7 @@ After the light spec is approved:
 2. Name exact files to edit.
 3. Put tests or fixture assertions before implementation.
 4. Include verification commands, preferring `yarn test`.
-5. Keep UI scaffolding out of scope until the pre-UI gate is closed.
+5. Keep UI scaffolding out of scope until the Schema Stabilization Gate is closed.
 
 ### TDD Fallback
 

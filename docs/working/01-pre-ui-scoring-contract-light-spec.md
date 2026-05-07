@@ -68,7 +68,7 @@ The end player experience matters, but this phase does not design the player-fac
 2. Make `DraftRecommendation` sufficient for a future UI to render recommendation, reason, risk, return likelihood, and next-pick direction.
 3. Expand `ScoreComponents` so important draft judgment concepts are represented explicitly.
 4. Expand fixture assertions beyond "top card".
-5. Grow the draft fixture matrix from 3 fixtures to at least 10.
+5. Grow the draft fixture matrix through the Schema Stabilization and Domain Logic gates.
 6. Pin missing-data behavior through validation and fixtures.
 7. Keep the draft scoring engine independent from React/Next.js.
 
@@ -219,6 +219,7 @@ Policy:
 - `trackingSignals` may mention role pressure, but must not claim an opponent picked a card.
 - `planShiftHints` appear only for high-impact recommendations where a pivot is plausible.
 - If the engine returns all offered cards, lower-ranked rows are evaluations. Rank 1 and any UI-highlighted recommendation must have a non-empty `candidateGroups` array.
+- For Phase 1, UI-highlighted recommendation means rank 1. Later UI work may extend this to Top N or pinned comparison rows.
 
 ## Candidate Groups
 
