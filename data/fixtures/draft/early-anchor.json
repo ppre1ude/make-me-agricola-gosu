@@ -1,0 +1,14 @@
+{
+  "id": "early-anchor",
+  "description": "Pick 1 should prioritize a broken plan anchor over medium support cards.",
+  "session": {
+    "pickNumber": 1,
+    "pickedCardIds": [],
+    "seenCardIds": [],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-late-points"]
+  },
+  "expected": {
+    "topCardId": "occ-field-watchman"
+  }
+}

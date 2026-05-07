@@ -1,0 +1,9 @@
+{
+  "name": "agricola-korean-gosu",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/score-draft-fixtures.js",
+    "score:fixtures": "node scripts/score-draft-fixtures.js"
+  }
+}

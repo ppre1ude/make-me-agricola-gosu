@@ -1,0 +1,56 @@
+[
+  {
+    "cardId": "occ-field-watchman",
+    "locale": "ko-KR",
+    "name": "밭일 감독",
+    "aliases": ["Field Watchman"],
+    "shortText": "밭 접근과 곡식 종자 행동을 강화하는 초반 플랜 앵커.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-swing-plow",
+    "locale": "ko-KR",
+    "name": "밭갈이 보조 카드",
+    "aliases": ["Swing Plow"],
+    "shortText": "밭을 더 효율적으로 마련하는 보조 설비 예시.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-grain-supply",
+    "locale": "ko-KR",
+    "name": "곡식 공급 카드",
+    "aliases": ["Grain Supply"],
+    "shortText": "밭 엔진 이후 필요한 곡식 공급 역할 예시.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-bake-access",
+    "locale": "ko-KR",
+    "name": "빵굽기 접근 카드",
+    "aliases": ["Bake Access"],
+    "shortText": "곡식을 음식으로 바꾸는 접근 역할 예시.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "occ-food-engine",
+    "locale": "ko-KR",
+    "name": "음식 엔진 카드",
+    "aliases": ["Food Engine"],
+    "shortText": "수확 전 음식 압박을 줄이는 역할 예시.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-late-points",
+    "locale": "ko-KR",
+    "name": "후반 점수 카드",
+    "aliases": ["Late Points"],
+    "shortText": "초반 방향성보다 후반 점수 전환에 가까운 카드 예시.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-07"
+  }
+]

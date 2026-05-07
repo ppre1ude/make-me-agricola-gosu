@@ -1,0 +1,17 @@
+{
+  "id": "field-watchman-saturation",
+  "description": "After Field Watchman solves field access, another field card should be downranked below grain or food support.",
+  "session": {
+    "pickNumber": 3,
+    "pickedCardIds": ["occ-field-watchman"],
+    "seenCardIds": ["occ-field-watchman", "minor-swing-plow", "minor-grain-supply", "occ-food-engine"],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-swing-plow", "minor-grain-supply", "occ-food-engine"]
+  },
+  "expected": {
+    "notTopCardIds": ["minor-swing-plow"],
+    "downrankedBelow": [
+      { "cardId": "minor-swing-plow", "belowCardId": "minor-grain-supply" }
+    ]
+  }
+}

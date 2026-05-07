@@ -1,0 +1,148 @@
+[
+  {
+    "cardId": "occ-field-watchman",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["broken", "plan_anchor", "field_engine", "grain_seeds_action_upgrade"],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": ["field_engine"],
+    "increasesNeedFor": ["grain_supply", "bake_bread_access", "food_engine"],
+    "saturationPenaltyTo": ["field_engine", "minor-swing-plow"],
+    "synergyWith": ["minor-grain-supply", "minor-bake-access", "occ-food-engine"],
+    "conflictsWith": [],
+    "riskTags": ["needs_followup_grain_or_bake"],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["곡식 공급", "빵굽기 접근", "첫 수확 음식 안정성"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "밭 접근을 해결하는 초반 플랜 앵커입니다." },
+      "standard": { "ko-KR": "밭일 감독은 밭 접근을 해결하므로 초반에 강합니다. 이후 곡식 공급과 빵굽기 접근을 찾아야 합니다." },
+      "deep": { "ko-KR": "이 카드는 밭 행동 부담을 줄여 액션 압축을 만듭니다. 다만 밭만 해결하고 곡식/음식 전환을 확보하지 못하면 고점으로 이어지지 않습니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-swing-plow",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["field_engine"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["field_engine"],
+    "increasesNeedFor": ["grain_supply"],
+    "saturationPenaltyTo": ["field_engine"],
+    "synergyWith": ["minor-grain-supply"],
+    "conflictsWith": [],
+    "riskTags": ["redundant_if_field_access_solved"],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["곡식 공급"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "밭 접근을 돕지만 이미 해결된 손패에서는 중복될 수 있습니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-grain-supply",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["grain_supply"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["grain_supply"],
+    "increasesNeedFor": ["bake_bread_access"],
+    "saturationPenaltyTo": ["grain_supply"],
+    "synergyWith": ["occ-field-watchman", "minor-bake-access"],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["빵굽기 접근", "음식 엔진"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "밭 엔진 이후 실제로 뿌릴 곡식을 공급합니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-bake-access",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["bake_bread_access", "food_engine"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["bake_bread_access", "food_engine"],
+    "increasesNeedFor": ["grain_supply"],
+    "saturationPenaltyTo": ["bake_bread_access"],
+    "synergyWith": ["occ-field-watchman", "minor-grain-supply"],
+    "conflictsWith": [],
+    "riskTags": ["needs_grain"],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": ["곡식 공급", "첫 수확 음식"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "곡식을 음식으로 바꾸는 경로를 엽니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "occ-food-engine",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["food_engine"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["food_engine"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["food_engine"],
+    "synergyWith": ["occ-field-watchman"],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["점수 전환", "가족성장 준비"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "초반 음식 압박을 줄여 카드/방 자원 행동 여유를 만듭니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "cardId": "minor-late-points",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["late_bonus_points"],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": ["late_bonus_points"],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": ["late_bonus_points"],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": ["low_early_impact"],
+    "timingWindow": "late",
+    "nextPickGuidance": {
+      "ko-KR": ["생존 플랜", "성장 플랜"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "후반 점수 전환 카드라 초반 플랜 앵커보다 우선도가 낮습니다." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-07"
+  }
+]

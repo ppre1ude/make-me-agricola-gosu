@@ -1,0 +1,80 @@
+[
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "occ-field-watchman",
+    "rank": 1,
+    "pwr": 5.7,
+    "adp": 1.4,
+    "apr": 1.8,
+    "deals": 1000,
+    "drafted": 940,
+    "plays": 870,
+    "wtdPwr": 7.8,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "minor-swing-plow",
+    "rank": 24,
+    "pwr": 3.9,
+    "adp": 3.1,
+    "apr": 3.5,
+    "deals": 1000,
+    "drafted": 720,
+    "plays": 610,
+    "wtdPwr": 5.8,
+    "tier": "A"
+  },
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "minor-grain-supply",
+    "rank": 58,
+    "pwr": 2.6,
+    "adp": 4.4,
+    "apr": 2.9,
+    "deals": 1000,
+    "drafted": 560,
+    "plays": 500,
+    "wtdPwr": 4.6,
+    "tier": "B"
+  },
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "minor-bake-access",
+    "rank": 71,
+    "pwr": 2.2,
+    "adp": 5.0,
+    "apr": 3.3,
+    "deals": 1000,
+    "drafted": 470,
+    "plays": 410,
+    "wtdPwr": 4.1,
+    "tier": "B"
+  },
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "occ-food-engine",
+    "rank": 49,
+    "pwr": 2.8,
+    "adp": 4.1,
+    "apr": 2.2,
+    "deals": 1000,
+    "drafted": 620,
+    "plays": 590,
+    "wtdPwr": 4.9,
+    "tier": "B"
+  },
+  {
+    "snapshotId": "prototype-2026-05-07",
+    "cardId": "minor-late-points",
+    "rank": 85,
+    "pwr": 1.8,
+    "adp": 6.2,
+    "apr": 8.5,
+    "deals": 1000,
+    "drafted": 390,
+    "plays": 330,
+    "wtdPwr": 3.5,
+    "tier": "C"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "id": "bga-arena-prototype",
+  "name": "BGA Arena prototype pool",
+  "sourceRefs": ["manual-prototype-seed"],
+  "collectedAt": "2026-05-07",
+  "playerCount": 4,
+  "cardStatuses": {
+    "occ-field-watchman": "active",
+    "minor-swing-plow": "active",
+    "minor-grain-supply": "active",
+    "minor-bake-access": "active",
+    "occ-food-engine": "active",
+    "minor-late-points": "active"
+  },
+  "notes": "Prototype pool for validating draft scoring behavior before importing the real BGA Arena snapshot."
+}

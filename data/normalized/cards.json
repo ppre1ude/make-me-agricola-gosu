@@ -1,0 +1,74 @@
+[
+  {
+    "id": "occ-field-watchman",
+    "type": "occupation",
+    "decks": ["A"],
+    "editions": ["revised"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["field", "grain", "action_upgrade"],
+    "timingTagIds": ["on_use_action_space"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "id": "minor-swing-plow",
+    "type": "minor_improvement",
+    "decks": ["A"],
+    "editions": ["revised"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["field", "plow"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "id": "minor-grain-supply",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["grain", "supply"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "id": "minor-bake-access",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["bake_bread", "food"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "id": "occ-food-engine",
+    "type": "occupation",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["food_engine"],
+    "timingTagIds": ["on_play_occupation"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  },
+  {
+    "id": "minor-late-points",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["late_scoring"],
+    "timingTagIds": ["scoring"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-07",
+    "updatedAt": "2026-05-07"
+  }
+]
