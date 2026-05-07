@@ -23,3 +23,11 @@ BGA Arena 드래프트 중 보이는 카드를 입력하면,
 ```
 
 초기 구현은 서버 DB 없이 정적 JSON과 TypeScript 추천 엔진으로 시작합니다.
+
+## 개발 명령
+
+```bash
+yarn test
+```
+
+`yarn test`는 TypeScript 타입 검사, 데이터 검증, 드래프트 fixture 검증을 순서대로 실행합니다.

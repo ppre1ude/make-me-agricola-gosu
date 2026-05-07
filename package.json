@@ -3,7 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node scripts/score-draft-fixtures.js",
-    "score:fixtures": "node scripts/score-draft-fixtures.js"
+    "test": "yarn typecheck && yarn validate:data && yarn score:fixtures",
+    "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
+    "validate:data": "node scripts/validate-data.ts",
+    "score:fixtures": "node scripts/score-draft-fixtures.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3"
   }
 }

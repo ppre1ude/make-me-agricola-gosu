@@ -1,0 +1,153 @@
+import { readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import {
+  buildDraftDataIndex,
+  rankDraftOptions,
+  type DraftDataSet,
+  type DraftFixture,
+  type DraftRecommendation,
+  type DraftScoringInput
+} from "../src/features/draft/index.ts";
+
+const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
+const data: DraftDataSet = {
+  cards: await readJson("data/normalized/cards.json"),
+  translations: await readJson("data/normalized/translations.ko-KR.json"),
+  stats: await readJson("data/normalized/stats.prototype.json"),
+  strategyRoles: await readJson("data/normalized/strategy-roles.json"),
+  strategyProfiles: await readJson("data/manual/card-strategy-profiles.json"),
+  cardPoolProfile: await readJson("data/normalized/card-pool.bga-arena.prototype.json")
+};
+
+const dataIndex = buildDraftDataIndex(data);
+const fixtureDir = path.join(rootDir, "data/fixtures/draft");
+const fixtureFiles = (await readdir(fixtureDir)).filter((file) => file.endsWith(".json"));
+
+let failures = 0;
+
+for (const file of fixtureFiles) {
+  const fixture: DraftFixture = await readJson(path.join("data/fixtures/draft", file));
+  const session = normalizeFixtureSession(fixture, data);
+  const recommendations = rankDraftOptions(session, dataIndex);
+  const result = validateFixture(fixture, recommendations);
+
+  if (result.ok) {
+    console.log(`PASS ${fixture.id}: ${recommendations[0]?.cardId ?? "none"} top`);
+  } else {
+    failures += 1;
+    console.error(`FAIL ${fixture.id}`);
+    for (const message of result.messages) console.error(`  - ${message}`);
+    console.error(formatRecommendations(recommendations));
+  }
+}
+
+if (failures > 0) {
+  process.exitCode = 1;
+} else {
+  console.log(`\n${fixtureFiles.length} draft fixtures passed.`);
+}
+
+async function readJson<T>(relativePath: string): Promise<T> {
+  const absolutePath = path.isAbsolute(relativePath) ? relativePath : path.join(rootDir, relativePath);
+  return JSON.parse(await readFile(absolutePath, "utf8")) as T;
+}
+
+function normalizeFixtureSession(fixture: DraftFixture, data: DraftDataSet): DraftScoringInput {
+  return {
+    playerCount: fixture.session.playerCount ?? 4,
+    draftCardType: fixture.session.draftCardType ?? "occupation",
+    pickNumber: fixture.session.pickNumber,
+    offeredCardIds: fixture.session.offeredCardIds,
+    pickedCardIds: fixture.session.pickedCardIds ?? [],
+    seenCardIds: fixture.session.seenCardIds ?? [],
+    passedCardIds: fixture.session.passedCardIds ?? [],
+    draftFormat: fixture.session.draftFormat ?? "10-to-7",
+    cardPoolProfileId: fixture.session.cardPoolProfileId ?? data.cardPoolProfile.id,
+    explanationDepth: fixture.session.explanationDepth ?? "standard"
+  };
+}
+
+function validateFixture(
+  fixture: DraftFixture,
+  recommendations: DraftRecommendation[]
+): { ok: boolean; messages: string[] } {
+  const messages: string[] = [];
+  const expected = fixture.expected ?? {};
+  const topCardId = recommendations[0]?.cardId;
+
+  if (expected.topCardId && topCardId !== expected.topCardId) {
+    messages.push(`expected top card ${expected.topCardId}, got ${topCardId}`);
+  }
+
+  for (const cardId of expected.notTopCardIds ?? []) {
+    if (topCardId === cardId) messages.push(`expected ${cardId} not to be top card`);
+  }
+
+  for (const pair of expected.downrankedBelow ?? []) {
+    const cardRank = findRank(recommendations, pair.cardId);
+    const belowCardRank = findRank(recommendations, pair.belowCardId);
+    if (cardRank === undefined || belowCardRank === undefined) {
+      messages.push(`missing compared cards ${pair.cardId} or ${pair.belowCardId}`);
+    } else if (cardRank <= belowCardRank) {
+      messages.push(`expected ${pair.cardId} rank ${cardRank} below ${pair.belowCardId} rank ${belowCardRank}`);
+    }
+  }
+
+  for (const assertion of expected.componentAtLeast ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.components[assertion.component];
+    if (actual === undefined || actual < assertion.value) {
+      messages.push(`expected ${assertion.cardId}.${assertion.component} >= ${assertion.value}, got ${actual}`);
+    }
+  }
+
+  for (const assertion of expected.componentBelow ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    const actual = recommendation?.components[assertion.component];
+    if (actual === undefined || actual >= assertion.value) {
+      messages.push(`expected ${assertion.cardId}.${assertion.component} < ${assertion.value}, got ${actual}`);
+    }
+  }
+
+  for (const assertion of expected.returnLikelihood ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    if (recommendation?.returnLikelihood !== assertion.value) {
+      messages.push(`expected ${assertion.cardId}.returnLikelihood ${assertion.value}, got ${recommendation?.returnLikelihood}`);
+    }
+  }
+
+  for (const assertion of expected.hasRisk ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    if (!recommendation?.risks.includes(assertion.risk)) {
+      messages.push(`expected ${assertion.cardId} risk "${assertion.risk}"`);
+    }
+  }
+
+  for (const assertion of expected.nextPickIncludes ?? []) {
+    const recommendation = findRecommendation(recommendations, assertion.cardId);
+    if (!recommendation?.nextPickDirection.includes(assertion.value)) {
+      messages.push(`expected ${assertion.cardId} nextPickDirection to include "${assertion.value}"`);
+    }
+  }
+
+  return { ok: messages.length === 0, messages };
+}
+
+function findRank(recommendations: DraftRecommendation[], cardId: string): number | undefined {
+  return findRecommendation(recommendations, cardId)?.rank;
+}
+
+function findRecommendation(recommendations: DraftRecommendation[], cardId: string): DraftRecommendation | undefined {
+  return recommendations.find((recommendation) => recommendation.cardId === cardId);
+}
+
+function formatRecommendations(recommendations: DraftRecommendation[]): string {
+  return recommendations
+    .map((recommendation) => {
+      const components = JSON.stringify(recommendation.components);
+      return `  #${recommendation.rank} ${recommendation.cardId} score=${recommendation.score} return=${recommendation.returnLikelihood} components=${components}`;
+    })
+    .join("\n");
+}

@@ -31,44 +31,40 @@ UI 전에 scoring contract, data validation, fixture matrix를 먼저 닫는다.
 
 ### 코드 아키텍처
 
-코드 아키텍처는 아직 정립 전이다.
+draft scoring prototype은 TypeScript 기반 도메인 모듈로 전환되었다.
 
-현재 scoring prototype은 의존성 없이 빠르게 검증하기 위해 JavaScript로 작성되었다. 이는 최종 방향이 아니라 임시 프로토타입이다.
+현재 상태:
 
-이유:
+- `src/features/draft/contract.ts`: UI, 스크립트, 추천 엔진이 공유하는 타입 계약
+- `src/features/draft/scoring.ts`: React/Next.js에 의존하지 않는 순수 추천 로직
+- `src/features/draft/validation.ts`: JSON 데이터와 fixture의 런타임 검증
+- `scripts/validate-data.ts`: 데이터 검증 CLI
+- `scripts/score-draft-fixtures.ts`: fixture 기반 추천 검증 CLI
 
-- repo가 문서 중심 상태에서 시작했다.
-- Next.js/TypeScript scaffold가 아직 없다.
-- 로컬 `npm`이 깨져 있었고, `yarn`만 동작했다.
-- UI보다 먼저 추천 로직 방향을 검증하는 것이 급했다.
-
-하지만 UI 구현 전에 반드시 TypeScript 기반 계약으로 전환해야 한다.
+아직 Next.js/TypeScript scaffold는 없다. 이는 의도적이다. UI보다 먼저 추천 엔진의 계약과 데이터 검증을 닫는 것이 현재 단계의 목표다.
 
 ## 핵심 리뷰 결론
 
-### 1. TypeScript 전환은 필수
+### 1. TypeScript 전환은 완료
 
-현재 JavaScript scoring prototype은 기능 탐색용이다.
-
-이 상태로 UI를 붙이면 다음 문제가 생긴다.
+JavaScript scoring prototype은 TypeScript로 전환되었다. 이 결정으로 다음 위험을 먼저 줄였다.
 
 - UI가 기대하는 입력/출력 타입이 암묵적이다.
 - 데이터 누락 시 fallback 정책이 코드 내부에 묻힌다.
 - fixture가 늘어날수록 refactor 비용이 커진다.
 - 카드 50~100장 이후에는 잘못된 데이터 참조를 추적하기 어렵다.
 
-권장:
+현재 파일:
 
 ```text
-src/features/draft/scoring.js
-→ src/features/draft/scoring.ts
-
-scripts/score-draft-fixtures.js
-→ scripts/score-draft-fixtures.ts
-또는 tsx 기반 실행
+src/features/draft/contract.ts
+src/features/draft/scoring.ts
+src/features/draft/validation.ts
+scripts/validate-data.ts
+scripts/score-draft-fixtures.ts
 ```
 
-단, TypeScript 전환은 단순 확장자 변경이 아니라 contract를 먼저 세우는 작업이어야 한다.
+남은 일은 TypeScript 전환 자체가 아니라 fixture matrix와 데이터 검증 범위를 넓히는 것이다.
 
 ## Scoring Contract
 
@@ -85,7 +81,7 @@ src/features/draft/
   index.ts
 ```
 
-초기에는 `contract.ts`와 `scoring.ts`만 있어도 된다.
+현재는 `contract.ts`, `scoring.ts`, `validation.ts`, `index.ts`가 존재한다.
 
 ### DraftScoringInput
 
@@ -174,11 +170,7 @@ UI 전 가장 중요한 작업은 데이터 검증이다.
 scripts/validate-data.ts
 ```
 
-또는 TypeScript toolchain 전까지:
-
-```text
-scripts/validate-data.js
-```
+현재는 `scripts/validate-data.ts`로 구현되어 있다.
 
 ### 필수 검증
 
@@ -445,6 +437,8 @@ Draft input ──▶│ draft scoring engine │
 - `node`는 동작한다.
 - `npm`은 깨져 있다.
 - `yarn test`는 동작한다.
+- TypeScript와 Node 타입은 `yarn` devDependency로 설치되어 있다.
+- Node 24의 TypeScript 실행 지원을 사용해 `.ts` 스크립트를 직접 실행한다.
 
 권장:
 
@@ -457,9 +451,9 @@ Draft input ──▶│ draft scoring engine │
 다음 조건을 만족하면 `/draft` UI 구현을 시작해도 된다.
 
 ```text
-- TypeScript scoring contract가 있다.
-- scoring prototype이 TypeScript로 전환되어 있다.
-- validate-data가 존재한다.
+- TypeScript scoring contract가 있다. 완료
+- scoring prototype이 TypeScript로 전환되어 있다. 완료
+- validate-data가 존재한다. 완료
 - yarn test가 validate-data와 score fixtures를 모두 실행한다.
 - fixture가 10개 이상이다.
 - fixture가 ranking, component, risk, return likelihood, nextPickDirection을 검증한다.
@@ -471,23 +465,19 @@ Draft input ──▶│ draft scoring engine │
 
 우선순위 순서:
 
-1. TypeScript 전환 범위
-   - scoring module만 먼저 전환
-   - repo 전체 Next.js scaffold와 함께 전환
-
-2. data validation 구현 방식
-   - 직접 JS/TS 검증 함수
-   - Zod 같은 schema library 사용
-
-3. fixture matrix 범위
+1. fixture matrix 범위
    - 최소 10개
    - 권장 15~20개
 
-4. brokenReasonTags 도입
+2. data validation 확장 범위
+   - 직접 JS/TS 검증 함수
+   - Zod 같은 schema library 사용
+
+3. brokenReasonTags 도입
    - 설명용으로만 도입
    - scoring에도 일부 반영
 
-5. package manager
+4. package manager
    - yarn 유지
    - npm 복구 후 npm 기준
 
@@ -495,12 +485,10 @@ Draft input ──▶│ draft scoring engine │
 
 추천 순서:
 
-1. `contract.ts` 작성
-2. `scoring.js`를 `scoring.ts`로 전환
-3. `validate-data` 추가
-4. fixture assertion 확장
-5. fixture 10~15개로 확대
-6. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
-7. 그 다음 `/draft` UI 시작
+1. fixture assertion 확장
+2. fixture 10~15개로 확대
+3. missing data 정책을 fixture로 고정
+4. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
+5. 그 다음 `/draft` UI 시작
 
 이 순서를 지키면 UI는 실험용 화면이 아니라, 이미 계약과 검증을 가진 추천 엔진을 렌더링하는 화면이 된다.

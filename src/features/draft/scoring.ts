@@ -1,4 +1,18 @@
-const PHASE_WEIGHTS = {
+import type {
+  CardStatRow,
+  CardStrategyProfile,
+  ConfidenceLevel,
+  DraftDataIndex,
+  DraftDataSet,
+  DraftPickPhase,
+  DraftRecommendation,
+  DraftScoringInput,
+  ExplanationDepth,
+  ReturnLikelihood,
+  ScoreComponents
+} from "./contract.ts";
+
+const PHASE_WEIGHTS: Record<DraftPickPhase, ScoreComponents> = {
   early_anchor: {
     statStrength: 2.2,
     brokenOrAnchor: 3.0,
@@ -34,7 +48,7 @@ const PHASE_WEIGHTS = {
   }
 };
 
-const CONFIDENCE_SCORE = {
+const CONFIDENCE_SCORE: Record<ConfidenceLevel, number> = {
   manual_verified: 10,
   official_verified: 10,
   bga_verified: 9,
@@ -44,20 +58,29 @@ const CONFIDENCE_SCORE = {
   unverified: 2
 };
 
-export function buildDraftDataIndex(data) {
+type HandContext = {
+  pickedCardIds: Set<string>;
+  pickedProfiles: CardStrategyProfile[];
+  solvedRoles: Set<string>;
+  neededRoles: Map<string, number>;
+  saturationTargets: Set<string>;
+};
+
+export function buildDraftDataIndex(data: DraftDataSet): DraftDataIndex {
   return {
     cardsById: indexById(data.cards),
-    profilesByCardId: indexBy(data.strategyProfiles, "cardId"),
-    statsByCardId: indexBy(data.stats, "cardId"),
-    translationsByCardId: indexBy(data.translations, "cardId")
+    profilesByCardId: indexByString(data.strategyProfiles, "cardId"),
+    statsByCardId: indexByString(data.stats, "cardId"),
+    translationsByCardId: indexByString(data.translations, "cardId"),
+    rolesById: indexById(data.strategyRoles)
   };
 }
 
-export function rankDraftOptions(session, dataIndex) {
+export function rankDraftOptions(session: DraftScoringInput, dataIndex: DraftDataIndex): DraftRecommendation[] {
   const phase = getPickPhase(session.pickNumber);
-  const handContext = buildHandContext(session.pickedCardIds ?? [], dataIndex);
+  const handContext = buildHandContext(session.pickedCardIds, dataIndex);
 
-  return (session.offeredCardIds ?? [])
+  return session.offeredCardIds
     .map((cardId) => scoreCard(cardId, session, dataIndex, handContext, phase))
     .sort((a, b) => b.score - a.score)
     .map((recommendation, index) => ({
@@ -66,17 +89,23 @@ export function rankDraftOptions(session, dataIndex) {
     }));
 }
 
-export function getPickPhase(pickNumber) {
+export function getPickPhase(pickNumber: number): DraftPickPhase {
   if (pickNumber <= 2) return "early_anchor";
   if (pickNumber <= 4) return "middle_direction";
   return "late_completion";
 }
 
-function scoreCard(cardId, session, dataIndex, handContext, phase) {
+function scoreCard(
+  cardId: string,
+  session: DraftScoringInput,
+  dataIndex: DraftDataIndex,
+  handContext: HandContext,
+  phase: DraftPickPhase
+): DraftRecommendation {
   const profile = dataIndex.profilesByCardId.get(cardId);
   const stat = dataIndex.statsByCardId.get(cardId);
   const weights = PHASE_WEIGHTS[phase];
-  const components = {
+  const components: ScoreComponents = {
     statStrength: computeStatStrength(stat),
     brokenOrAnchor: computeBrokenOrAnchor(profile),
     roleCoverage: computeRoleCoverage(profile, handContext),
@@ -104,7 +133,7 @@ function scoreCard(cardId, session, dataIndex, handContext, phase) {
     rank: 0,
     score: round(score),
     phase,
-    components: mapValues(components, round),
+    components: roundComponents(components),
     returnLikelihood: estimateReturnLikelihood(stat, session.pickNumber),
     reasons: buildReasons(cardId, profile, stat, components, handContext, dataIndex),
     risks: buildRisks(profile, components),
@@ -112,21 +141,21 @@ function scoreCard(cardId, session, dataIndex, handContext, phase) {
   };
 }
 
-function buildHandContext(pickedCardIds, dataIndex) {
+function buildHandContext(pickedCardIds: string[], dataIndex: DraftDataIndex): HandContext {
   const pickedProfiles = pickedCardIds
     .map((cardId) => dataIndex.profilesByCardId.get(cardId))
-    .filter(Boolean);
-  const solvedRoles = new Set();
-  const neededRoles = new Map();
-  const saturationTargets = new Set();
+    .filter((profile): profile is CardStrategyProfile => profile !== undefined);
+  const solvedRoles = new Set<string>();
+  const neededRoles = new Map<string, number>();
+  const saturationTargets = new Set<string>();
 
   for (const profile of pickedProfiles) {
-    for (const role of profile.solves ?? []) solvedRoles.add(role);
-    for (const target of profile.saturationPenaltyTo ?? []) saturationTargets.add(target);
+    for (const role of profile.solves) solvedRoles.add(role);
+    for (const target of profile.saturationPenaltyTo) saturationTargets.add(target);
   }
 
   for (const profile of pickedProfiles) {
-    for (const role of profile.increasesNeedFor ?? []) {
+    for (const role of profile.increasesNeedFor) {
       if (!solvedRoles.has(role)) {
         neededRoles.set(role, (neededRoles.get(role) ?? 0) + 1);
       }
@@ -142,7 +171,7 @@ function buildHandContext(pickedCardIds, dataIndex) {
   };
 }
 
-function computeStatStrength(stat) {
+function computeStatStrength(stat: CardStatRow | undefined): number {
   if (!stat) return 3;
 
   const wtdPwr = normalize(stat.wtdPwr, 0, 8);
@@ -151,24 +180,24 @@ function computeStatStrength(stat) {
   return clamp(wtdPwr * 0.55 + pwr * 0.25 + adpStrength * 0.2, 0, 10);
 }
 
-function computeBrokenOrAnchor(profile) {
+function computeBrokenOrAnchor(profile: CardStrategyProfile | undefined): number {
   if (!profile) return 0;
   if (profile.isBroken) return 10;
   if (profile.isPlanAnchor) return 8;
-  if ((profile.roles ?? []).includes("plan_anchor")) return 7;
+  if (profile.roles.includes("plan_anchor")) return 7;
   return 0;
 }
 
-function computeRoleCoverage(profile, handContext) {
+function computeRoleCoverage(profile: CardStrategyProfile | undefined, handContext: HandContext): number {
   if (!profile) return 0;
   let score = 0;
 
-  for (const role of profile.solves ?? []) {
+  for (const role of profile.solves) {
     if (handContext.solvedRoles.has(role)) continue;
     score += handContext.neededRoles.has(role) ? 4 : 2;
   }
 
-  for (const role of profile.roles ?? []) {
+  for (const role of profile.roles) {
     if (handContext.solvedRoles.has(role)) continue;
     score += handContext.neededRoles.has(role) ? 1.5 : 0.75;
   }
@@ -176,30 +205,30 @@ function computeRoleCoverage(profile, handContext) {
   return clamp(score, 0, 10);
 }
 
-function computeSynergy(cardId, profile, handContext) {
+function computeSynergy(cardId: string, profile: CardStrategyProfile | undefined, handContext: HandContext): number {
   if (!profile) return 0;
   let score = 0;
 
   for (const pickedCardId of handContext.pickedCardIds) {
-    if ((profile.synergyWith ?? []).includes(pickedCardId)) score += 3;
+    if (profile.synergyWith.includes(pickedCardId)) score += 3;
   }
 
   for (const pickedProfile of handContext.pickedProfiles) {
-    if ((pickedProfile.synergyWith ?? []).includes(cardId)) score += 2;
+    if (pickedProfile.synergyWith.includes(cardId)) score += 2;
   }
 
-  for (const role of profile.roles ?? []) {
+  for (const role of profile.roles) {
     if (handContext.neededRoles.has(role)) score += 2;
   }
 
-  for (const role of profile.solves ?? []) {
+  for (const role of profile.solves) {
     if (handContext.neededRoles.has(role)) score += 2;
   }
 
   return clamp(score, 0, 10);
 }
 
-function computeReturnUrgency(stat, pickNumber) {
+function computeReturnUrgency(stat: CardStatRow | undefined, pickNumber: number): number {
   const likelihood = estimateReturnLikelihood(stat, pickNumber);
   if (likelihood === "unlikely") return 10;
   if (likelihood === "possible") return 6;
@@ -207,8 +236,8 @@ function computeReturnUrgency(stat, pickNumber) {
   return 4;
 }
 
-function estimateReturnLikelihood(stat, pickNumber) {
-  if (!stat?.adp) return "unknown";
+function estimateReturnLikelihood(stat: CardStatRow | undefined, pickNumber: number): ReturnLikelihood {
+  if (typeof stat?.adp !== "number") return "unknown";
 
   const pickPressure = Math.max(0, 4 - pickNumber) * 0.25;
   const adjustedAdp = stat.adp - pickPressure;
@@ -218,7 +247,7 @@ function estimateReturnLikelihood(stat, pickNumber) {
   return "likely";
 }
 
-function computePhaseFit(profile, phase) {
+function computePhaseFit(profile: CardStrategyProfile | undefined, phase: DraftPickPhase): number {
   const timingWindow = profile?.timingWindow ?? "anytime";
   if (timingWindow === "anytime") return 8;
 
@@ -239,21 +268,25 @@ function computePhaseFit(profile, phase) {
   return 5;
 }
 
-function computeConfidence(profile, stat) {
-  const profileConfidence = CONFIDENCE_SCORE[profile?.confidence] ?? 2;
+function computeConfidence(profile: CardStrategyProfile | undefined, stat: CardStatRow | undefined): number {
+  const profileConfidence = profile ? CONFIDENCE_SCORE[profile.confidence] : 2;
   if (!stat) return profileConfidence * 0.7;
 
-  const sampleScore = stat.deals >= 500 && stat.plays >= 100 ? 10 : 6;
+  const sampleScore = (stat.deals ?? 0) >= 500 && (stat.plays ?? 0) >= 100 ? 10 : 6;
   return clamp(profileConfidence * 0.7 + sampleScore * 0.3, 0, 10);
 }
 
-function computeSaturationPenalty(cardId, profile, handContext) {
+function computeSaturationPenalty(
+  cardId: string,
+  profile: CardStrategyProfile | undefined,
+  handContext: HandContext
+): number {
   if (!profile) return 0;
   let penalty = 0;
 
   if (handContext.saturationTargets.has(cardId)) penalty += 5;
 
-  for (const role of [...(profile.roles ?? []), ...(profile.solves ?? [])]) {
+  for (const role of [...profile.roles, ...profile.solves]) {
     if (handContext.solvedRoles.has(role)) penalty += 3;
     if (handContext.saturationTargets.has(role)) penalty += 3;
   }
@@ -262,28 +295,39 @@ function computeSaturationPenalty(cardId, profile, handContext) {
   return clamp(penalty, 0, 10);
 }
 
-function computeRiskPenalty(profile, stat, handContext) {
+function computeRiskPenalty(
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  handContext: HandContext
+): number {
   if (!profile) return 2;
 
-  let penalty = (profile.riskTags ?? []).length * 1.5;
+  let penalty = profile.riskTags.length * 1.5;
 
-  if ((profile.riskTags ?? []).includes("low_early_impact")) penalty += 1;
-  if ((profile.riskTags ?? []).includes("redundant_if_field_access_solved") && handContext.solvedRoles.has("field_engine")) {
+  if (profile.riskTags.includes("low_early_impact")) penalty += 1;
+  if (profile.riskTags.includes("redundant_if_field_access_solved") && handContext.solvedRoles.has("field_engine")) {
     penalty += 2;
   }
 
-  if (stat?.drafted && stat?.plays && stat.plays / stat.drafted < 0.55) {
+  if (stat?.drafted && stat.plays && stat.plays / stat.drafted < 0.55) {
     penalty += 2;
   }
 
   return clamp(penalty, 0, 10);
 }
 
-function buildReasons(cardId, profile, stat, components, handContext, dataIndex) {
+function buildReasons(
+  cardId: string,
+  profile: CardStrategyProfile | undefined,
+  stat: CardStatRow | undefined,
+  components: ScoreComponents,
+  handContext: HandContext,
+  dataIndex: DraftDataIndex
+): Record<ExplanationDepth, string[]> {
   const name = getCardName(cardId, dataIndex);
-  const compact = [];
-  const standard = [];
-  const deep = [];
+  const compact: string[] = [];
+  const standard: string[] = [];
+  const deep: string[] = [];
 
   if (profile?.isBroken || profile?.isPlanAnchor) {
     compact.push(`${name}: 초반 플랜 앵커로 우선도가 높습니다.`);
@@ -308,12 +352,12 @@ function buildReasons(cardId, profile, stat, components, handContext, dataIndex)
     standard.push("ADP 기준으로 다시 돌아올 가능성이 낮아 지금 집을 압력이 있습니다.");
   }
 
-  deep.push(`score components: ${JSON.stringify(mapValues(components, round))}`);
+  deep.push(`score components: ${JSON.stringify(roundComponents(components))}`);
   if (stat) {
     deep.push(`stats: WtdPWR ${stat.wtdPwr}, PWR ${stat.pwr}, ADP ${stat.adp}, APR ${stat.apr}.`);
   }
   if ((profile?.nextPickGuidance?.["ko-KR"] ?? []).length > 0) {
-    deep.push(`다음 픽 방향: ${profile.nextPickGuidance["ko-KR"].join(", ")}.`);
+    deep.push(`다음 픽 방향: ${profile?.nextPickGuidance?.["ko-KR"]?.join(", ")}.`);
   }
 
   return {
@@ -323,44 +367,55 @@ function buildReasons(cardId, profile, stat, components, handContext, dataIndex)
   };
 }
 
-function buildRisks(profile, components) {
+function buildRisks(profile: CardStrategyProfile | undefined, components: ScoreComponents): string[] {
   const risks = [...(profile?.riskTags ?? [])];
   if (components.saturationPenalty >= 5) risks.push("role_saturation");
   if (components.riskPenalty >= 5) risks.push("high_risk_penalty");
   return [...new Set(risks)];
 }
 
-function buildNextPickDirection(profile, handContext) {
+function buildNextPickDirection(profile: CardStrategyProfile | undefined, handContext: HandContext): string[] {
   const direct = profile?.nextPickGuidance?.["ko-KR"] ?? [];
   const needs = [...handContext.neededRoles.keys()];
   return [...new Set([...direct, ...needs])];
 }
 
-function getCardName(cardId, dataIndex) {
+function getCardName(cardId: string, dataIndex: DraftDataIndex): string {
   return dataIndex.translationsByCardId.get(cardId)?.name ?? cardId;
 }
 
-function indexById(items) {
-  return indexBy(items, "id");
+function indexById<T extends { id: string }>(items: T[]): Map<string, T> {
+  return indexByString(items, "id");
 }
 
-function indexBy(items, key) {
-  return new Map((items ?? []).map((item) => [item[key], item]));
+function indexByString<T extends object>(items: T[], key: keyof T): Map<string, T> {
+  const entries = items.map((item): [string, T] => [String(item[key]), item]);
+  return new Map(entries);
 }
 
-function mapValues(object, mapper) {
-  return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, mapper(value)]));
-}
-
-function normalize(value, min, max) {
+function normalize(value: number | undefined, min: number, max: number): number {
   if (typeof value !== "number") return 0;
   return clamp(((value - min) / (max - min)) * 10, 0, 10);
 }
 
-function clamp(value, min, max) {
+function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-function round(value) {
+function round(value: number): number {
   return Math.round(value * 100) / 100;
+}
+
+function roundComponents(components: ScoreComponents): ScoreComponents {
+  return {
+    statStrength: round(components.statStrength),
+    brokenOrAnchor: round(components.brokenOrAnchor),
+    roleCoverage: round(components.roleCoverage),
+    synergy: round(components.synergy),
+    returnUrgency: round(components.returnUrgency),
+    phaseFit: round(components.phaseFit),
+    confidence: round(components.confidence),
+    saturationPenalty: round(components.saturationPenalty),
+    riskPenalty: round(components.riskPenalty)
+  };
 }
