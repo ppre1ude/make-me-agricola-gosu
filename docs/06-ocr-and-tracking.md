@@ -109,36 +109,68 @@ confidence가 낮으면 사용자가 직접 선택한다.
 
 유저가 지나간 카드를 기억하는 부담을 줄인다.
 
+v0의 트래킹 목표는 상대 손패를 맞히는 것이 아니라, 사용자가 실제로 본 정보와 선택한 카드를 잃어버리지 않는 것이다.
+
 ### 데이터
 
 ```ts
 type DraftSession = {
   id: string;
   createdAt: string;
-  playerCount: number;
-  cardPool?: string[];
+  updatedAt: string;
+  playerCount: 4;
+  cardPoolProfileId: string;
+  draftFormat: {
+    initialPackSize: 8 | 9 | 10;
+    cardsKept: 7;
+    totalPicks: 7;
+  };
+  draftCardType: "occupation" | "minor_improvement";
+  explanationDepth: "compact" | "standard" | "deep";
   picks: DraftPick[];
   seenCardIds: string[];
-  handCardIds: string[];
+  pickedCardIds: string[];
+  passedCardIds: string[];
 };
 
 type DraftPick = {
-  round: number;
-  pickNumber: number;
+  pickNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  inputMode: "full_pack" | "selected_only" | "corrected_pack";
   offeredCardIds: string[];
   selectedCardId?: string;
   passedCardIds?: string[];
-  source: "manual" | "ocr";
+  source: "manual" | "ocr" | "prediction";
 };
 ```
 
 ### 초기 기능
 
-- 현재 후보 카드 저장
+- 1~4픽 full visible pack 저장
+- 5~7픽 selected card 중심 저장
+- 필요 시 반환 pack 수정 입력
 - 내가 고른 카드 저장
 - 지나간 카드 목록 보기
-- 지나간 카드 중 위험한 콤보 카드 표시
-- 내 손패 태그 분포 업데이트
+- 지나간 카드 중 위험한 콤보/역할 카드 표시
+- 내 손패 전략 역할 분포 업데이트
+- 이미 해결한 역할과 부족한 역할 표시
+- 돌아올 가능성 힌트 표시
+
+### 첫 4픽과 마지막 3픽
+
+BGA Arena 드래프트에서는 첫 4픽이 새 정보를 가장 많이 만든다.
+
+```text
+Pick 1-4:
+  full visible pack 입력
+  selected card + passed cards 기록
+
+Pick 5-7:
+  돌아온 카드 중심
+  selected card만 빠르게 기록
+  예측이 틀리면 corrected pack 입력
+```
+
+이 구조는 OCR이 없어도 동작해야 한다. OCR은 입력 부담을 줄이는 보조 기능이다.
 
 ### 나중 기능
 
@@ -146,10 +178,23 @@ type DraftPick = {
 - 내가 놓친 고평가 카드 표시
 - ADP 대비 이상한 픽 패턴 분석
 - 개인 선호 태그 분석
+- 실전 판세와 연결한 주요 설비/누적 칸 위험 경고
 
 ## 공정성 원칙
 
 트래킹은 사용자가 직접 본 카드와 입력한 카드만 대상으로 한다.
+
+허용:
+
+- 사용자가 입력한 visible pack 기반의 seen/passed 기록
+- ADP와 seen card 기반의 확률적 return likelihood
+- "이 역할을 누군가 가져갔을 수 있음" 수준의 불확실한 신호 표시
+
+금지:
+
+- 상대가 가져간 카드를 확정적으로 표시
+- 숨겨진 카드 정보를 자동 추론
+- BGA 비공개 데이터 수집
 
 제공하지 않는 기능:
 
@@ -158,4 +203,3 @@ type DraftPick = {
 - 비공개 BGA 데이터 수집
 - 자동 행동 선택
 - 자동 플레이
-

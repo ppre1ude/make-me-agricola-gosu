@@ -2,6 +2,15 @@
 
 ## 혼자 구현하는 순서
 
+로드맵의 기준은 다음이다.
+
+```text
+Product flow: Draft Memory Coach
+Data-building flow: Strategy Knowledge Base
+```
+
+따라서 카드 DB UI를 먼저 완성하지 않는다. 먼저 추천 엔진이 raw tier list보다 나은 판단을 하는지 fixture로 검증한다.
+
 ### Phase 0: 프로젝트 기반
 
 목표:
@@ -10,24 +19,27 @@
 - TypeScript, ESLint, Tailwind 설정
 - docs 유지
 - data 디렉터리 생성
+- 추천 엔진을 순수 TypeScript 함수로 둘 위치 확정
 
 산출물:
 
 ```text
 Next.js 앱 실행
 기본 레이아웃
-데이터 파일 구조
+data 디렉터리 구조
+draft scoring module skeleton
 ```
 
-### Phase 1: 데이터 파이프라인
+### Phase 1: 데이터 스키마와 seed
 
 목표:
 
-- raw 엑셀/TSV 저장
-- 카드 ID 규칙 확정
-- import script 작성
-- normalized JSON 생성
-- validation script 작성
+- canonical card id 규칙 확정
+- Card, CardTranslation, CardStatRow 타입 작성
+- StrategyRole, CardStrategyProfile 타입 작성
+- DraftSession, DraftPick 타입 작성
+- BGA Arena card pool profile 형식 작성
+- seed JSON 최소 샘플 생성
 
 산출물:
 
@@ -35,17 +47,74 @@ Next.js 앱 실행
 data/normalized/cards.json
 data/normalized/translations.ko-KR.json
 data/normalized/stats.lumin-s.json
-data/normalized/tags.json
+data/normalized/strategy-roles.json
+data/normalized/card-pool.bga-arena.2026-xx.json
+data/manual/card-strategy-profiles.json
 ```
 
 우선순위:
 
-1. Lumin_S 통계 영문 카드명 import
-2. 웅이님 엑셀 한국어명/효과 import
-3. card-id-map 수동 보정
-4. 검증 스크립트
+1. BGA Arena active card pool snapshot
+2. Lumin_S 또는 Agricola Norge 계열 통계 import
+3. 웅이님 엑셀 한국어명/효과/티어 mapping
+4. card-id-map 수동 보정
+5. strategy profile 초안 50~100장
 
-### Phase 2: 카드 DB UI
+### Phase 2: 비UI 드래프트 추천 프로토타입
+
+목표:
+
+- 추천 점수 component 구현
+- pick phase weighting 구현
+- role coverage와 saturation penalty 구현
+- return likelihood 구현
+- explanation depth별 문장 생성
+- fixture 기반 검증
+
+산출물:
+
+```text
+src/features/draft/scoring.ts
+src/features/draft/explain.ts
+src/features/draft/fixtures/*.json
+scripts/score-draft-fixture.ts
+```
+
+성공 기준:
+
+- strong card라도 이미 해결된 역할과 겹치면 내려간다.
+- broken/plan anchor는 초반에 충분히 우선된다.
+- 3~4픽부터 콤보와 역할 보완이 점수에 반영된다.
+- 추천 결과가 단순 WtdPWR 정렬과 다른 이유를 설명한다.
+
+### Phase 3: Draft Memory Coach UI
+
+목표:
+
+- 새 드래프트 세션 생성
+- 1~4픽 full visible pack 입력
+- 5~7픽 selected card 중심 입력
+- 추천 순위와 설명 표시
+- 내 픽/본 카드/넘긴 카드 기록 표시
+- 역할 커버리지와 다음 픽 방향 표시
+
+산출물:
+
+```text
+/draft
+/draft/new
+/draft/[sessionId]
+```
+
+필수 기능:
+
+- autocomplete
+- card chip 입력
+- pick number navigation
+- explanation depth toggle
+- session state local persistence
+
+### Phase 4: 카드 검색과 카드 상세
 
 목표:
 
@@ -53,6 +122,7 @@ data/normalized/tags.json
 - 검색
 - 필터
 - 카드 상세
+- strategy profile 검수에 쓸 수 있는 정보 표시
 
 산출물:
 
@@ -65,62 +135,36 @@ data/normalized/tags.json
 
 - 한글/영문 검색
 - 타입 필터
+- Arena active 필터
+- 전략 역할 필터
 - 티어 필터
 - WtdPWR/ADP/APR 표시
-- 카드 상세에서 통계 해석 문장 표시
+- 카드 상세에서 전략 역할, solves, risk, next-pick guidance 표시
 
-### Phase 3: 드래프트 수동 입력
-
-목표:
-
-- 후보 카드 입력
-- 추천 순위 계산
-- 추천 이유 표시
-
-산출물:
-
-```text
-/draft
-```
-
-초기 추천 로직:
-
-- WtdPWR
-- PWR
-- ADP
-- APR
-- Plays/Drafted
-- 태그 시너지
-
-### Phase 4: 전략 가이드
+### Phase 5: 전략 가이드와 룰링
 
 목표:
 
 - MDX 기반 한국어 가이드
-- 카드/태그와 연결
-
-초기 글:
-
-1. 카드 텍스트 타이밍 읽는 법
-2. 가족 늘리기 경쟁
-3. 방 늘리기 경쟁
-4. 화로 경쟁
-5. 울타리와 동물 운영
-
-### Phase 5: 콤보와 룰링
-
-목표:
-
-- 수동 콤보 20~50개 입력
-- 텍스트 판정 룰링 입력
-- 카드 상세과 드래프트 추천에 연결
+- 카드/태그/전략 역할과 연결
+- 수동 콤보와 룰링 입력
 
 산출물:
 
 ```text
 data/manual/combos.ko-KR.json
 data/manual/rulings.ko-KR.json
+content/guides/*.mdx
 ```
+
+초기 글:
+
+1. 드래프트 기본 원칙: broken card에서 역할 보완으로 전환하기
+2. 카드 텍스트 타이밍 읽는 법
+3. 가족 늘리기 경쟁
+4. 화로 경쟁
+5. 울타리와 동물 운영
+6. 2방 2가족으로 버티는 조건
 
 ### Phase 6: BGA 스크린샷 OCR
 
@@ -129,7 +173,7 @@ data/manual/rulings.ko-KR.json
 - 스크린샷 업로드
 - 카드명 자동 추출
 - 결과 수정 UI
-- 드래프트 분석으로 전달
+- 드래프트 코치로 전달
 
 초기 구현:
 
@@ -138,7 +182,21 @@ data/manual/rulings.ko-KR.json
 - fuzzy matching
 - 수동 검수
 
-### Phase 7: DB와 사용자 기능
+### Phase 7: 사후 복기와 판세 경고
+
+목표:
+
+- 드래프트 선택 복기
+- 내가 놓친 고평가 카드 표시
+- 왜 특정 판에서 2방 2가족이 맞았는지/틀렸는지 설명
+- 주요 설비, 누적 칸, 곡식/울타리/화로 경쟁 위험 경고
+
+주의:
+
+- v0 범위가 아니다.
+- 실시간 자동 플레이가 아니라 학습/경고 보조로 설계한다.
+
+### Phase 8: DB와 사용자 기능
 
 DB가 필요한 시점에 도입한다.
 
@@ -154,6 +212,7 @@ DB가 필요한 시점에 도입한다.
 - OCR job 저장
 - 피드백 저장
 - 카드 데이터 관리자 UI
+- 전략 프로필 검수 워크플로
 
 ## 2주 MVP 예시
 
@@ -166,41 +225,43 @@ DB가 필요한 시점에 도입한다.
 
 ### Day 3-4
 
-- 엑셀/TSV import script
+- 최소 카드 seed
 - card-id-map 초안
-- normalized JSON 생성
+- 통계 snapshot 샘플
+- strategy role 사전
 
 ### Day 5-7
 
-- 카드 목록
-- 검색
-- 필터
-- 카드 상세
+- CardStrategyProfile 50~100장 초안
+- fixture 10~20개 작성
+- scoring prototype 구현
 
 ### Day 8-10
 
-- 통계 표시
-- 티어 계산
-- 통계 해석 문장
+- role coverage, saturation, return likelihood 구현
+- standard/deep explanation 구현
+- fixture 검증
 
 ### Day 11-12
 
-- 드래프트 수동 입력
-- 추천 점수 계산
+- `/draft` UI
+- 1~4픽 full pack 입력
+- 5~7픽 selected card 입력
 
 ### Day 13-14
 
-- 전략 가이드 2~3개
+- 카드 검색/상세 최소 구현
 - 문서/데이터 검증
-- 배포 준비
+- 내부 사용 가능한 배포 준비
 
 ## 성공 기준
 
 MVP 성공 기준:
 
-- 카드명 검색이 빠르고 정확하다.
-- 카드 상세에서 한국어명, 영문명, 효과, 통계가 한눈에 보인다.
-- 드래프트 후보 7장을 입력하면 납득 가능한 추천 순위가 나온다.
-- 카드와 전략 글이 서로 연결된다.
-- 데이터 업데이트를 JSON/스크립트로 반복할 수 있다.
-
+- 실제 BGA Arena 드래프트 중 입력 부담이 병목이 되지 않는다.
+- 첫 50~100장 큐레이션 카드에 대해서 raw tier list보다 납득 가능한 추천이 나온다.
+- 이미 해결한 역할의 중복 카드를 downrank한다.
+- 강한 카드가 현재 손패에 맞지 않는 이유를 설명한다.
+- ADP와 seen-card memory로 단순 return likelihood를 설명한다.
+- standard 설명은 초중급자가 이해할 수 있다.
+- deep 설명은 사후 학습에 도움이 된다.

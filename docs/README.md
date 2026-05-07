@@ -1,17 +1,24 @@
-# Agricola Assistant Planning Docs
+# Agricola Korean Gosu Planning Docs
 
-이 문서들은 아그리콜라 보조 Web 사이트를 실제로 구현하기 위한 기준 문서입니다.
+이 문서들은 BGA Arena 아그리콜라 드래프트 코치를 실제로 구현하기 위한 기준 문서입니다.
 
-서비스의 1차 페르소나는 한국어 BGA 아그리콜라 유저입니다. 다만 데이터 모델과 콘텐츠 구조는 처음부터 다국어, 신규 카드, 신규 통계, 오프라인 플레이 인식까지 확장할 수 있도록 설계합니다.
+현재 제품 결론은 office-hours 결과를 반영해 다음처럼 정리합니다.
+
+```text
+Product flow: Draft Memory Coach
+Data-building flow: Strategy Knowledge Base
+```
+
+즉 사용자가 보는 제품은 드래프트 중 현재 픽을 판단해주는 도구이고, 내부 데이터 구축은 카드별 전략 역할, 룰링, 콤보, 통계, 운영 시퀀스를 쌓는 지식 베이스입니다.
 
 ## 문서 목록
 
 - [00 Vision](./00-vision.md): 제품 목표, 페르소나, 핵심 가치
 - [01 Product Requirements](./01-product-requirements.md): 기능 요구사항과 MVP 범위
 - [02 Information Architecture](./02-information-architecture.md): 사이트 구조와 주요 화면
-- [03 Data Model](./03-data-model.md): 카드, 번역, 통계, 태그, 콤보, 룰링 데이터 모델
+- [03 Data Model](./03-data-model.md): 카드, 번역, 통계, 전략 프로필, 드래프트 상태 모델
 - [04 Data Pipeline](./04-data-pipeline.md): 원본 데이터 수집, 정규화, seed 흐름
-- [05 Feature Specs](./05-feature-specs.md): 카드 검색, 드래프트 추천, 전략 가이드 세부 명세
+- [05 Feature Specs](./05-feature-specs.md): 카드 검색, 드래프트 코치, 전략 가이드 세부 명세
 - [06 OCR And Tracking](./06-ocr-and-tracking.md): BGA 스크린샷 인식과 드래프트 트래킹 설계
 - [07 Roadmap](./07-roadmap.md): 혼자 구현하기 위한 단계별 개발 순서
 - [08 Risks And Policies](./08-risks-and-policies.md): 저작권, BGA 공정성, 데이터 신뢰도 리스크
@@ -26,14 +33,24 @@
 ```text
 Next.js + TypeScript
 + local JSON data
-+ MDX guide pages
-+ manual draft analyzer
++ non-UI draft scoring prototype
++ manual strategy profiles
++ Draft Memory Coach UI
 ```
 
-이후 사용자별 기록, OCR 작업 큐, 데이터 업데이트 관리가 필요해질 때 Firestore, Supabase, 또는 별도 API 서버를 붙입니다.
+이후 사용자별 기록, OCR 작업 큐, 피드백 수집, 데이터 업데이트 관리가 필요해질 때 Firestore, Supabase, 또는 별도 API 서버를 붙입니다.
 
 ## 1차 MVP 정의
 
 1차 MVP는 다음 한 문장으로 정의합니다.
 
-> 한국어/영문 카드명을 검색하면 카드 정보, 통계 티어, 태그, 기본 콤보를 보여주고, 드래프트 후보 카드를 수동 입력하면 추천 픽 순위를 알려주는 웹앱.
+> BGA Arena 드래프트 중 보이는 카드와 내가 고른 카드를 입력하면, 현재 픽의 추천 카드, 이유, 리스크, 돌아올 가능성, 다음 픽 방향을 설명하는 드래프트 메모리 코치.
+
+## v0에서 하지 않는 것
+
+- 범용 아그리콜라 위키 완성
+- 전체 A~E 카드의 완전한 전략 태깅
+- 실시간 BGA 화면 자동 감시
+- 상대 손패 확정 추론
+- 자동 플레이 또는 자동 액션 선택
+- 공용 서비스에서 카드 전문/커뮤니티 글 전문 복제

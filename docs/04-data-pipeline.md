@@ -27,18 +27,24 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
     translations.en.json
     stats.lumin-s.2026-xx.json
     tags.json
+    strategy-roles.json
+    card-pool.bga-arena.2026-xx.json
     timing-tags.json
     source-refs.json
   /manual
     aliases.json
     card-id-map.json
+    card-strategy-profiles.json
     combos.ko-KR.json
     rulings.ko-KR.json
     guide-card-links.json
+    draft-fixtures.json
 /scripts
   import-woong-xlsx.ts
   import-lumin-stats.ts
   normalize-cards.ts
+  validate-strategy-profiles.ts
+  score-draft-fixture.ts
   validate-data.ts
   seed-firestore.ts
 ```
@@ -81,6 +87,35 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 
 - raw에는 포럼에서 복사한 TSV 또는 CSV를 그대로 보관한다.
 - normalized에는 cardId와 매핑한 CardStatRow 배열로 저장한다.
+
+### BGA Arena 카드 풀 snapshot
+
+용도:
+
+- v0에서 실제 추천 대상 카드 제한
+- weak ban, strong ban, rules ban, not in BGA 상태 표시
+- Arena 환경 변화에 따른 과거/현재 추천 비교
+
+저장 방식:
+
+- `data/normalized/card-pool.bga-arena.2026-xx.json`에 카드별 상태를 저장한다.
+- 카드 검색에서는 제외 사유를 보여줄 수 있지만, 드래프트 추천 기본값은 `active` 카드만 사용한다.
+
+### Strategy profile
+
+용도:
+
+- broken card / plan anchor 표시
+- 전략 역할 태깅
+- 역할 중복과 포화도 계산
+- 콤보, 리스크, 다음 픽 방향 설명
+- 초보자/고급자 설명 분리
+
+저장 방식:
+
+- `data/manual/card-strategy-profiles.json`을 수동 큐레이션 source of truth로 둔다.
+- 카드 효과 텍스트에서 추론 가능한 태그는 importer가 초안을 만들 수 있지만, 추천에 직접 쓰기 전 수동 검수를 거친다.
+- 처음부터 전체 A~E 카드를 완성하지 않고, BGA Arena에서 영향이 큰 50~100장부터 태깅한다.
 
 ### Agricola Cards
 
@@ -125,7 +160,10 @@ raw source
 → parser script
 → normalized intermediate
 → manual card id mapping
+→ strategy profile draft generation
+→ manual strategy review
 → validation
+→ draft fixture scoring
 → app static import
 → optional DB seed
 ```
@@ -160,9 +198,40 @@ raw source
 - 모든 CardTranslation은 존재하는 cardId를 참조해야 한다.
 - 모든 CardStatRow는 존재하는 cardId를 참조해야 한다.
 - tagIds는 사전에 존재해야 한다.
+- CardStrategyProfile.roles는 StrategyRole 사전에 존재해야 한다.
+- CardStrategyProfile의 synergy/conflict/saturation 대상은 존재하는 cardId 또는 role id여야 한다.
+- CardPoolProfile의 cardStatuses는 존재하는 cardId를 참조해야 한다.
 - timingTagIds는 사전에 존재해야 한다.
 - 중복 alias가 있으면 warning을 낸다.
 - Lumin_S 통계의 카드명이 매핑되지 않으면 error 또는 review list로 뺀다.
+
+## 드래프트 fixture 검증
+
+추천 엔진은 UI보다 먼저 fixture로 검증한다.
+
+초기 fixture 예:
+
+```json
+{
+  "id": "field-watchman-saturation-example",
+  "pickNumber": 3,
+  "pickedCardIds": ["occ-field-watchman"],
+  "seenCardIds": ["minor-swing-plow", "minor-grain-cart"],
+  "offeredCardIds": ["minor-swing-plow", "minor-grain-cart", "minor-food-engine-a"],
+  "expected": {
+    "downrankedRoles": ["field_engine"],
+    "preferredRoles": ["grain_supply", "bake_bread_access", "food_engine"]
+  }
+}
+```
+
+`score-draft-fixture.ts`는 최소한 다음을 확인한다.
+
+- already solved role이 반복되면 saturation penalty가 적용된다.
+- broken/plan anchor는 초반 픽에서 충분히 높은 가중치를 받는다.
+- ADP가 낮은 카드는 return likelihood가 낮게 나온다.
+- 조건부 카드는 deep 설명에 리스크가 포함된다.
+- 추천 결과가 단순 WtdPWR 정렬과 다른 이유를 설명할 수 있다.
 
 ## 초기에는 DB 없이 시작
 
@@ -183,3 +252,4 @@ raw source
 - 다수 사용자의 피드백 수집
 - 통계 업데이트 자동화
 
+DB를 도입하더라도 카드/전략 프로필의 source of truth는 Git으로 관리되는 normalized/manual 데이터 파일로 유지한다.

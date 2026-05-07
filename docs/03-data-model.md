@@ -112,10 +112,13 @@ zh-CN: name → en.name
 ```ts
 type TagCategory =
   | "strategy"
+  | "role"
   | "resource"
   | "action"
   | "timing"
   | "card_type"
+  | "draft"
+  | "card_pool"
   | "risk"
   | "scoring";
 
@@ -145,6 +148,57 @@ early_engine
 late_scoring
 conditional
 ```
+
+## StrategyRole
+
+드래프트 추천 엔진에서 쓰는 전략 역할 사전이다. 일반 태그보다 더 제품 핵심에 가깝다.
+
+초기 후보:
+
+```text
+plan_anchor
+broken
+field_engine
+grain_supply
+grain_seeds_action_upgrade
+food_engine
+bake_bread_access
+wood_supply
+fence_support
+animal_housing
+animal_completion
+family_growth_support
+delayed_growth_enabler
+occupation_count_enabler
+minor_prerequisite_payoff
+major_improvement_support
+late_bonus_points
+risk_conditional
+```
+
+```ts
+type StrategyRole = {
+  id: string;
+  labels: Record<LocaleCode, string>;
+  description?: Record<LocaleCode, string>;
+  parentId?: string;
+  defaultSaturationLimit?: number;
+};
+```
+
+## ExplanationDepth
+
+추천 설명의 깊이다.
+
+```ts
+type ExplanationDepth = "compact" | "standard" | "deep";
+```
+
+용도:
+
+- `compact`: 실전 중 한 줄 요약
+- `standard`: 기본 추천 이유, 리스크, 다음 픽 방향
+- `deep`: score component, 역할 커버리지, 포화도, 돌아올 가능성, 운영 시퀀스, 학습 메모
 
 ## TimingTag
 
@@ -185,7 +239,14 @@ replacement_effect
 MVP에서는 완전한 룰 엔진이 아니라 구조화된 해설 태그로 사용한다.
 
 ```ts
-type MechanicConfidence = "verified" | "manual" | "inferred" | "unverified";
+type MechanicConfidence =
+  | "manual_verified"
+  | "official_verified"
+  | "bga_verified"
+  | "stat_inferred"
+  | "text_inferred"
+  | "community_inferred"
+  | "unverified";
 
 type CardMechanic = {
   id: string;
@@ -254,6 +315,155 @@ type CardStatRow = {
 };
 ```
 
+## CardPoolProfile
+
+특정 시점의 카드 풀과 ban/filter 상태다.
+
+v0에서는 BGA Arena active pool을 기본값으로 둔다. 공개 서비스에서 제외 카드가 draft 중 보일 일은 거의 없지만, 카드 검색과 데이터 관리 화면에서는 카드가 왜 빠졌는지 설명할 수 있어야 한다.
+
+```ts
+type CardPoolStatus =
+  | "active"
+  | "weak_ban"
+  | "strong_ban"
+  | "rules_ban"
+  | "not_in_bga"
+  | "unknown";
+
+type CardPoolProfile = {
+  id: string;
+  name: string;
+  sourceRefs: string[];
+  collectedAt?: string;
+  playerCount?: number;
+  cardStatuses: Record<string, CardPoolStatus>;
+  notes?: string;
+};
+```
+
+## CardStrategyProfile
+
+드래프트 추천과 카드 상세의 전략 설명을 위한 수동/반자동 큐레이션 데이터다.
+
+```ts
+type StrategyConfidence =
+  | "manual_verified"
+  | "stat_inferred"
+  | "text_inferred"
+  | "unverified";
+
+type TimingWindow = "early" | "mid" | "late" | "anytime";
+
+type CardStrategyProfile = {
+  cardId: string;
+  cardPoolProfileId?: string;
+  arenaActive: boolean;
+  roles: string[];
+  isBroken?: boolean;
+  isPlanAnchor?: boolean;
+  solves: string[];
+  increasesNeedFor: string[];
+  saturationPenaltyTo: string[];
+  synergyWith: string[];
+  conflictsWith: string[];
+  riskTags: string[];
+  timingWindow: TimingWindow;
+  operatingSequence?: Record<LocaleCode, string[]>;
+  nextPickGuidance?: Record<LocaleCode, string[]>;
+  explanation: {
+    compact?: Record<LocaleCode, string>;
+    standard?: Record<LocaleCode, string>;
+    deep?: Record<LocaleCode, string>;
+  };
+  sourceRefs: string[];
+  confidence: StrategyConfidence;
+  updatedAt: string;
+};
+```
+
+예:
+
+```text
+밭일 감독이 field access를 해결하면,
+추가 밭갈기/농지 계열 카드에는 saturation penalty가 붙고,
+다음 픽에서는 grain supply, bake-bread access, food stability 쪽 가치가 오른다.
+```
+
+## DraftSession
+
+사용자가 드래프트 중 본 정보와 고른 카드를 기록하는 세션이다.
+
+```ts
+type DraftFormat = {
+  initialPackSize: 8 | 9 | 10;
+  cardsKept: 7;
+  totalPicks: 7;
+};
+
+type DraftCardType = "occupation" | "minor_improvement";
+
+type DraftSession = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  playerCount: 4;
+  cardPoolProfileId: string;
+  draftFormat: DraftFormat;
+  draftCardType: DraftCardType;
+  explanationDepth: ExplanationDepth;
+  picks: DraftPick[];
+  pickedCardIds: string[];
+  seenCardIds: string[];
+  passedCardIds: string[];
+};
+
+type DraftPick = {
+  pickNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  inputMode: "full_pack" | "selected_only" | "corrected_pack";
+  offeredCardIds: string[];
+  selectedCardId?: string;
+  passedCardIds?: string[];
+  source: "manual" | "ocr" | "prediction";
+  createdAt: string;
+};
+```
+
+입력 원칙:
+
+- 1~4픽은 `full_pack`을 기본으로 한다.
+- 5~7픽은 `selected_only`를 기본으로 하되, 예측과 실제 visible pack이 다르면 `corrected_pack`을 허용한다.
+- 상대가 가져간 카드는 확정하지 않고, 사용자가 본 카드와 지나간 카드만 저장한다.
+
+## DraftRecommendation
+
+추천 엔진의 출력 타입이다. UI는 이 객체를 렌더링한다.
+
+```ts
+type ReturnLikelihood = "unlikely" | "possible" | "likely" | "unknown";
+
+type DraftRecommendation = {
+  sessionId: string;
+  pickNumber: number;
+  cardId: string;
+  rank: number;
+  score: number;
+  components: {
+    statStrength?: number;
+    brokenOrAnchor?: number;
+    synergy?: number;
+    roleCoverage?: number;
+    saturationPenalty?: number;
+    riskPenalty?: number;
+    returnUrgency?: number;
+    confidence?: number;
+  };
+  returnLikelihood: ReturnLikelihood;
+  reasons: Record<ExplanationDepth, string[]>;
+  risks: string[];
+  nextPickDirection: string[];
+};
+```
+
 ## Combo
 
 콤보는 단순 카드 묶음이 아니라 전략 설명 단위다.
@@ -309,4 +519,3 @@ type GuideMeta = {
   updatedAt: string;
 };
 ```
-
