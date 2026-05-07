@@ -41,10 +41,9 @@ const schemaGate: Gate = {
     },
     {
       id: "general-or-fallback-recommendation",
-      coverage: "partial",
-      fixtureIds: ["missing-profile-warning-and-evaluation-meta"],
-      evidence: ["missing-profile card remains evaluable with metadata"],
-      reviewNote: "No explicit general_value_candidate or fallback_filler_candidate assertion yet."
+      coverage: "direct",
+      fixtureIds: ["fallback-filler-candidate"],
+      evidence: ["fallback_filler_candidate, fallback_basic metadata, and missing-data warnings"]
     },
     {
       id: "missing-profile-warning-and-evaluation-meta",

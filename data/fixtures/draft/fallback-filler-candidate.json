@@ -1,0 +1,36 @@
+{
+  "id": "fallback-filler-candidate",
+  "description": "A card with only base card data should still produce a fallback candidate group and visible missing-data metadata.",
+  "input": {
+    "pickNumber": 7,
+    "pickedCardIds": [],
+    "seenCardIds": [],
+    "passedCardIds": [],
+    "offeredCardIds": ["minor-fallback-token"]
+  },
+  "expected": {
+    "topCardId": "minor-fallback-token",
+    "candidateGroupIncludes": [
+      { "cardId": "minor-fallback-token", "value": "fallback_filler_candidate" }
+    ],
+    "returnLikelihood": [
+      { "cardId": "minor-fallback-token", "value": "unknown" }
+    ],
+    "warningIncludes": [
+      { "cardId": "minor-fallback-token", "value": "stat" },
+      { "cardId": "minor-fallback-token", "value": "strategy profile" },
+      { "cardId": "minor-fallback-token", "value": "translation" }
+    ],
+    "evaluationMetaIncludes": [
+      { "cardId": "minor-fallback-token", "confidence": "low" },
+      { "cardId": "minor-fallback-token", "method": "fallback_basic" },
+      { "cardId": "minor-fallback-token", "missingDataIncludes": "stat" },
+      { "cardId": "minor-fallback-token", "missingDataIncludes": "strategy_profile" },
+      { "cardId": "minor-fallback-token", "missingDataIncludes": "translation" }
+    ],
+    "reasonExcludes": [
+      { "cardId": "minor-fallback-token", "depth": "standard", "value": "missing" },
+      { "cardId": "minor-fallback-token", "depth": "compact", "value": "missing" }
+    ]
+  }
+}

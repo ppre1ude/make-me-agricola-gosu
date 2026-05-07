@@ -17,7 +17,8 @@
     "minor-seed-cart": "active",
     "minor-snack-basket": "active",
     "occ-flex-merchant": "active",
-    "minor-risky-bonus": "active"
+    "minor-risky-bonus": "active",
+    "minor-fallback-token": "active"
   },
   "notes": "Prototype pool for validating draft scoring behavior before importing the real BGA Arena snapshot."
 }

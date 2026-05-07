@@ -154,5 +154,17 @@
     "sourceRefs": ["manual-prototype-seed"],
     "createdAt": "2026-05-08",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "minor-fallback-token",
+    "type": "minor_improvement",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["fallback"],
+    "timingTagIds": ["on_play_minor"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
   }
 ]

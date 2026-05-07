@@ -5,8 +5,8 @@ Status: Draft
 Latest checkpoint:
 
 ```text
-Schema Stabilization Gate: closed by 7 passing fixtures.
-Domain Logic Gate: 15 passing fixtures; pending human review.
+Schema Stabilization Gate: 7/7 direct fixture gate coverage.
+Domain Logic Gate: 16 passing fixtures; pending human review.
 Fixture Gate Report: available through yarn report:fixture-gates.
 ```
 
