@@ -1,7 +1,12 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateDraftDataSet, type DraftDataSet, type DraftFixture } from "../src/features/draft/index.ts";
+import {
+  validateDraftDataSet,
+  type DraftDataSet,
+  type DraftFeedbackEvent,
+  type DraftFixture
+} from "../src/features/draft/index.ts";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -15,7 +20,8 @@ const data: DraftDataSet = {
 };
 
 const fixtures = await readDraftFixtures();
-const result = validateDraftDataSet(data, fixtures);
+const feedbackEvents = await readDraftFeedbackEvents();
+const result = validateDraftDataSet(data, fixtures, feedbackEvents);
 
 for (const issue of result.issues) {
   const label = issue.severity.toUpperCase();
@@ -38,6 +44,14 @@ async function readDraftFixtures(): Promise<DraftFixture[]> {
   const fixtureDir = path.join(rootDir, "data/fixtures/draft");
   const fixtureFiles = (await readdir(fixtureDir)).filter((file) => file.endsWith(".json"));
   return Promise.all(fixtureFiles.map((file) => readJson<DraftFixture>(path.join("data/fixtures/draft", file))));
+}
+
+async function readDraftFeedbackEvents(): Promise<DraftFeedbackEvent[]> {
+  const fixtureDir = path.join(rootDir, "data/fixtures/draft-feedback");
+  const fixtureFiles = (await readdir(fixtureDir)).filter((file) => file.endsWith(".json"));
+  return Promise.all(
+    fixtureFiles.map((file) => readJson<DraftFeedbackEvent>(path.join("data/fixtures/draft-feedback", file)))
+  );
 }
 
 async function readJson<T>(relativePath: string): Promise<T> {

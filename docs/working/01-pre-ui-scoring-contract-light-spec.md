@@ -85,6 +85,10 @@ This spec does not include:
 - probabilistic table modeling
 - automatic learning from user disagreement
 
+It may include a neutral feedback event contract. That contract records a user
+choice that differs from the model recommendation, but it must not label the
+model as wrong or update scoring automatically.
+
 ## Existing Baseline
 
 Current code already has:
@@ -450,6 +454,28 @@ Stretch fixtures:
 - `late-pick-candidate-set-before-tier`
 - `high-pass-regret-plan-anchor-creates-pivot-hint`
 - `model-user-disagreement-recorded-without-judgment`
+
+## Feedback Event Contract
+
+The first feedback event is neutral:
+
+```text
+model_user_disagreement
+```
+
+Purpose:
+
+- record that the user picked a different card than the model top pick
+- preserve the draft input and recommendation list that produced the result
+- keep the event available for later human review or fixture creation
+
+Policy:
+
+- The event must not mean the model was wrong.
+- The event must keep `reviewState: "unreviewed"` until a person reviews it.
+- Possible causes should stay neutral, such as pilot preference, missing screen
+  context, strategy disagreement, input error, or unknown.
+- Validation should reject unsupported judgment fields.
 
 ## Thin Strategy Data Slice
 

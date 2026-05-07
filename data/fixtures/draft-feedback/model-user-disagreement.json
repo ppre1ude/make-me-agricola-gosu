@@ -1,0 +1,17 @@
+{
+  "id": "model-user-disagreement",
+  "eventType": "model_user_disagreement",
+  "occurredAt": "2026-05-08T00:00:00.000Z",
+  "input": {
+    "pickNumber": 2,
+    "pickedCardIds": [],
+    "seenCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-late-points"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-late-points"]
+  },
+  "recommendationCardIds": ["occ-field-watchman", "minor-grain-supply", "minor-late-points"],
+  "modelTopCardId": "occ-field-watchman",
+  "userSelectedCardId": "minor-grain-supply",
+  "reviewState": "unreviewed",
+  "possibleCauses": ["pilot_user_preference"]
+}

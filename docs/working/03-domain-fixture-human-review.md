@@ -17,17 +17,17 @@ coach.
 ```text
 Schema Stabilization Gate: 7/7 direct fixture gate coverage.
 Domain Logic Gate: 17 passing fixtures.
-Stretch Fixture Coverage: 4/5 direct.
+Stretch Fixture Coverage: 5/5 direct.
 Human strategy review: pending.
 ```
 
-The remaining stretch case is deferred:
+The feedback stretch case is covered by a neutral feedback event fixture:
 
 ```text
 model-user-disagreement-recorded-without-judgment
 ```
 
-It should wait until a feedback event contract exists.
+It records the user choosing a different card without labeling the model wrong.
 
 ## Review Commands
 
@@ -44,7 +44,7 @@ Expected baseline:
 17 draft fixtures passed.
 Schema Stabilization Gate: 7 direct, 0 partial, 0 missing.
 Domain Logic Gate: 14 direct, 1 shared, 0 partial, 0 missing.
-Stretch Cases: 4 direct, 1 missing.
+Stretch Cases: 5 direct, 0 missing.
 ```
 
 ## Review Verdicts
@@ -115,6 +115,7 @@ For every fixture, answer:
 | `late-pick-candidate-set-before-tier` | Does late pick candidate fit beat raw tier? | Confirm executable food support beats conditional points. |
 | `plan-shift-hint-high-impact` | Does a high-impact pick justify a pivot hint? | Confirm plan-shift hint appears only for true pivot cards. |
 | `broken-card-resists-saturation` | Does broken strength survive but not ignore saturation? | Confirm broken duplicate lands between food follow-up and weak points. |
+| `model-user-disagreement` | Can user disagreement be recorded without judgment? | Confirm the event preserves user choice without saying the model was wrong. |
 
 ## Reviewer Output Template
 

@@ -1,10 +1,11 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { DraftFixture, DraftFixtureExpected } from "../src/features/draft/index.ts";
+import type { DraftFeedbackEvent, DraftFixture, DraftFixtureExpected } from "../src/features/draft/index.ts";
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const fixtureDir = path.join(rootDir, "data/fixtures/draft");
+const feedbackFixtureDir = path.join(rootDir, "data/fixtures/draft-feedback");
 const minimumDomainFixtureCount = 15;
 
 type CoverageLevel = "direct" | "shared" | "partial" | "missing";
@@ -197,15 +198,15 @@ const stretchCases: GateCase[] = [
   },
   {
     id: "model-user-disagreement-recorded-without-judgment",
-    coverage: "missing",
-    fixtureIds: [],
-    evidence: [],
-    reviewNote: "Deferred until feedback events exist."
+    coverage: "direct",
+    fixtureIds: ["model-user-disagreement"],
+    evidence: ["neutral feedback event records user selection without model-wrong judgment"]
   }
 ];
 
 const fixtures = await readFixtures();
-const fixtureIds = new Set(fixtures.map((fixture) => fixture.id));
+const feedbackEvents = await readFeedbackEvents();
+const fixtureIds = new Set([...fixtures.map((fixture) => fixture.id), ...feedbackEvents.map((event) => event.id)]);
 const allGateCases = [...schemaGate.cases, ...domainGate.cases, ...stretchCases];
 const missingReferencedFixtureIds = findMissingReferencedFixtureIds(allGateCases, fixtureIds);
 
@@ -228,6 +229,17 @@ async function readFixtures(): Promise<DraftFixture[]> {
   return fixtures.sort((a, b) => a.id.localeCompare(b.id));
 }
 
+async function readFeedbackEvents(): Promise<DraftFeedbackEvent[]> {
+  const fixtureFiles = (await readdir(feedbackFixtureDir)).filter((file) => file.endsWith(".json")).sort();
+  const events: DraftFeedbackEvent[] = [];
+
+  for (const file of fixtureFiles) {
+    events.push(await readJson<DraftFeedbackEvent>(path.join(feedbackFixtureDir, file)));
+  }
+
+  return events.sort((a, b) => a.id.localeCompare(b.id));
+}
+
 async function readJson<T>(absolutePath: string): Promise<T> {
   return JSON.parse(await readFile(absolutePath, "utf8")) as T;
 }
@@ -235,6 +247,7 @@ async function readJson<T>(absolutePath: string): Promise<T> {
 function printFixtureGateReport(fixtures: DraftFixture[]): void {
   console.log("# Draft Fixture Gate Report\n");
   console.log(`Fixture count: ${fixtures.length}`);
+  console.log(`Feedback fixture count: ${feedbackEvents.length}`);
   console.log(`Domain fixture count target: ${minimumDomainFixtureCount}+`);
   console.log(`Domain fixture count status: ${fixtures.length >= minimumDomainFixtureCount ? "covered" : "missing"}\n`);
 

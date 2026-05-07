@@ -228,6 +228,28 @@ export type DraftDataIndex = {
 export type DraftFixtureInput = Partial<DraftScoringInput> &
   Pick<DraftScoringInput, "pickNumber" | "offeredCardIds">;
 
+export type DraftFeedbackEventType = "model_user_disagreement";
+export type DraftFeedbackReviewState = "unreviewed" | "reviewed";
+export type DraftFeedbackPossibleCause =
+  | "pilot_user_preference"
+  | "screen_context_missing"
+  | "strategy_disagreement"
+  | "input_error"
+  | "unknown";
+
+export type DraftFeedbackEvent = {
+  id: string;
+  eventType: DraftFeedbackEventType;
+  occurredAt: string;
+  input: DraftFixtureInput;
+  recommendationCardIds: string[];
+  modelTopCardId: string;
+  userSelectedCardId: string;
+  reviewState: DraftFeedbackReviewState;
+  possibleCauses?: DraftFeedbackPossibleCause[];
+  note?: string;
+};
+
 export type ComponentAssertion = {
   cardId: string;
   component: keyof ScoreComponents;

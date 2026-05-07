@@ -9,6 +9,10 @@ import type {
   DraftCandidateGroup,
   DraftDataSet,
   DraftEvaluationMeta,
+  DraftFeedbackEvent,
+  DraftFeedbackEventType,
+  DraftFeedbackPossibleCause,
+  DraftFeedbackReviewState,
   DraftFixture,
   ExplanationDepth,
   ReturnLikelihood,
@@ -51,6 +55,27 @@ const CARD_POOL_STATUSES = new Set<CardPoolStatus>([
   "inactive"
 ]);
 const TRACKING_MODES = new Set<TrackingMode>(["full_pack", "selected_only"]);
+const FEEDBACK_EVENT_TYPES = new Set<DraftFeedbackEventType>(["model_user_disagreement"]);
+const FEEDBACK_REVIEW_STATES = new Set<DraftFeedbackReviewState>(["unreviewed", "reviewed"]);
+const FEEDBACK_POSSIBLE_CAUSES = new Set<DraftFeedbackPossibleCause>([
+  "pilot_user_preference",
+  "screen_context_missing",
+  "strategy_disagreement",
+  "input_error",
+  "unknown"
+]);
+const FEEDBACK_EVENT_KEYS = new Set([
+  "id",
+  "eventType",
+  "occurredAt",
+  "input",
+  "recommendationCardIds",
+  "modelTopCardId",
+  "userSelectedCardId",
+  "reviewState",
+  "possibleCauses",
+  "note"
+]);
 const SATURATION_BEHAVIORS = new Set<SaturationBehavior>([
   "hard_cap",
   "soft_cap",
@@ -119,7 +144,11 @@ const FIXTURE_EXPECTED_KEYS = new Set([
   "reasonExcludes"
 ]);
 
-export function validateDraftDataSet(data: DraftDataSet, fixtures: DraftFixture[] = []): ValidationResult {
+export function validateDraftDataSet(
+  data: DraftDataSet,
+  fixtures: DraftFixture[] = [],
+  feedbackEvents: DraftFeedbackEvent[] = []
+): ValidationResult {
   const issues: ValidationIssue[] = [];
   const cardIds = validateCards(data.cards, issues);
   const roleIds = validateStrategyRoles(data.strategyRoles, issues);
@@ -129,6 +158,7 @@ export function validateDraftDataSet(data: DraftDataSet, fixtures: DraftFixture[
   validateStrategyProfiles(data.strategyProfiles, cardIds, roleIds, issues);
   validateCardPoolProfile(data.cardPoolProfile, cardIds, issues);
   validateFixtures(fixtures, cardIds, roleIds, issues);
+  validateFeedbackEvents(feedbackEvents, cardIds, issues);
 
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
   const warningCount = issues.length - errorCount;
@@ -424,6 +454,96 @@ function validateFixtures(
       }
       requireString(assertion.value, `${path}.expected.reasonExcludes.value`, issues);
     }
+  });
+}
+
+function validateFeedbackEvents(
+  feedbackEvents: DraftFeedbackEvent[],
+  cardIds: Set<string>,
+  issues: ValidationIssue[]
+): void {
+  feedbackEvents.forEach((event, index) => {
+    const path = `feedbackEvents[${index}]`;
+    const input = event.input;
+
+    for (const key of Object.keys(event)) {
+      if (!FEEDBACK_EVENT_KEYS.has(key)) {
+        addIssue(issues, "error", `${path}.${key}`, `unsupported feedback event field "${key}"`);
+      }
+    }
+
+    requireString(event.id, `${path}.id`, issues);
+    if (!FEEDBACK_EVENT_TYPES.has(event.eventType)) {
+      addIssue(issues, "error", `${path}.eventType`, `invalid feedback event type "${event.eventType}"`);
+    }
+    if (typeof event.occurredAt !== "string" || Number.isNaN(Date.parse(event.occurredAt))) {
+      addIssue(issues, "error", `${path}.occurredAt`, "expected ISO date string");
+    }
+
+    if (!isPickNumber(input.pickNumber)) {
+      addIssue(issues, "error", `${path}.input.pickNumber`, `invalid pick number "${input.pickNumber}"`);
+    }
+    validateCardReferences(input.offeredCardIds, cardIds, `${path}.input.offeredCardIds`, issues);
+    validateCardReferences(input.pickedCardIds ?? [], cardIds, `${path}.input.pickedCardIds`, issues);
+    validateCardReferences(input.seenCardIds ?? [], cardIds, `${path}.input.seenCardIds`, issues);
+    validateCardReferences(input.passedCardIds ?? [], cardIds, `${path}.input.passedCardIds`, issues);
+    validateCardReferences(input.previousPackCardIds ?? [], cardIds, `${path}.input.previousPackCardIds`, issues);
+    validateCardReferences(input.missingFromPreviousPack ?? [], cardIds, `${path}.input.missingFromPreviousPack`, issues);
+
+    if (input.trackingMode !== undefined && !TRACKING_MODES.has(input.trackingMode)) {
+      addIssue(issues, "error", `${path}.input.trackingMode`, `invalid tracking mode "${input.trackingMode}"`);
+    }
+    if (input.trackingMode === "selected_only" && (input.previousPackCardIds !== undefined || input.missingFromPreviousPack !== undefined)) {
+      addIssue(issues, "error", `${path}.input.trackingMode`, "selected_only feedback cannot include full-pack tracking fields");
+    }
+    if (input.previousPackCardIds !== undefined && input.missingFromPreviousPack !== undefined) {
+      const previousPackCardIds = new Set(input.previousPackCardIds);
+      for (const cardId of input.missingFromPreviousPack) {
+        if (!previousPackCardIds.has(cardId)) {
+          addIssue(
+            issues,
+            "error",
+            `${path}.input.missingFromPreviousPack`,
+            `missing card id "${cardId}" was not present in previousPackCardIds`
+          );
+        }
+      }
+    }
+
+    validateCardReferences(event.recommendationCardIds, cardIds, `${path}.recommendationCardIds`, issues);
+    validateCardReference(event.modelTopCardId, cardIds, `${path}.modelTopCardId`, issues);
+    validateCardReference(event.userSelectedCardId, cardIds, `${path}.userSelectedCardId`, issues);
+
+    const offeredCardIds = new Set(input.offeredCardIds);
+    const recommendationCardIds = new Set(event.recommendationCardIds);
+    if (!offeredCardIds.has(event.modelTopCardId)) {
+      addIssue(issues, "error", `${path}.modelTopCardId`, "model top card must be in offeredCardIds");
+    }
+    if (!offeredCardIds.has(event.userSelectedCardId)) {
+      addIssue(issues, "error", `${path}.userSelectedCardId`, "user selected card must be in offeredCardIds");
+    }
+    if (!recommendationCardIds.has(event.modelTopCardId)) {
+      addIssue(issues, "error", `${path}.modelTopCardId`, "model top card must be in recommendationCardIds");
+    }
+    if (!recommendationCardIds.has(event.userSelectedCardId)) {
+      addIssue(issues, "error", `${path}.userSelectedCardId`, "user selected card must be in recommendationCardIds");
+    }
+    if (event.eventType === "model_user_disagreement" && event.modelTopCardId === event.userSelectedCardId) {
+      addIssue(issues, "error", `${path}.userSelectedCardId`, "disagreement event requires a different selected card");
+    }
+
+    if (!FEEDBACK_REVIEW_STATES.has(event.reviewState)) {
+      addIssue(issues, "error", `${path}.reviewState`, `invalid feedback review state "${event.reviewState}"`);
+    }
+    if (event.possibleCauses !== undefined) {
+      requireArray(event.possibleCauses, `${path}.possibleCauses`, issues);
+      for (const cause of event.possibleCauses) {
+        if (!FEEDBACK_POSSIBLE_CAUSES.has(cause)) {
+          addIssue(issues, "error", `${path}.possibleCauses`, `invalid feedback possible cause "${cause}"`);
+        }
+      }
+    }
+    if (event.note !== undefined) requireString(event.note, `${path}.note`, issues);
   });
 }
 
