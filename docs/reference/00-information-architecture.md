@@ -1,4 +1,4 @@
-# 02 Information Architecture
+# 00 Information Architecture
 
 ## 사이트 맵
 

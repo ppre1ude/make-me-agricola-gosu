@@ -1,4 +1,4 @@
-# 06 OCR And Tracking
+# 02 OCR And Tracking
 
 ## 목표
 

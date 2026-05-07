@@ -1,4 +1,4 @@
-# 11 Advanced Strategy Framework
+# 06 Advanced Strategy Framework
 
 ## 목적
 

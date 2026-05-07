@@ -1,4 +1,4 @@
-# 10 Official Core Rules
+# 05 Official Core Rules
 
 ## 목적
 

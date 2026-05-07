@@ -1,4 +1,4 @@
-# 09 Open Questions
+# 04 Open Questions
 
 ## 가장 먼저 결정할 것
 

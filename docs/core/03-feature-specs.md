@@ -1,4 +1,6 @@
-# 05 Feature Specs
+# 03 Feature Specs
+
+이 문서는 사용자가 만나는 핵심 기능의 행동 계약을 정의한다. Draft Memory Coach, 카드 검색, 카드 상세, 전략 가이드가 어떤 입력을 받고 어떤 판단 근거를 보여야 하는지 정한다.
 
 ## Draft Memory Coach
 

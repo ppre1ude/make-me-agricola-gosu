@@ -1,4 +1,4 @@
-# 12 Pre-UI Engineering Review
+# 00 Pre-UI Engineering Review
 
 ## 목적
 
@@ -25,9 +25,9 @@ UI 전에 scoring contract, data validation, fixture matrix를 먼저 닫는다.
 
 관련 문서:
 
-- [03 Data Model](./03-data-model.md)
-- [05 Feature Specs](./05-feature-specs.md)
-- [07 Roadmap](./07-roadmap.md)
+- [02 Data Model](../core/02-data-model.md)
+- [03 Feature Specs](../core/03-feature-specs.md)
+- [04 Roadmap](../core/04-roadmap.md)
 
 ### 코드 아키텍처
 
