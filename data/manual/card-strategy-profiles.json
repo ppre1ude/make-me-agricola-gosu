@@ -290,5 +290,29 @@
     "sourceRefs": ["manual-prototype-seed"],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-field-prodigy",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": ["broken", "field_engine", "grain_seeds_action_upgrade"],
+    "isBroken": true,
+    "isPlanAnchor": false,
+    "solves": ["field_engine"],
+    "increasesNeedFor": ["grain_supply", "bake_bread_access"],
+    "saturationPenaltyTo": ["field_engine"],
+    "synergyWith": ["minor-grain-supply", "minor-bake-access"],
+    "conflictsWith": [],
+    "riskTags": ["needs_followup_grain_or_bake"],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": ["grain_supply", "bake_bread_access"]
+    },
+    "explanation": {
+      "compact": { "ko-KR": "Second broken field card for saturation-resistance coverage." }
+    },
+    "sourceRefs": ["manual-prototype-seed"],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
   }
 ]

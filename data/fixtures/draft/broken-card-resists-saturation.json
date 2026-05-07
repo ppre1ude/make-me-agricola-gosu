@@ -1,0 +1,30 @@
+{
+  "id": "broken-card-resists-saturation",
+  "description": "A second broken field card should remain a real candidate after Field Watchman, but still expose saturation pressure.",
+  "input": {
+    "pickNumber": 3,
+    "pickedCardIds": ["occ-field-watchman"],
+    "seenCardIds": ["occ-field-watchman", "occ-field-prodigy", "occ-food-engine", "minor-late-points"],
+    "passedCardIds": [],
+    "offeredCardIds": ["occ-field-prodigy", "occ-food-engine", "minor-late-points"]
+  },
+  "expected": {
+    "topCardId": "occ-food-engine",
+    "downrankedBelow": [
+      { "cardId": "occ-field-prodigy", "belowCardId": "occ-food-engine" },
+      { "cardId": "minor-late-points", "belowCardId": "occ-field-prodigy" }
+    ],
+    "componentAtLeast": [
+      { "cardId": "occ-field-prodigy", "component": "brokenOrAnchor", "value": 10 },
+      { "cardId": "occ-field-prodigy", "component": "passRegret", "value": 7 },
+      { "cardId": "occ-field-prodigy", "component": "saturationPenalty", "value": 5 }
+    ],
+    "candidateGroupIncludes": [
+      { "cardId": "occ-field-prodigy", "value": "broken_candidate" },
+      { "cardId": "occ-field-prodigy", "value": "high_pass_regret_candidate" }
+    ],
+    "hasRisk": [
+      { "cardId": "occ-field-prodigy", "risk": "role_saturation" }
+    ]
+  }
+}

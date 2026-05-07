@@ -6,7 +6,8 @@ Latest checkpoint:
 
 ```text
 Schema Stabilization Gate: 7/7 direct fixture gate coverage.
-Domain Logic Gate: 16 passing fixtures; pending human review.
+Domain Logic Gate: 17 passing fixtures; pending human review.
+Stretch Fixture Coverage: 4/5 direct; feedback event fixture deferred.
 Fixture Gate Report: available through yarn report:fixture-gates.
 ```
 

@@ -166,5 +166,17 @@
     "sourceRefs": ["manual-prototype-seed"],
     "createdAt": "2026-05-08",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "id": "occ-field-prodigy",
+    "type": "occupation",
+    "decks": ["prototype"],
+    "editions": ["prototype"],
+    "availability": { "bga": true, "revised": true },
+    "tagIds": ["field", "grain", "broken"],
+    "timingTagIds": ["on_play_occupation"],
+    "sourceRefs": ["manual-prototype-seed"],
+    "createdAt": "2026-05-08",
+    "updatedAt": "2026-05-08"
   }
 ]

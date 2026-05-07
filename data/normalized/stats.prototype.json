@@ -154,5 +154,18 @@
     "plays": 260,
     "wtdPwr": 5.2,
     "tier": "B"
+  },
+  {
+    "snapshotId": "prototype-2026-05-08",
+    "cardId": "occ-field-prodigy",
+    "rank": 8,
+    "pwr": 5.1,
+    "adp": 1.8,
+    "apr": 2.1,
+    "deals": 1000,
+    "drafted": 860,
+    "plays": 780,
+    "wtdPwr": 7.1,
+    "tier": "A"
   }
 ]

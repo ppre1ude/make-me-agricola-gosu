@@ -116,5 +116,14 @@
     "shortText": "Prototype conditional points card for risk fixture coverage.",
     "sourceRefs": ["manual-prototype-seed"],
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-field-prodigy",
+    "locale": "ko-KR",
+    "name": "Field Prodigy",
+    "aliases": ["Field Prodigy"],
+    "shortText": "Prototype broken field card used for saturation-resistance fixture coverage.",
+    "sourceRefs": ["manual-prototype-seed"],
+    "updatedAt": "2026-05-08"
   }
 ]

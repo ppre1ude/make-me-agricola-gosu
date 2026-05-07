@@ -173,10 +173,9 @@ const domainGate: Gate = {
 const stretchCases: GateCase[] = [
   {
     id: "broken-card-resists-but-does-not-ignore-saturation",
-    coverage: "missing",
-    fixtureIds: [],
-    evidence: [],
-    reviewNote: "Not yet represented by a dedicated stretch fixture."
+    coverage: "direct",
+    fixtureIds: ["broken-card-resists-saturation"],
+    evidence: ["broken duplicate stays above weak points but below food follow-up with saturation asserted"]
   },
   {
     id: "middle-pick-high-pass-regret-beats-weak-support",
