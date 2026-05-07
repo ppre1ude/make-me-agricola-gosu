@@ -164,28 +164,64 @@ field_engine
 grain_supply
 grain_seeds_action_upgrade
 food_engine
+food_support
+food_conversion
+food_self_sufficiency
 bake_bread_access
 wood_supply
+clay_supply
+reed_supply
+wood_sink
 fence_support
 animal_housing
 animal_completion
 family_growth_support
+room_building
 delayed_growth_enabler
 occupation_count_enabler
 minor_prerequisite_payoff
 major_improvement_support
 late_bonus_points
+wood_to_points
 risk_conditional
 ```
 
 ```ts
+type SaturationBehavior =
+  | "hard_cap"
+  | "soft_cap"
+  | "stackable"
+  | "resource_convertible"
+  | "condition_based";
+
 type StrategyRole = {
   id: string;
   labels: Record<LocaleCode, string>;
   description?: Record<LocaleCode, string>;
   parentId?: string;
   defaultSaturationLimit?: number;
+  saturationBehavior?: SaturationBehavior;
+  sinkRoleIds?: string[];
 };
+```
+
+`saturationBehavior`는 role 중복을 어떻게 해석할지 정한다.
+
+- `hard_cap`: 농경 seed/field처럼 1~2장 이후 강하게 포화되는 역할
+- `soft_cap`: wood supply처럼 여러 장이 좋지만 3~4장째부터 점차 내려가는 역할
+- `stackable`: 점수 전환처럼 여러 장이 가능하지만 실행 비용을 봐야 하는 역할
+- `resource_convertible`: 자원 소모처와 전환 플랜에 따라 가치가 달라지는 역할
+- `condition_based`: 조건 충족 여부가 핵심인 보너스/콤보 역할
+
+예:
+
+```json
+{
+  "id": "wood_supply",
+  "defaultSaturationLimit": 2,
+  "saturationBehavior": "soft_cap",
+  "sinkRoleIds": ["fence_support", "animal_housing", "room_building", "wood_to_points"]
+}
 ```
 
 ## ExplanationDepth
@@ -363,7 +399,11 @@ type CardStrategyProfile = {
   roles: string[];
   isBroken?: boolean;
   isPlanAnchor?: boolean;
+  brokenReasonTags?: string[];
+  brokenReasonNote?: Record<LocaleCode, string>;
   solves: string[];
+  supports?: string[];
+  partialSolves?: string[];
   increasesNeedFor: string[];
   saturationPenaltyTo: string[];
   synergyWith: string[];
@@ -388,8 +428,16 @@ type CardStrategyProfile = {
 ```text
 밭일 감독이 field access를 해결하면,
 추가 밭갈기/농지 계열 카드에는 saturation penalty가 붙고,
-다음 픽에서는 grain supply, bake-bread access, food stability 쪽 가치가 오른다.
+다음 픽에서는 bake-bread access, food self-sufficiency, wood/fence support, animal coverage, 점수 전환 쪽 가치가 오른다.
 ```
+
+`solves`, `supports`, `partialSolves`는 구분한다.
+
+- `solves`: 카드 한 장이 해당 문제를 실질적으로 해결한다.
+- `supports`: 해당 축을 보조하지만 해결했다고 보지는 않는다.
+- `partialSolves`: 일부 조건에서는 해결에 가깝지만 추가 연결고리가 필요하다.
+
+예를 들어 식량 1~2개를 주는 카드는 `food_support`를 `supports`할 수 있지만, `food_engine`을 `solves`했다고 보지 않는다.
 
 ## DraftSession
 
@@ -417,24 +465,40 @@ type DraftSession = {
   pickedCardIds: string[];
   seenCardIds: string[];
   passedCardIds: string[];
+  missingFromPreviousPacks?: DraftTrackingSignal[];
 };
 
 type DraftPick = {
   pickNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   inputMode: "full_pack" | "selected_only" | "corrected_pack";
   offeredCardIds: string[];
+  previousPackCardIds?: string[];
+  missingFromPreviousPack?: string[];
   selectedCardId?: string;
   passedCardIds?: string[];
   source: "manual" | "ocr" | "prediction";
   createdAt: string;
 };
+
+type DraftTrackingSignal = {
+  pickNumber: number;
+  previousPickNumber?: number;
+  missingCardIds: string[];
+  missingRoleCounts: Record<string, number>;
+  premiumMissingCount: number;
+  roleAvailabilityPressure: Record<string, number>;
+  notes: string[];
+};
 ```
 
 입력 원칙:
 
-- 1~4픽은 `full_pack`을 기본으로 한다.
-- 5~7픽은 `selected_only`를 기본으로 하되, 예측과 실제 visible pack이 다르면 `corrected_pack`을 허용한다.
-- 상대가 가져간 카드는 확정하지 않고, 사용자가 본 카드와 지나간 카드만 저장한다.
+- 1~7픽 모두 `full_pack`을 지원한다.
+- 고수용 기본 흐름은 full tracking이다.
+- 5~7픽에서 이전 pack 대비 사라진 카드를 계산해 `missingFromPreviousPack`과 `DraftTrackingSignal`로 남긴다.
+- `selected_only`는 시간 압박이 큰 quick mode fallback이다.
+- 상대가 가져간 카드는 확정하지 않고, 사용자가 본 카드와 돌아오지 않은 카드만 저장한다.
+- tracking signal은 role availability와 복기 요약에 사용하되, 특정 상대 플랜을 확정하지 않는다.
 
 ## DraftRecommendation
 
@@ -457,12 +521,15 @@ type DraftRecommendation = {
     saturationPenalty?: number;
     riskPenalty?: number;
     returnUrgency?: number;
+    premiumDenial?: number;
+    roleAvailabilityPressure?: number;
     confidence?: number;
   };
   returnLikelihood: ReturnLikelihood;
   reasons: Record<ExplanationDepth, string[]>;
   risks: string[];
   nextPickDirection: string[];
+  candidateGroups?: string[];
 };
 ```
 

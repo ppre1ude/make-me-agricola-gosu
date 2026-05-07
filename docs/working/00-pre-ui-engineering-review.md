@@ -66,6 +66,43 @@ scripts/score-draft-fixtures.ts
 
 남은 일은 TypeScript 전환 자체가 아니라 fixture matrix와 데이터 검증 범위를 넓히는 것이다.
 
+## Grill-Me 결정 요약
+
+구현 전 인터뷰에서 다음 결정을 추가로 닫았다.
+
+1. 추천의 정답 기준은 pick phase별로 다르다.
+   - Pick 1~2: broken card, premium card, 열린 plan anchor를 강하게 본다.
+   - Pick 3~4: 범용 강카드가 여전히 중요하지만, 치명적 결절점 보완 카드는 강카드를 이길 수 있다.
+   - Pick 5~7: 감점 방지, 조건이 충족된 보너스 점수, 생존 안정화, 플랜 마무리 후보군을 먼저 만들고 그 안에서 티어/통계를 본다.
+
+2. broken card끼리 비교할 때는 유연성, follow-up 부담, 테이블 의존성, 통계 강도를 본다.
+
+3. `premiumDenial` 또는 `passRegret` 개념을 둔다.
+   - 의미는 "상대 플랜 추론"이 아니라 "범용 강도/ADP/티어가 높아 넘기기 아까운 카드"다.
+   - 추천 문구는 "상대에게 주면 위험"보다 "넘기기 아까운 범용 강카드"로 표현한다.
+
+4. 부족 역할은 "없음/미충족"으로 단정하지 않는다.
+   - 카드 기반 자립성이 낮은 축
+   - 외부 행동 의존도가 높은 축
+   - 다음 픽에서 보면 좋은 역할
+   로 표현한다.
+
+5. 기본 UX는 현재 드래프트 풀과 내 손패 풀을 동시에 보여주는 균형형이다.
+   - 시각적 우선순위는 현재 드래프트 풀에 둔다.
+   - 손패 풀은 추천의 맥락과 근거를 제공한다.
+
+6. 1~7픽 모두 full visible pack 입력을 지원한다.
+   - 고수용 기본 흐름은 full tracking이다.
+   - selected-only 입력은 quick mode fallback이다.
+
+7. 5~7픽에서 돌아온 pack의 missing cards는 v0에서도 기록하고 약하게 활용한다.
+   - 사라진 카드의 tier/role 요약
+   - role availability pressure
+   - return likelihood 보정
+   - deep explanation
+   에 사용한다.
+   - 특정 상대 플랜이나 특정 상대의 행동은 확정하지 않는다.
+
 ## Scoring Contract
 
 추천 엔진은 UI와 분리된 순수 도메인 모듈이어야 한다.
@@ -89,8 +126,12 @@ UI가 추천 엔진에 넘기는 입력이다.
 
 ```ts
 type DraftScoringInput = {
+  playerCount: number;
+  draftCardType: DraftCardType;
   pickNumber: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   offeredCardIds: string[];
+  previousPackCardIds?: string[];
+  missingFromPreviousPack?: string[];
   pickedCardIds: string[];
   seenCardIds: string[];
   passedCardIds: string[];
@@ -145,6 +186,8 @@ type ScoreComponents = {
   synergy: number;
   returnUrgency: number;
   phaseFit: number;
+  premiumDenial?: number;
+  roleAvailabilityPressure?: number;
   confidence: number;
   saturationPenalty: number;
   riskPenalty: number;
@@ -263,7 +306,7 @@ fixture 15~20개
 2. early plan anchor beats late points
 3. high WtdPWR card downranked when role already solved
 4. Field Watchman 이후 field/plow card saturation
-5. Field Watchman 이후 grain supply/bake access 가점
+5. Field Watchman 이후 bake access/food self-sufficiency/animal-fence coverage 가점
 6. low ADP card marked unlikely to return
 7. high ADP card marked likely to return
 8. conditional card gets risk penalty
@@ -271,9 +314,14 @@ fixture 15~20개
 10. missing strategy profile gets low confidence
 11. late pick prefers hole filling over raw power
 12. conflict card downranked
-13. already solved food engine reduces extra food engine value
+13. food_engine과 food_support를 구분한다
 14. card with next-pick guidance emits nextPickDirection
 15. broken card resists but does not fully ignore saturation
+16. Pick 3~4 premiumDenial/passRegret can beat weak support
+17. Pick 5~7 candidate set first, tier/stat second
+18. wood_supply soft cap applies only after enough supply or without sink
+19. full tracking detects missing field cards and raises role availability pressure weakly
+20. missing cards produce role/tier summary without opponent-plan certainty
 
 ### Fixture Assertion 확장
 
@@ -307,6 +355,12 @@ fixture 15~20개
   ],
   "nextPickIncludes": [
     { "cardId": "occ-field-watchman", "value": "곡식 공급" }
+  ],
+  "candidateGroupIncludes": [
+    { "cardId": "occ-field-watchman", "value": "premium" }
+  ],
+  "trackingSignalIncludes": [
+    { "role": "field_engine", "value": "availability_pressure" }
   ]
 }
 ```
@@ -362,6 +416,61 @@ type CardStrategyProfile = {
   "saturationPenaltyTo": ["field_engine", "minor-swing-plow"]
 }
 ```
+
+role-level saturation은 단순 개수 제한이 아니라 behavior를 가진다.
+
+```ts
+type SaturationBehavior =
+  | "hard_cap"
+  | "soft_cap"
+  | "stackable"
+  | "resource_convertible"
+  | "condition_based";
+```
+
+초기 구현 권장:
+
+- `hard_cap`: field/seed 계열. 1~2장 이후 강하게 감점한다.
+- `soft_cap`: wood supply 계열. 2~3장까지는 높게 보되, wood sink가 없으면 후반 감점한다.
+- `stackable`: 점수 전환 계열. 중복 자체보다 실행 가능성과 비용을 본다.
+- `condition_based`: 조건부 보너스/콤보 계열. 조건 충족 여부가 핵심이다.
+
+음식 역할은 반드시 분리한다.
+
+- `food_engine`: 단일 또는 chain action으로 가족 먹여살리기 플랜을 실질적으로 만든다.
+- `food_support`: 식량 1~2개 보충이나 약한 완충이다. food engine 해결로 보지 않는다.
+- `food_conversion`: 동물/자원/곡식/채소를 음식으로 바꾸는 통로다.
+
+표현 원칙:
+
+```text
+나쁨: 음식 플랜이 없습니다.
+좋음: 식량 플랜의 카드 기반 자립성이 낮아, 주요 설비나 행동 칸 의존도가 높은 상태입니다.
+```
+
+### full tracking signal
+
+5~7픽에서 돌아온 pack은 중요한 정보다.
+
+예:
+
+```text
+1픽에서 본 field/plow 카드 2장이 5픽에 모두 사라졌다.
+```
+
+이때 v0는 다음까지 한다.
+
+- 사라진 카드 기록
+- 사라진 카드의 tier/role 요약
+- 해당 role의 availability pressure 약한 상승
+- 같은 role 후보가 보이면 returnUrgency 또는 nextPickDirection에 약한 반영
+- deep explanation에서 "해당 역할 카드가 빠르게 사라짐" 표시
+
+v0에서 하지 않는 것:
+
+- 특정 상대 플랜 확정
+- 특정 상대가 특정 카드를 집었다는 표현
+- 특정 상대의 다음 행동 예측
 
 ## Architecture Recommendation
 
@@ -458,7 +567,10 @@ Draft input ──▶│ draft scoring engine │
 - fixture가 10개 이상이다.
 - fixture가 ranking, component, risk, return likelihood, nextPickDirection을 검증한다.
 - missing data 정책이 구현되어 있다.
-- brokenReasonTags/brokenReasonNote 도입 여부를 결정했다.
+- brokenReasonTags/brokenReasonNote 도입 여부를 결정했다. 완료: 설명/분류 우선, 강한 scoring modifier 아님
+- full tracking mode와 quick mode 정책이 문서화되어 있다. 완료
+- role saturation behavior와 food role 분리가 fixture에 반영되어 있다.
+- table pressure/role availability pressure fixture가 최소 1~2개 있다.
 ```
 
 ## 남은 의사결정
@@ -469,15 +581,20 @@ Draft input ──▶│ draft scoring engine │
    - 최소 10개
    - 권장 15~20개
 
-2. data validation 확장 범위
+2. role saturation behavior 구현 범위
+   - hard_cap / soft_cap / stackable 우선
+   - resource_convertible / condition_based는 설명 중심으로 시작
+
+3. full tracking signal 구현 범위
+   - missing cards 기록
+   - role/tier 요약
+   - role availability pressure 약한 반영
+
+4. data validation 확장 범위
    - 직접 JS/TS 검증 함수
    - Zod 같은 schema library 사용
 
-3. brokenReasonTags 도입
-   - 설명용으로만 도입
-   - scoring에도 일부 반영
-
-4. package manager
+5. package manager
    - yarn 유지
    - npm 복구 후 npm 기준
 
@@ -486,9 +603,12 @@ Draft input ──▶│ draft scoring engine │
 추천 순서:
 
 1. fixture assertion 확장
-2. fixture 10~15개로 확대
-3. missing data 정책을 fixture로 고정
-4. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
-5. 그 다음 `/draft` UI 시작
+2. role saturation behavior를 `strategy-roles.json`에 추가
+3. `food_engine`, `food_support`, `food_conversion`을 분리
+4. full tracking signal 타입과 계산 함수 추가
+5. fixture 10~15개로 확대
+6. missing data 정책을 fixture로 고정
+7. `brokenReasonTags`와 `brokenReasonNote`를 strategy profile에 추가
+8. 그 다음 `/draft` UI 시작
 
 이 순서를 지키면 UI는 실험용 화면이 아니라, 이미 계약과 검증을 가진 추천 엔진을 렌더링하는 화면이 된다.
