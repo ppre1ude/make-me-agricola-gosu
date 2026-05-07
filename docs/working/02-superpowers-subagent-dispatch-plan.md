@@ -9,6 +9,7 @@ Schema Stabilization Gate: 7/7 direct fixture gate coverage.
 Domain Logic Gate: 17 passing fixtures; pending human review.
 Stretch Fixture Coverage: 4/5 direct; feedback event fixture deferred.
 Fixture Gate Report: available through yarn report:fixture-gates.
+Human Review Guide: docs/working/03-domain-fixture-human-review.md.
 ```
 
 ## Scope
