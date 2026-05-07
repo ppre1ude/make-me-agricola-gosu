@@ -1,4 +1,4 @@
-# 01 Product Requirements
+# 02 Product Requirements
 
 이 문서는 Vision을 구현 가능한 제품 요구사항으로 변환한다. MVP 범위, 포함/제외 기능, 사용자에게 보여야 할 핵심 출력을 정의한다.
 
@@ -12,7 +12,7 @@
 4. 카드 상세 정보
 5. 드래프트 트래킹
 6. 한국어 전략 가이드
-7. 텍스트 판정과 룰링
+7. 텍스트 판정과 cardRuling
 8. 통계와 메타 분석
 9. BGA 스크린샷 인식
 10. 사후 복기와 판세 분석
@@ -51,7 +51,7 @@
 - 현재 픽 추천 순위
 - 추천 이유, 리스크, 돌아올 가능성, 다음 픽 방향 표시
 - 역할 포화도, 역할 공백, role availability pressure 표시
-- 사용자 설정: skill level, goal mode, explanation depth
+- 사용자 설정: skill level, explanation depth
 - 카드 검색과 카드 상세
 - 카드별 통계, 역할 태그, 전략 메모 표시
 - 설명 깊이 설정: compact, standard, deep
@@ -64,7 +64,7 @@
 - 자동 플레이 또는 액션 추천
 - 숨겨진 상대 손패 확정 추론
 - 실물 카드 사진 인식
-- 고급 AI 룰링 생성
+- 고급 AI cardRuling 생성
 - 전체 카드 mechanic 완전 구조화
 - 전체 A~E 카드의 완전한 수동 전략 태깅
 
@@ -86,7 +86,7 @@
 - 내가 이미 고른 카드
 - 내가 본 뒤 넘긴 카드
 - 이전에 봤지만 이번에 사라진 카드
-- skill level과 goal mode
+- skill level
 - 설명 깊이
 
 출력:
@@ -158,7 +158,7 @@
 - 중복되면 가치가 낮아지는 역할
 - 관련 콤보
 - 관련 가이드
-- 룰링 또는 텍스트 판정 메모
+- cardRuling 또는 텍스트 판정 메모
 
 ### Strategy Knowledge Base
 
@@ -205,7 +205,7 @@
 
 ### 정확성
 
-통계, 카드 텍스트, 룰링, 전략 메모는 출처와 업데이트 날짜를 저장한다.
+통계, 카드 텍스트, cardRuling, 전략 메모는 출처와 업데이트 날짜를 저장한다.
 
 카드 효과 해석과 전략 프로필은 confidence를 둔다.
 

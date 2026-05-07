@@ -11,11 +11,12 @@
 - selected-only 입력은 5~7픽의 기본 모델이 아니라 시간 압박이 큰 quick fallback이다.
 - 현재 드래프트 풀과 내 손패 풀은 화면에서 분리해 보여주되, 추천 판단에서는 현재 드래프트 풀이 더 눈에 먼저 들어와야 한다.
 - 설명 깊이는 compact, standard, deep 3단계로 둔다.
-- skill level과 goal mode는 유저가 직접 설정할 수 있다. 추천 순위 자체보다 설명 밀도와 화면 강조를 조정한다.
+- skill level은 유저가 직접 설정할 수 있다. 추천 순위 자체보다 설명 밀도와 화면 강조를 조정한다.
+- goalMode, DraftCoachMode, StudyMode는 v0 도메인에서 사용하지 않는다. 기능 목적은 FeatureContext가 결정한다.
 
 ### 추천 정책
 
-- 추천 기준은 pick phase에 따라 달라진다.
+- 추천 기준은 draftPickBand에 따라 달라진다.
 - Pick 1~2는 broken card, premium card, open-ended plan anchor를 강하게 본다.
 - Pick 3~4는 범용 강도, 현재 손패의 부족 역할, passRegret을 함께 본다.
 - Pick 5~7은 현재 손패 기준 후보군을 먼저 만들고, 그 안에서 티어와 통계를 반영한다.
@@ -80,7 +81,7 @@
    - MiniSearch
    - Algolia
    - Meilisearch
-2. session state는 v0에서 어디에 저장할 것인가?
+2. draft state는 v0에서 어디에 저장할 것인가?
    - memory only
    - localStorage
    - URL encoded state
@@ -103,10 +104,10 @@
 
 ## 다음 결정 권장
 
-도메인 고정 전에 먼저 닫아야 할 것은 다음이다.
+도메인 언어는 [01 Domain Language](../core/01-domain-language.md)에 고정했다. 다음으로 닫아야 할 것은 다음이다.
 
-1. canonical domain language 문서 위치와 이름
-2. `role`, `tag`, `mechanic`, `plan`, `combo`의 경계
-3. `solves`, `supports`, `partialSolves`의 scoring 의미
-4. `passRegret`, `pivotPotential`, `conflictCost`의 초기 weight 정책
-5. TypeScript contract와 문서 계약의 동기화 범위
+1. TypeScript contract와 domain language의 rename/sync 범위
+2. `passRegret`, `pivotPotential`, `conflictCost`의 초기 weight 정책
+3. validation error와 setting mismatch의 복구 UX
+4. 첫 CardPoolProfile snapshot과 StatsSnapshot source of truth
+5. 첫 fixtureConfidence/manual_hypothesis fixture 세트

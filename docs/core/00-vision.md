@@ -33,7 +33,7 @@ Data-building flow: Strategy Knowledge Base
 - 티어
 - 태그
 - 추천 콤보
-- 관련 전략 글과 룰링
+- 관련 전략 글과 카드 판정(cardRuling)
 
 ### 쉽게
 
@@ -98,7 +98,7 @@ BGA 같은 온라인 플레이 중에는 스크린샷을 올려 카드 후보를
 ```text
 BGA Arena Draft Memory Coach
 + 한국어 Agricola strategy knowledge base
-+ 카드 검색/통계/룰링 reference
++ 카드 검색/통계/cardRuling reference
 ```
 
 Agricola Cards나 ReedStoneFood처럼 카드 정보를 보여주는 기존 사이트가 있지만, 한국어 유저 중심의 드래프트 판단, BGA 통계, 텍스트 판정, 전략 가이드까지 연결하는 서비스는 별도 가치가 있다. v0의 차별점은 카드 정보를 많이 보여주는 것이 아니라, 현재 손패에서 왜 이 카드를 집어야 하는지 또는 왜 강한 카드를 내려놔도 되는지 설명하는 것이다.

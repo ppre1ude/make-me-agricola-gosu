@@ -1,4 +1,4 @@
-# 03 Feature Specs
+# 04 Feature Specs
 
 이 문서는 사용자가 만나는 핵심 기능의 행동 계약을 정의한다. Draft Memory Coach, 카드 검색, 카드 상세, 전략 가이드가 어떤 입력을 받고 어떤 판단 근거를 보여야 하는지 정한다.
 
@@ -101,7 +101,7 @@ BGA Arena 드래프트 중 현재 보이는 카드와 내가 이미 고른 카�
 
 시각적 우선순위는 현재 드래프트 풀에 둔다. 드래프트 중 가장 급한 질문은 "지금 무엇을 집을 것인가"이기 때문이다. 다만 제품의 차별점은 내 손패 기준의 맥락화이므로, 손패 진단은 추천 근거로 항상 함께 보여준다.
 
-### Pick phase weighting
+### Draft pick band weighting
 
 추천 가중치는 pick number에 따라 달라진다.
 
@@ -120,15 +120,15 @@ Pick 5-7:
   penalty avoidance, executable bonus points, low-support axes, and risk control rise
 ```
 
-초기 구현에서는 아래처럼 phase를 나눈다.
+초기 구현에서는 아래처럼 draftPickBand를 나눈다. `phase`는 공식 round/harvest 절차에 쓰는 용어이므로 드래프트 추천 구간에는 쓰지 않는다.
 
 ```ts
-type DraftPickPhase = "early_anchor" | "middle_direction" | "late_completion";
+type DraftPickBand = "early_anchor" | "middle_direction" | "late_completion";
 ```
 
-### Pick phase objective
+### Draft pick band objective
 
-추천의 "정답 기준"은 pick phase에 따라 달라진다.
+추천의 "정답 기준"은 draftPickBand에 따라 달라진다.
 
 Pick 1~2:
 
@@ -165,7 +165,7 @@ score =
 + roleCoverage
 + synergy
 + returnUrgency
-+ phaseFit
++ draftPickBandFit
 + passRegret
 + pivotPotential
 + confidence
@@ -181,7 +181,7 @@ score =
 - `roleCoverage`: 현재 손패가 아직 해결하지 못한 역할을 채우는 정도
 - `synergy`: 이미 고른 카드와 직접/역할 기반으로 맞는 정도
 - `returnUrgency`: 지금 안 집으면 돌아오기 어려운 정도
-- `phaseFit`: 현재 pick phase와 카드 timing window의 적합도
+- `draftPickBandFit`: 현재 draftPickBand와 카드 timing window의 적합도
 - `confidence`: 통계 표본과 전략 프로필 신뢰도
 - `saturationPenalty`: 이미 해결한 역할과 중복되는 정도
 - `riskPenalty`: 조건부 카드, 비용 압박, 낮은 play rate, 충돌 태그
@@ -189,7 +189,7 @@ score =
 - `pivotPotential`: 후보 카드가 새 중심 플랜을 만들 수 있는 정도
 - `conflictCost`: 후보 카드가 기존 손패와 충돌하거나 이미 해결한 역할을 과하게 중복하는 비용
 
-`passRegret`은 항상 scoring에 반영한다. 다만 phase별 weight가 다르다.
+`passRegret`은 항상 scoring에 반영한다. 다만 draftPickBand별 weight가 다르다.
 
 ```text
 Pick 1-2:
@@ -222,7 +222,7 @@ Pick 5-7:
 - `solves`가 채워진 역할은 coverage 점수를 낮춘다.
 - `saturationPenaltyTo` 대상 역할 또는 카드에는 감점을 준다.
 - `increasesNeedFor` 대상 역할은 다음 픽 방향과 추천 가점에 반영한다.
-- broken card는 포화도 감점을 완전히 무시하지는 않되, 초반 phase에서는 더 강하게 버틴다.
+- broken card는 포화도 감점을 완전히 무시하지는 않되, 초반 draftPickBand에서는 더 강하게 버틴다.
 
 role category별 포화 방식은 다르게 취급한다.
 
@@ -411,16 +411,10 @@ hand profile을 다시 계산
 
 ### User Settings
 
-v0는 사용자가 직접 실력과 목표를 설정할 수 있게 한다.
+v0는 사용자가 직접 설명 수준을 설정할 수 있게 한다.
 
 ```ts
 type SkillLevel = "beginner" | "intermediate" | "advanced";
-
-type GoalMode =
-  | "quick_pick"
-  | "learn"
-  | "review"
-  | "high_ceiling";
 ```
 
 정책:
@@ -428,12 +422,10 @@ type GoalMode =
 - `beginner`: 용어를 풀어서 설명하고 리스크와 운영 순서를 더 크게 표시한다.
 - `intermediate`: 추천, 대안, 리스크, 다음 픽 방향을 균형 있게 보여준다.
 - `advanced`: 후보군 분류, component breakdown, tracking signal 접근을 쉽게 한다.
-- `quick_pick`: compact 위주
-- `learn`: standard/deep 위주
-- `review`: 선택 차이, 이유, fixture 후보화에 초점
-- `high_ceiling`: 고점, 플랜 전환, 조건부 강카드 설명을 더 강조
 
 추천 순위를 beginner라서 안전픽 위주로 강하게 바꾸지는 않는다.
+
+`goalMode`, `DraftCoachMode`, `StudyMode`는 v0에서 만들지 않는다. 제품 기능 목적은 `FeatureContext`가 결정하고, `skillLevel`은 같은 기능 안에서 설명 밀도와 용어 수준만 조정한다.
 
 ### Feedback Loop
 
@@ -575,7 +567,7 @@ Drafted 대비 Plays가 낮아 조건부 카드일 가능성이 있습니다.
 - 같은 전략축 기반 추천 카드
 - 해결/요구 역할 기반 추천 카드
 
-#### Rulings
+#### CardRuling
 
 - 발동 타이밍
 - 텍스트 주의점

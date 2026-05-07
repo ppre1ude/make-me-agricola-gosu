@@ -114,7 +114,7 @@ v0의 트래킹 목표는 상대 손패를 맞히는 것이 아니라, 사용자
 ### 데이터
 
 ```ts
-type DraftSession = {
+type DraftSequence = {
   id: string;
   createdAt: string;
   updatedAt: string;

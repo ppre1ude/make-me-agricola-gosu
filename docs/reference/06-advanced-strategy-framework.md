@@ -11,7 +11,7 @@
 - 손패 기반 플랜 제안
 - 사용자가 본 카드 기반의 불확실한 역할 경쟁 신호
 - 주요 설비와 누적 칸 상태를 반영한 경고
-- BGA 룰링과 공식 룰링의 차이 표시
+- BGA cardRuling과 공식 cardRuling의 차이 표시
 
 이 문서는 원문 공략을 그대로 복제하지 않고 핵심 주장, 판단 기준, 구현 가능한 태그와 체크리스트로 재구성한다.
 
@@ -597,7 +597,7 @@ type CardStrategicRole =
 
 추천 로직은 같은 액션 칸을 강화하는 카드가 여러 장 모이면 개별 티어보다 높은 시너지 점수를 줘야 한다.
 
-### Pick phase별 추천 기준
+### Draft pick band별 추천 기준
 
 드래프트 추천은 모든 픽에서 같은 기준으로 작동하지 않는다.
 
@@ -740,7 +740,7 @@ type OpponentPlanSignal = {
 - 상대가 가져가면 내 플랜이 막히는가
 - 지금 가져오면 내 다음 액션 시퀀스가 열리는가
 
-## 카드 텍스트와 룰링
+## 카드 텍스트와 cardRuling
 
 카드 텍스트는 전략보다 먼저 판정되어야 한다.
 
@@ -757,7 +757,7 @@ type OpponentPlanSignal = {
 `~할 때` 트리거와 액션 중간에 내려진 카드의 처리에는 BGA 구현과 오프라인 합의가 다를 수 있다. 이 영역은 전략 문서에 단정적으로 넣지 말고 룰링 데이터로 분리한다.
 
 ```ts
-type RulingSourceKind =
+type CardRulingSourceKind =
   | "official_rulebook"
   | "official_appendix"
   | "official_faq"

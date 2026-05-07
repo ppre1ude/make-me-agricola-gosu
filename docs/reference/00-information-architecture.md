@@ -6,7 +6,7 @@
 /
 /draft
 /draft/new
-/draft/[sessionId]
+/draft/[draftSetId]
 /cards
 /cards/[cardId]
 /guides
@@ -34,7 +34,7 @@
 
 ### 드래프트 시작
 
-새 드래프트 세션을 만든다.
+새 DraftSet을 만든다.
 
 입력:
 
@@ -44,7 +44,6 @@
 - 카드 타입: 직업, 보조 설비
 - 입력 모드 기본값: full tracking 또는 quick
 - skill level: beginner, intermediate, advanced
-- goal mode: quick pick, learn, review, high ceiling
 - 설명 깊이: compact, standard, deep
 
 v0 기본값:
@@ -55,7 +54,6 @@ cardPool: bga-arena-active
 draftSize: 10-to-7
 inputModeDefault: full_tracking
 skillLevel: advanced
-goalMode: learn
 explanationDepth: deep
 ```
 
@@ -149,7 +147,7 @@ explanationDepth: deep
 상단: 카드명, 타입, 티어, 핵심 통계
 좌측: 카드 텍스트 렌더링 또는 요약
 중앙: 효과, 비용, 조건, 전략 역할
-우측: 통계, 추천 콤보, 관련 가이드, 룰링
+우측: 통계, 추천 콤보, 관련 가이드, cardRuling
 하단: 전략 프로필, 출처, 변경 이력, 관련 카드
 ```
 

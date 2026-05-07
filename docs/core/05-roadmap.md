@@ -1,4 +1,4 @@
-# 04 Roadmap
+# 05 Roadmap
 
 이 문서는 구현 순서와 단계별 성공 기준을 정의한다. 세부 작업 문서는 바뀔 수 있지만, 큰 실행 순서는 이 문서를 기준으로 조정한다.
 
@@ -13,7 +13,7 @@ Data-building flow: Strategy Knowledge Base
 
 따라서 카드 DB UI를 먼저 완성하지 않는다. 먼저 추천 엔진이 raw tier list보다 나은 판단을 하는지 fixture로 검증한다.
 
-### Phase 0: 프로젝트 기반
+### Milestone 0: 프로젝트 기반
 
 목표:
 
@@ -32,14 +32,14 @@ data 디렉터리 구조
 draft scoring module skeleton
 ```
 
-### Phase 1: 데이터 스키마와 seed
+### Milestone 1: 데이터 스키마와 seed
 
 목표:
 
 - canonical card id 규칙 확정
 - Card, CardTranslation, CardStatRow 타입 작성
 - StrategyRole, CardStrategyProfile 타입 작성
-- DraftSession, DraftPick 타입 작성
+- DraftSet, DraftSequence, DraftPick 타입 작성
 - BGA Arena card pool profile 형식 작성
 - seed JSON 최소 샘플 생성
 - grill-me에서 닫은 domain/scoring 용어를 TypeScript contract와 동기화
@@ -63,12 +63,12 @@ data/manual/card-strategy-profiles.json
 4. card-id-map 수동 보정
 5. strategy profile 초안 50~100장
 
-### Phase 2: 비UI 드래프트 추천 프로토타입
+### Milestone 2: 비UI 드래프트 추천 프로토타입
 
 목표:
 
 - 추천 점수 component 구현
-- pick phase weighting 구현
+- draftPickBand weighting 구현
 - role coverage와 saturation penalty 구현
 - saturationBehavior와 sinkRoleIds 반영
 - return likelihood 구현
@@ -96,25 +96,25 @@ scripts/score-draft-fixture.ts
 - 이미 해결한 역할과 충돌하는 후보는 conflictCost 또는 saturationPenalty로 설명된다.
 - 추천 결과가 단순 WtdPWR 정렬과 다른 이유를 설명한다.
 
-### Phase 3: Draft Memory Coach UI
+### Milestone 3: Draft Memory Coach UI
 
 목표:
 
-- 새 드래프트 세션 생성
+- 새 DraftSet 생성
 - 1~7픽 full visible pack 입력
 - selected-only quick fallback
 - 추천 순위와 설명 표시
 - 내 픽/본 카드/넘긴 카드 기록 표시
 - 5~7픽에서 사라진 카드와 role availability pressure 표시
 - 역할 커버리지와 다음 픽 방향 표시
-- skill level과 goal mode 설정
+- skill level과 explanation depth 설정
 
 산출물:
 
 ```text
 /draft
 /draft/new
-/draft/[sessionId]
+/draft/[draftSetId]
 ```
 
 필수 기능:
@@ -123,9 +123,9 @@ scripts/score-draft-fixture.ts
 - card chip 입력
 - pick number navigation
 - explanation depth toggle
-- session state local persistence
+- draft state local persistence
 
-### Phase 4: 카드 검색과 카드 상세
+### Milestone 4: 카드 검색과 카드 상세
 
 목표:
 
@@ -152,19 +152,19 @@ scripts/score-draft-fixture.ts
 - WtdPWR/ADP/APR 표시
 - 카드 상세에서 전략 역할, solves, risk, next-pick guidance 표시
 
-### Phase 5: 전략 가이드와 룰링
+### Milestone 5: 전략 가이드와 cardRuling
 
 목표:
 
 - MDX 기반 한국어 가이드
 - 카드/태그/전략 역할과 연결
-- 수동 콤보와 룰링 입력
+- 수동 콤보와 cardRuling 입력
 
 산출물:
 
 ```text
 data/manual/combos.ko-KR.json
-data/manual/rulings.ko-KR.json
+data/manual/card-rulings.ko-KR.json
 content/guides/*.mdx
 ```
 
@@ -177,7 +177,7 @@ content/guides/*.mdx
 5. 울타리와 동물 운영
 6. 2방 2가족으로 버티는 조건
 
-### Phase 6: BGA 스크린샷 OCR
+### Milestone 6: BGA 스크린샷 OCR
 
 목표:
 
@@ -193,7 +193,7 @@ content/guides/*.mdx
 - fuzzy matching
 - 수동 검수
 
-### Phase 7: 사후 복기와 판세 경고
+### Milestone 7: 사후 복기와 판세 경고
 
 목표:
 
@@ -207,7 +207,7 @@ content/guides/*.mdx
 - v0 범위가 아니다.
 - 실시간 자동 플레이가 아니라 학습/경고 보조로 설계한다.
 
-### Phase 8: DB와 사용자 기능
+### Milestone 8: DB와 사용자 기능
 
 DB가 필요한 시점에 도입한다.
 

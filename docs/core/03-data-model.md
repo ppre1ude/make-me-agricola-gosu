@@ -1,6 +1,6 @@
-# 02 Data Model
+# 03 Data Model
 
-이 문서는 구현이 의존할 데이터 계약을 정의한다. 카드, 번역, 통계, 전략 프로필, 드래프트 세션, 추천 결과의 기본 구조는 이 문서를 기준으로 한다.
+이 문서는 구현이 의존할 데이터 계약을 정의한다. 카드, 번역, 통계, 전략 프로필, DraftSet/DraftSequence, 추천 결과의 기본 구조는 이 문서를 기준으로 한다.
 
 ## 설계 원칙
 
@@ -10,7 +10,7 @@
 
 - 중국어, 일본어 등 신규 언어 추가 시 Card 구조를 바꾸지 않는다.
 - 코보게 공식명, BGA명, 영문명, 팬 번역 alias를 유연하게 관리한다.
-- 카드 효과 텍스트와 룰링은 언어별로 관리할 수 있다.
+- 카드 효과 텍스트와 cardRuling은 언어별로 관리할 수 있다.
 
 통계는 카드에 직접 박지 않고 snapshot으로 관리한다.
 
@@ -264,9 +264,9 @@ on_play_occupation
 on_play_minor
 round_start
 harvest_start
-field_phase
-feeding_phase
-breeding_phase
+harvest_field_step
+harvest_feeding_step
+harvest_breeding_step
 scoring
 anytime
 replacement_effect
@@ -362,11 +362,10 @@ v0에서는 BGA Arena active pool을 기본값으로 둔다. 공개 서비스에
 ```ts
 type CardPoolStatus =
   | "active"
-  | "weak_ban"
-  | "strong_ban"
-  | "rules_ban"
-  | "not_in_bga"
-  | "unknown";
+  | "weak_excluded"
+  | "strong_excluded"
+  | "banned"
+  | "inactive";
 
 type CardPoolProfile = {
   id: string;
@@ -439,9 +438,9 @@ type CardStrategyProfile = {
 
 예를 들어 식량 1~2개를 주는 카드는 `food_support`를 `supports`할 수 있지만, `food_engine`을 `solves`했다고 보지 않는다.
 
-## DraftSession
+## DraftSet / DraftSequence
 
-사용자가 드래프트 중 본 정보와 고른 카드를 기록하는 세션이다.
+사용자가 드래프트 중 본 정보와 고른 카드를 기록하는 도메인 단위다. bare `session`은 app/browser technical state에만 사용한다.
 
 ```ts
 type DraftFormat = {
@@ -452,7 +451,17 @@ type DraftFormat = {
 
 type DraftCardType = "occupation" | "minor_improvement";
 
-type DraftSession = {
+type DraftSet = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  playerCount: 4;
+  cardPoolProfileId: string;
+  draftFormat: DraftFormat;
+  sequences: DraftSequence[];
+};
+
+type DraftSequence = {
   id: string;
   createdAt: string;
   updatedAt: string;
@@ -496,7 +505,7 @@ type DraftTrackingSignal = {
 - 1~7픽 모두 `full_pack`을 지원한다.
 - 고수용 기본 흐름은 full tracking이다.
 - 5~7픽에서 이전 pack 대비 사라진 카드를 계산해 `missingFromPreviousPack`과 `DraftTrackingSignal`로 남긴다.
-- `selected_only`는 시간 압박이 큰 quick mode fallback이다.
+- `selected_only`는 시간 압박이 큰 quick fallback이다.
 - 상대가 가져간 카드는 확정하지 않고, 사용자가 본 카드와 돌아오지 않은 카드만 저장한다.
 - tracking signal은 role availability와 복기 요약에 사용하되, 특정 상대 플랜을 확정하지 않는다.
 
@@ -508,7 +517,7 @@ type DraftTrackingSignal = {
 type ReturnLikelihood = "unlikely" | "possible" | "likely" | "unknown";
 
 type DraftRecommendation = {
-  sessionId: string;
+  draftSequenceId: string;
   pickNumber: number;
   cardId: string;
   rank: number;
@@ -540,7 +549,7 @@ type DraftRecommendation = {
 
 `pivotPotential`은 후보 카드가 기존 손패와 직접 맞지 않아도 새 중심 플랜을 만들 수 있는 정도다. v0에서는 plan graph를 만들지 않고, high tier + plan anchor + low conflict인 경우 약하게 반영한다.
 
-`conflictCost`는 후보 카드가 기존 손패와 충돌하거나 이미 해결한 역할을 과하게 중복하는 비용이다.
+`conflictCost`는 후보 카드가 기존 손패와 단순히 역할이 겹치는 정도가 아니라, 실제 실행 자원, 액션 타이밍, 조건, payoff 방향을 충돌시켜 기존 플랜과 후보 카드를 함께 살리기 어렵게 만드는 비용이다.
 
 ```ts
 type AfterPickPlanShift = {
@@ -560,21 +569,16 @@ after-pick plan shift는 모든 후보에 대해 보여주지 않는다. Pick 2~
 ```ts
 type SkillLevel = "beginner" | "intermediate" | "advanced";
 
-type GoalMode =
-  | "quick_pick"
-  | "learn"
-  | "review"
-  | "high_ceiling";
-
 type DraftCoachSettings = {
   skillLevel: SkillLevel;
-  goalMode: GoalMode;
   explanationDepth: ExplanationDepth;
   inputModeDefault: "full_tracking" | "quick";
 };
 ```
 
 `skillLevel`은 사용자가 직접 선택한다. 시스템이 유저 실력을 추정하거나 강제로 고정하지 않는다.
+
+`goalMode`, `DraftCoachMode`, `StudyMode`는 v0 도메인에서 사용하지 않는다. 기능 화면의 목적은 `FeatureContext`로 구분하고, 사용자별 설명 수준은 `skillLevel`로 조정한다.
 
 ## Feedback Event
 
@@ -583,7 +587,7 @@ type DraftCoachSettings = {
 ```ts
 type DraftDecisionFeedback = {
   kind: "model_user_disagreement";
-  sessionId: string;
+  draftSequenceId: string;
   pickNumber: number;
   offeredCardIds: string[];
   recommendedCardId: string;
@@ -595,7 +599,7 @@ type DraftDecisionFeedback = {
     | "user_preference"
     | "new_information"
     | "model_missing_synergy"
-    | "model_missing_ruling"
+    | "model_missing_card_ruling"
     | "data_outdated"
     | "misclick";
   userNote?: string;
@@ -615,7 +619,7 @@ type Combo = {
   cardIds: string[];
   requiredTagIds?: string[];
   payoffTagIds?: string[];
-  phase?: "early" | "mid" | "late" | "scoring";
+  timingWindow?: "early" | "mid" | "late" | "scoring";
   strength: 1 | 2 | 3 | 4 | 5;
   title: Record<LocaleCode, string>;
   description: Record<LocaleCode, string>;
@@ -624,12 +628,12 @@ type Combo = {
 };
 ```
 
-## Ruling
+## CardRuling
 
 텍스트 판정과 FAQ 성격의 콘텐츠다.
 
 ```ts
-type Ruling = {
+type CardRuling = {
   id: string;
   cardId?: string;
   tagIds?: string[];

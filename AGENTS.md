@@ -29,10 +29,11 @@ Before UI work, close scoring contract, data validation, and fixture matrix.
 Primary docs:
 
 - `docs/core/00-vision.md`
-- `docs/core/01-product-requirements.md`
-- `docs/core/02-data-model.md`
-- `docs/core/03-feature-specs.md`
-- `docs/core/04-roadmap.md`
+- `docs/core/01-domain-language.md`
+- `docs/core/02-product-requirements.md`
+- `docs/core/03-data-model.md`
+- `docs/core/04-feature-specs.md`
+- `docs/core/05-roadmap.md`
 - `docs/working/00-pre-ui-engineering-review.md`
 
 ## Skill Routing

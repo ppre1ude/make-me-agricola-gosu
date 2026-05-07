@@ -25,9 +25,10 @@ UI 전에 scoring contract, data validation, fixture matrix를 먼저 닫는다.
 
 관련 문서:
 
-- [02 Data Model](../core/02-data-model.md)
-- [03 Feature Specs](../core/03-feature-specs.md)
-- [04 Roadmap](../core/04-roadmap.md)
+- [01 Domain Language](../core/01-domain-language.md)
+- [03 Data Model](../core/03-data-model.md)
+- [04 Feature Specs](../core/04-feature-specs.md)
+- [05 Roadmap](../core/05-roadmap.md)
 
 ### 코드 아키텍처
 
@@ -70,7 +71,7 @@ scripts/score-draft-fixtures.ts
 
 구현 전 인터뷰에서 다음 결정을 추가로 닫았다.
 
-1. 추천의 정답 기준은 pick phase별로 다르다.
+1. 추천의 정답 기준은 draftPickBand별로 다르다.
    - Pick 1~2: broken card, premium card, 열린 plan anchor를 강하게 본다.
    - Pick 3~4: 범용 강카드가 여전히 중요하지만, 치명적 결절점 보완 카드는 강카드를 이길 수 있다.
    - Pick 5~7: 감점 방지, 조건이 충족된 보너스 점수, 생존 안정화, 플랜 마무리 후보군을 먼저 만들고 그 안에서 티어/통계를 본다.
@@ -127,8 +128,9 @@ scripts/score-draft-fixtures.ts
     - 차이가 있다고 해서 모델이 틀렸다고 자동 판정하지 않는다.
     - 유저 실력, 화면 밖 정보, 실험적 선택, 데이터 낡음 여부를 모르기 때문이다.
 
-13. `skillLevel`과 `goalMode`는 사용자가 직접 설정한다.
-    - 설명과 UI 우선순위에 반영한다.
+13. `skillLevel`은 사용자가 직접 설정하고, 기능 목적은 `FeatureContext`로 구분한다.
+    - skillLevel은 설명과 UI 우선순위에 반영한다.
+    - goalMode는 v0 도메인에서 사용하지 않는다.
     - 추천 순위 자체를 실력별 안전픽 중심으로 크게 바꾸지는 않는다.
 
 ## Scoring Contract
@@ -193,7 +195,7 @@ type DraftRecommendation = {
   cardId: string;
   rank: number;
   score: number;
-  phase: DraftPickPhase;
+  draftPickBand: DraftPickBand;
   components: ScoreComponents;
   returnLikelihood: ReturnLikelihood;
   reasons: Record<ExplanationDepth, string[]>;
@@ -213,7 +215,7 @@ type ScoreComponents = {
   roleCoverage: number;
   synergy: number;
   returnUrgency: number;
-  phaseFit: number;
+  draftPickBandFit: number;
   passRegret?: number;
   pivotPotential?: number;
   conflictCost?: number;
@@ -414,7 +416,7 @@ fixture expected = stat/tier reference + manual strategic judgment
 원칙:
 
 - 통계/티어는 기본 참고값이다.
-- role saturation, phase objective, hand context, pivotPotential은 수동 전략 판단으로 고정한다.
+- role saturation, draftPickBand objective, hand context, pivotPotential은 수동 전략 판단으로 고정한다.
 - 모델 추천과 사용자 선택이 달랐던 상황은 fixture 후보가 될 수 있다.
 
 fixture에는 가능하면 판단 근거를 함께 적는다.
@@ -424,7 +426,7 @@ fixture에는 가능하면 판단 근거를 함께 적는다.
   "judgmentBasis": {
     "statReference": "prototype or Lumin_S",
     "manualReason": "밭일 감독 이후 추가 밭갈기 카드는 포화되고, 점수 전환이나 food self-sufficiency 보완이 더 중요함",
-    "phaseRule": "middle_direction",
+    "draftPickBandRule": "middle_direction",
     "expectedTradeoff": "high tier card remains high passRegret but not top"
   }
 }

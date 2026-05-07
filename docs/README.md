@@ -16,7 +16,7 @@ Data-building flow: Strategy Knowledge Base
 구현 전 인터뷰에서 닫은 현재 기준은 다음입니다.
 
 - v0의 중심 기능은 Draft Memory Coach이며, 카드 검색은 드래프트 판단과 전략 학습을 돕는 기반 기능입니다.
-- 추천의 정답 기준은 pick phase에 따라 다릅니다. Pick 1~2는 broken/premium/open-ended anchor, Pick 3~4는 강카드와 보완 역할의 균형, Pick 5~7은 현재 손패 완성도를 우선합니다.
+- 추천의 정답 기준은 draftPickBand에 따라 다릅니다. Pick 1~2는 broken/premium/open-ended anchor, Pick 3~4는 강카드와 보완 역할의 균형, Pick 5~7은 현재 손패 완성도를 우선합니다.
 - 고수용 기본 입력은 1~7픽 모두 full visible pack tracking입니다. selected-only 입력은 시간 압박이 큰 quick fallback입니다.
 - 사라진 카드는 특정 상대의 플랜으로 확정하지 않고, role availability pressure와 사후 복기 신호로 약하게 사용합니다.
 - `passRegret`은 boolean이 아니라 0~10 수치형 component입니다. 강카드를 넘겼을 때의 기회비용, 플랜 재편 가능성, 희소성을 표현합니다.
@@ -25,19 +25,20 @@ Data-building flow: Strategy Knowledge Base
 
 ## 문서 계층 기준
 
-- Core Docs: 제품과 구현이 계속 의존하는 상위 계약입니다. 제품 방향, 요구사항, 데이터 모델, 기능 계약, 로드맵만 둡니다.
+- Core Docs: 제품과 구현이 계속 의존하는 상위 계약입니다. 제품 방향, 도메인 언어, 요구사항, 데이터 모델, 기능 계약, 로드맵만 둡니다.
 - Reference Docs: core를 이해하거나 구현할 때 필요한 배경 자료입니다. 화면 구조, 데이터 수집, 공식 룰, 전략론, 리스크처럼 필요할 때 꺼내 보는 문서입니다.
 - Working Docs: 특정 단계의 실행 품질을 높이기 위한 작업 문서입니다. 완료되거나 결정이 core에 흡수되면 보관하거나 축약합니다.
 
 ## Core Docs
 
-Codex와 사람이 이 프로젝트를 이해할 때 먼저 봐야 하는 핵심 문서입니다. 이 다섯 문서는 상위 구조 역할을 하며, 다른 문서와 구현은 여기에 적힌 결정을 기준으로 삼습니다.
+Codex와 사람이 이 프로젝트를 이해할 때 먼저 봐야 하는 핵심 문서입니다. 이 여섯 문서는 상위 구조 역할을 하며, 다른 문서와 구현은 여기에 적힌 결정을 기준으로 삼습니다.
 
 - [00 Vision](./core/00-vision.md): 제품 목표, 페르소나, 핵심 가치
-- [01 Product Requirements](./core/01-product-requirements.md): 기능 요구사항과 MVP 범위
-- [02 Data Model](./core/02-data-model.md): 카드, 번역, 통계, 전략 프로필, 드래프트 상태 모델
-- [03 Feature Specs](./core/03-feature-specs.md): 카드 검색, 드래프트 코치, 전략 가이드 세부 명세
-- [04 Roadmap](./core/04-roadmap.md): 단계별 개발 순서와 성공 기준
+- [01 Domain Language](./core/01-domain-language.md): 구현과 문서 전체에서 사용하는 canonical domain language
+- [02 Product Requirements](./core/02-product-requirements.md): 기능 요구사항과 MVP 범위
+- [03 Data Model](./core/03-data-model.md): 카드, 번역, 통계, 전략 프로필, 드래프트 상태 모델
+- [04 Feature Specs](./core/04-feature-specs.md): 카드 검색, 드래프트 코치, 전략 가이드 세부 명세
+- [05 Roadmap](./core/05-roadmap.md): 단계별 개발 순서와 성공 기준
 
 ## Reference Docs
 

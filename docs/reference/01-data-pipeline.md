@@ -36,7 +36,7 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
     card-id-map.json
     card-strategy-profiles.json
     combos.ko-KR.json
-    rulings.ko-KR.json
+    card-rulings.ko-KR.json
     guide-card-links.json
     draft-fixtures.json
 /scripts
@@ -139,7 +139,7 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 
 - 영문 카드 텍스트 대조
 - 카드 렌더링 방식 참고
-- 컴펜디엄과 룰링 참고
+- 컴펜디엄과 cardRuling 참고
 
 주의:
 
