@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { constants } from "node:fs";
-import { access } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
 import {
   createServer,
   type IncomingMessage,
@@ -25,7 +25,9 @@ const defaultServerModuleCandidates = [
 
 type JsonObject = Record<string, unknown>;
 type RequestListener = (request: IncomingMessage, response: ServerResponse) => void | Promise<void>;
-type ServerFactory = (options?: { host: string; port: number; feedbackStorePath?: string }) => unknown | Promise<unknown>;
+type ServerFactory = (
+  options?: { host: string; port: number; feedbackStorePath?: string }
+) => unknown | Promise<unknown>;
 
 type CliOptions = {
   baseUrl?: string;
@@ -37,6 +39,7 @@ type ApiTarget =
       kind: "server";
       baseUrl: string;
       source: string;
+      feedbackStorePath: string | undefined;
       close: () => Promise<void>;
     }
   | {
@@ -79,14 +82,15 @@ async function main(options: CliOptions): Promise<void> {
   }
 
   try {
-    await runDraftCoachApiSmoke(target.baseUrl);
+    await runDraftCoachApiSmoke(target);
     console.log(`Draft Coach API smoke passed against ${target.source}.`);
   } finally {
     await target.close();
   }
 }
 
-async function runDraftCoachApiSmoke(baseUrl: string): Promise<void> {
+async function runDraftCoachApiSmoke(target: Extract<ApiTarget, { kind: "server" }>): Promise<void> {
+  const { baseUrl } = target;
   const sample = await requestJson(baseUrl, "GET", "/api/draft/sample");
   const offeredCardIds = extractOfferedCardIds(sample);
 
@@ -134,6 +138,7 @@ async function runDraftCoachApiSmoke(baseUrl: string): Promise<void> {
     { event: { ...feedbackSubmission, eventType: "model_user_disagreement" } }
   ]);
   const feedbackEvent = extractFeedbackEvent(feedbackResponse);
+  await assertFeedbackPersisted(target.feedbackStorePath, feedbackEvent);
 
   assert.equal(
     readString(feedbackEvent, "eventType"),
@@ -149,6 +154,72 @@ async function runDraftCoachApiSmoke(baseUrl: string): Promise<void> {
   }
 
   assertNeutralFeedbackEvent(feedbackEvent);
+  await assertInvalidFeedbackRejected(baseUrl, feedbackSubmission, target.feedbackStorePath);
+}
+
+async function assertFeedbackPersisted(
+  feedbackStorePath: string | undefined,
+  feedbackEvent: JsonObject
+): Promise<void> {
+  if (feedbackStorePath === undefined) return;
+
+  const lines = await readFeedbackJsonlLines(feedbackStorePath);
+
+  assert.equal(lines.length, 1, "POST /api/draft/feedback must append one JSONL record.");
+  const line = lines[0];
+  assert.ok(line !== undefined, "feedback JSONL should include a persisted event line.");
+  assert.deepEqual(
+    JSON.parse(line) as JsonObject,
+    feedbackEvent,
+    "persisted JSONL event must match response event."
+  );
+}
+
+async function assertInvalidFeedbackRejected(
+  baseUrl: string,
+  validSubmission: JsonObject,
+  feedbackStorePath: string | undefined
+): Promise<void> {
+  const invalidBodies = [
+    {
+      label: "same model top and selected card",
+      body: {
+        ...validSubmission,
+        userSelectedCardId: validSubmission.modelTopCardId
+      }
+    },
+    {
+      label: "invalid possible cause verdict",
+      body: {
+        ...validSubmission,
+        possibleCauses: ["model_wrong"]
+      }
+    },
+    {
+      label: "selected card outside recommendations",
+      body: {
+        ...validSubmission,
+        userSelectedCardId: "unknown-card-id"
+      }
+    }
+  ];
+
+  for (const invalidBody of invalidBodies) {
+    const result = await fetchJson(baseUrl, "POST", "/api/draft/feedback", invalidBody.body);
+    assert.equal(result.status, 400, `POST /api/draft/feedback should reject ${invalidBody.label}.`);
+  }
+
+  if (feedbackStorePath === undefined) return;
+  assert.equal(
+    (await readFeedbackJsonlLines(feedbackStorePath)).length,
+    1,
+    "rejected feedback submissions must not append JSONL records."
+  );
+}
+
+async function readFeedbackJsonlLines(feedbackStorePath: string): Promise<string[]> {
+  const contents = await readFile(feedbackStorePath, "utf8");
+  return contents.split(/\r?\n/).filter((line) => line !== "");
 }
 
 async function assertCardsEndpoint(baseUrl: string, offeredCardIds: string[]): Promise<void> {
@@ -200,6 +271,7 @@ async function resolveApiTarget(options: CliOptions): Promise<ApiTarget> {
       kind: "server",
       baseUrl: normalizeBaseUrl(baseUrl),
       source: "DRAFT_COACH_API_BASE_URL",
+      feedbackStorePath: undefined,
       close: async () => undefined
     };
   }
@@ -237,9 +309,31 @@ async function resolveApiTarget(options: CliOptions): Promise<ApiTarget> {
   return target;
 }
 
-async function createApiTargetFromModule(moduleExports: JsonObject, modulePath: string): Promise<ApiTarget | undefined> {
+async function createApiTargetFromModule(
+  moduleExports: JsonObject,
+  modulePath: string
+): Promise<ApiTarget | undefined> {
   const directServer = firstExport<Server>(moduleExports, ["draftCoachApiServer", "server", "default"], isHttpServer);
   if (directServer !== undefined) return listenOnEphemeralPort(directServer, modulePath);
+
+  const factory = firstExport<ServerFactory>(
+    moduleExports,
+    ["createDraftCoachApiServer", "createDraftCoachServer", "createServer", "startDraftCoachApiServer", "default"],
+    isServerFactory
+  );
+  if (factory !== undefined) {
+    const feedbackStorePath = path.join(
+      rootDir,
+      ".codex-tmp",
+      `draft-coach-api-smoke-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jsonl`
+    );
+    const created = await factory({
+      host,
+      port: 0,
+      feedbackStorePath
+    });
+    return createApiTargetFromFactoryResult(created, modulePath, feedbackStorePath);
+  }
 
   const handler = firstExport<RequestListener>(
     moduleExports,
@@ -250,28 +344,18 @@ async function createApiTargetFromModule(moduleExports: JsonObject, modulePath: 
     return listenOnEphemeralPort(createServer(wrapRequestListener(handler)), modulePath);
   }
 
-  const factory = firstExport<ServerFactory>(
-    moduleExports,
-    ["createDraftCoachApiServer", "createDraftCoachServer", "createServer", "startDraftCoachApiServer", "default"],
-    isServerFactory
-  );
-  if (factory === undefined) return undefined;
-
-  const created = await factory({
-    host,
-    port: 0,
-    feedbackStorePath: path.join(
-      rootDir,
-      ".codex-tmp",
-      `draft-coach-api-smoke-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jsonl`
-    )
-  });
-  return createApiTargetFromFactoryResult(created, modulePath);
+  return undefined;
 }
 
-async function createApiTargetFromFactoryResult(value: unknown, modulePath: string): Promise<ApiTarget | undefined> {
-  if (isHttpServer(value)) return listenOnEphemeralPort(value, modulePath);
-  if (isRequestListener(value)) return listenOnEphemeralPort(createServer(wrapRequestListener(value)), modulePath);
+async function createApiTargetFromFactoryResult(
+  value: unknown,
+  modulePath: string,
+  feedbackStorePath?: string
+): Promise<ApiTarget | undefined> {
+  if (isHttpServer(value)) return listenOnEphemeralPort(value, modulePath, feedbackStorePath);
+  if (isRequestListener(value)) {
+    return listenOnEphemeralPort(createServer(wrapRequestListener(value)), modulePath, feedbackStorePath);
+  }
 
   if (!isRecord(value)) return undefined;
 
@@ -282,13 +366,14 @@ async function createApiTargetFromFactoryResult(value: unknown, modulePath: stri
       kind: "server",
       baseUrl: normalizeBaseUrl(baseUrl),
       source: modulePath,
+      feedbackStorePath,
       close: async () => {
         if (close !== undefined) await close.call(value);
       }
     };
   }
 
-  if (isHttpServer(value.server)) return listenOnEphemeralPort(value.server, modulePath);
+  if (isHttpServer(value.server)) return listenOnEphemeralPort(value.server, modulePath, feedbackStorePath);
 
   const nestedHandler = isRequestListener(value.handler)
     ? value.handler
@@ -299,13 +384,17 @@ async function createApiTargetFromFactoryResult(value: unknown, modulePath: stri
         : undefined;
 
   if (nestedHandler !== undefined) {
-    return listenOnEphemeralPort(createServer(wrapRequestListener(nestedHandler)), modulePath);
+    return listenOnEphemeralPort(createServer(wrapRequestListener(nestedHandler)), modulePath, feedbackStorePath);
   }
 
   return undefined;
 }
 
-async function listenOnEphemeralPort(server: Server, source: string): Promise<ApiTarget> {
+async function listenOnEphemeralPort(
+  server: Server,
+  source: string,
+  feedbackStorePath?: string
+): Promise<ApiTarget> {
   if (server.address() === null) {
     await new Promise<void>((resolve, reject) => {
       const onError = (error: Error): void => {
@@ -330,6 +419,7 @@ async function listenOnEphemeralPort(server: Server, source: string): Promise<Ap
     kind: "server",
     baseUrl: `http://${host}:${address.port}`,
     source,
+    feedbackStorePath,
     close: async () => closeServer(server)
   };
 }
@@ -349,7 +439,12 @@ function wrapRequestListener(listener: RequestListener): RequestListener {
   };
 }
 
-async function requestJson(baseUrl: string, method: "GET" | "POST", pathname: string, body?: unknown): Promise<unknown> {
+async function requestJson(
+  baseUrl: string,
+  method: "GET" | "POST",
+  pathname: string,
+  body?: unknown
+): Promise<unknown> {
   const result = await fetchJson(baseUrl, method, pathname, body);
 
   assert.ok(result.ok, `${method} ${pathname} returned ${result.status}: ${result.text}`);

@@ -1,6 +1,6 @@
 # 04 Draft Memory Coach Vertical Slice
 
-Status: Next feature-unit: pick resolution flow
+Status: Current feature-unit: neutral JSONL feedback persistence hardening
 
 ## Goal
 
@@ -150,6 +150,12 @@ Policy:
 - 저장 직후 scoring weight, strategy profile, fixture expected를 자동 변경하지 않는다.
 - fixture 후보 전환은 사람이 복기한 뒤 별도 feature-unit에서 한다.
 
+Coverage:
+
+- API smoke는 temp JSONL 경로에 feedback event가 실제 append되는지 확인한다.
+- feedback store smoke는 missing file, append order, trailing newline,
+  malformed record reason과 line number를 확인한다.
+
 금지 표현:
 
 ```text
@@ -211,13 +217,14 @@ yarn score:fixtures
 yarn test:draft-coach-api
 yarn test:draft-state-store
 yarn test:pick-resolution
+yarn test:draft-feedback-store
 ```
 
 이 feature-unit에는 pick resolution unit test, `selected_only` state transition,
 model top과 다른 선택의 `model_user_disagreement` 기록, undo local rollback,
-`full_pack` missing-card inference 미수행 확인을 포함한다. test script가 추가되면
-같은 feature-unit 안에서 package script와 문서를 함께 갱신하고, 최종 확인은 여전히
-`yarn test`로 닫는다.
+`full_pack` missing-card inference 미수행 확인, JSONL append persistence 확인을
+포함한다. test script가 추가되면 같은 feature-unit 안에서 package script와 문서를
+함께 갱신하고, 최종 확인은 여전히 `yarn test`로 닫는다.
 
 ## Feature-Unit Commit Boundary
 
