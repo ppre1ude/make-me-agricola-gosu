@@ -1,6 +1,6 @@
 # 04 Draft Memory Coach Vertical Slice
 
-Status: Current feature-unit: neutral JSONL feedback persistence hardening
+Status: Current feature-unit: API/UI smoke tests and final docs alignment
 
 ## Goal
 
@@ -155,6 +155,8 @@ Coverage:
 - API smoke는 temp JSONL 경로에 feedback event가 실제 append되는지 확인한다.
 - feedback store smoke는 missing file, append order, trailing newline,
   malformed record reason과 line number를 확인한다.
+- static asset smoke는 `/draft/` app shell, JS/CSS asset, redirect, missing asset,
+  encoded traversal rejection을 확인한다.
 
 금지 표현:
 
@@ -218,13 +220,16 @@ yarn test:draft-coach-api
 yarn test:draft-state-store
 yarn test:pick-resolution
 yarn test:draft-feedback-store
+yarn test:draft-static-assets
 ```
 
 이 feature-unit에는 pick resolution unit test, `selected_only` state transition,
 model top과 다른 선택의 `model_user_disagreement` 기록, undo local rollback,
 `full_pack` missing-card inference 미수행 확인, JSONL append persistence 확인을
-포함한다. test script가 추가되면 같은 feature-unit 안에서 package script와 문서를
-함께 갱신하고, 최종 확인은 여전히 `yarn test`로 닫는다.
+포함한다. 마지막 API/UI smoke는 정적 draft shell과 helper script 노출을 확인하되,
+pick 확정 버튼 배치나 undo UI는 사용자 wireframe 뒤로 남긴다. test script가
+추가되면 같은 feature-unit 안에서 package script와 문서를 함께 갱신하고,
+최종 확인은 여전히 `yarn test`로 닫는다.
 
 ## Feature-Unit Commit Boundary
 
