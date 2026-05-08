@@ -16,12 +16,23 @@ import {
   createJsonlDraftFeedbackStore,
   type DraftFeedbackStore
 } from "../features/draft/feedback-store.ts";
-import { validateDraftDataSet, type Card, type DraftFeedbackEvent } from "../features/draft/index.ts";
+import {
+  validateDraftDataSet,
+  type Card,
+  type CardPoolStatus,
+  type DraftFeedbackEvent
+} from "../features/draft/index.ts";
 
 const DEFAULT_ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DEFAULT_PUBLIC_DIR = path.join(DEFAULT_ROOT_DIR, "public/draft");
 const DEFAULT_FEEDBACK_STORE_PATH = path.join(DEFAULT_ROOT_DIR, "data/local/draft-feedback-events.jsonl");
 const JSON_BODY_LIMIT_BYTES = 128 * 1024;
+const CARD_SEARCH_RESULT_LIMIT = 50;
+const CARD_TYPES: ReadonlySet<Card["type"]> = new Set([
+  "occupation",
+  "minor_improvement",
+  "major_improvement"
+]);
 
 type JsonRecord = Record<string, unknown>;
 
@@ -92,7 +103,8 @@ export async function draftCoachApiHandler(
     sendJson(response, 200, {
       cards: getCompactCards(activeRuntime, {
         type: url.searchParams.get("type"),
-        q: url.searchParams.get("q")
+        q: url.searchParams.get("q"),
+        limit: url.searchParams.get("limit")
       })
     });
     return;
@@ -213,28 +225,145 @@ async function readJsonBody(request: IncomingMessage): Promise<unknown> {
 
 function getCompactCards(
   runtime: DraftCoachApiRuntime,
-  filters: { type: string | null; q: string | null }
-): Array<{ id: string; type: Card["type"]; name: string; aliases: string[] }> {
-  const query = normalizeSearchText(filters.q ?? "");
-  const type = filters.type === "occupation" || filters.type === "minor_improvement" ? filters.type : undefined;
+  filters: { type: string | null; q: string | null; limit: string | null }
+): CompactCard[] {
+  const typeFilter = parseCardTypeFilter(filters.type);
+  if (typeFilter === "invalid") return [];
+
+  const query = createSearchQuery(filters.q ?? "");
+  const limit = parseCardSearchLimit(filters.limit);
 
   return runtime.dataContext.data.cards
-    .filter((card) => type === undefined || card.type === type)
-    .map((card) => {
-      const translation = runtime.dataContext.dataIndex.translationsByCardId.get(card.id);
-      return {
-        id: card.id,
-        type: card.type,
-        name: translation?.name ?? card.id,
-        aliases: translation?.aliases ?? []
-      };
-    })
-    .filter((card) => {
-      if (query === "") return true;
-      const searchable = [card.id, card.name, ...card.aliases].map(normalizeSearchText).join(" ");
-      return searchable.includes(query);
-    })
-    .slice(0, 50);
+    .filter((card) => typeFilter === undefined || card.type === typeFilter)
+    .map((card, index) => ({
+      index,
+      entry: createCardSearchEntry(runtime, card)
+    }))
+    .map(({ index, entry }) => ({
+      index,
+      entry,
+      rank: rankCardSearchEntry(entry, query)
+    }))
+    .filter((result): result is { index: number; entry: CardSearchEntry; rank: number } => result.rank !== undefined)
+    .sort((left, right) => left.rank - right.rank || left.index - right.index)
+    .slice(0, limit)
+    .map((result) => result.entry.card);
+}
+
+type CompactCard = {
+  id: string;
+  type: Card["type"];
+  name: string;
+  aliases: string[];
+  cardPoolStatus?: CardPoolStatus;
+};
+
+type CardTypeFilter = Card["type"] | "invalid" | undefined;
+
+type SearchQuery = {
+  normalized: string;
+  compact: string;
+  tokens: string[];
+};
+
+type CardSearchEntry = {
+  card: CompactCard;
+  normalizedValues: string[];
+  compactValues: string[];
+};
+
+function parseCardTypeFilter(value: string | null): CardTypeFilter {
+  if (value === null || value.trim() === "") return undefined;
+
+  const type = value.trim();
+  if (isCardType(type)) return type;
+  return "invalid";
+}
+
+function isCardType(value: string): value is Card["type"] {
+  return CARD_TYPES.has(value as Card["type"]);
+}
+
+function parseCardSearchLimit(value: string | null): number {
+  if (value === null || value.trim() === "") return CARD_SEARCH_RESULT_LIMIT;
+
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed) || parsed < 1) return CARD_SEARCH_RESULT_LIMIT;
+
+  return Math.min(Math.trunc(parsed), CARD_SEARCH_RESULT_LIMIT);
+}
+
+function createCardSearchEntry(runtime: DraftCoachApiRuntime, card: Card): CardSearchEntry {
+  const translation = runtime.dataContext.dataIndex.translationsByCardId.get(card.id);
+  const aliases = translation?.aliases ?? [];
+  const compactCard: CompactCard = {
+    id: card.id,
+    type: card.type,
+    name: translation?.name ?? card.id,
+    aliases
+  };
+  const cardPoolStatus = runtime.dataContext.data.cardPoolProfile.cardStatuses[card.id];
+  if (cardPoolStatus !== undefined) compactCard.cardPoolStatus = cardPoolStatus;
+
+  const searchableValues = [
+    card.id,
+    translation?.name,
+    translation?.officialName,
+    translation?.bgaName,
+    ...aliases
+  ].filter(isNonEmptyString);
+
+  return {
+    card: compactCard,
+    normalizedValues: searchableValues.map(normalizeSearchText),
+    compactValues: searchableValues.map(compactSearchText)
+  };
+}
+
+function createSearchQuery(value: string): SearchQuery {
+  const normalized = normalizeSearchText(value);
+  return {
+    normalized,
+    compact: compactSearchText(normalized),
+    tokens: normalized.split(" ").filter((token) => token !== "")
+  };
+}
+
+function rankCardSearchEntry(entry: CardSearchEntry, query: SearchQuery): number | undefined {
+  if (query.normalized === "") return 0;
+
+  if (
+    entry.normalizedValues.some((value) => value === query.normalized) ||
+    (query.compact !== "" && entry.compactValues.some((value) => value === query.compact))
+  ) {
+    return 0;
+  }
+
+  if (
+    entry.normalizedValues.some((value) => value.startsWith(query.normalized)) ||
+    (query.compact !== "" && entry.compactValues.some((value) => value.startsWith(query.compact)))
+  ) {
+    return 1;
+  }
+
+  if (entry.normalizedValues.some((value) => value.includes(query.normalized))) return 2;
+  if (query.compact !== "" && entry.compactValues.some((value) => value.includes(query.compact))) return 3;
+
+  if (query.tokens.length > 1) {
+    const compactTokens = query.tokens.map(compactSearchText);
+    const matchesAllTokens = query.tokens.every((token, index) => {
+      const compactToken = compactTokens[index];
+      return (
+        entry.normalizedValues.some((value) => value.includes(token)) ||
+        (compactToken !== undefined &&
+          compactToken !== "" &&
+          entry.compactValues.some((value) => value.includes(compactToken)))
+      );
+    });
+    if (matchesAllTokens) return 4;
+  }
+
+  return undefined;
 }
 
 async function tryServeStaticDraftAsset(
@@ -334,8 +463,16 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string" && item.trim() !== "");
 }
 
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim() !== "";
+}
+
 function normalizeSearchText(value: string): string {
-  return value.trim().toLocaleLowerCase("ko-KR");
+  return value.normalize("NFKC").trim().replace(/\s+/g, " ").toLocaleLowerCase("ko-KR");
+}
+
+function compactSearchText(value: string): string {
+  return normalizeSearchText(value).replace(/[^\p{L}\p{N}]+/gu, "");
 }
 
 function createFeedbackEventId(occurredAt: string): string {

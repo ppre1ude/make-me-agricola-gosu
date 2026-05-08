@@ -1,19 +1,19 @@
 # 04 Draft Memory Coach Vertical Slice
 
-Status: Draft for first integration slice
+Status: Next feature-unit: editable draft state and card autocomplete
 
 ## Goal
 
-첫 세로 조각은 scoring/data/fixture gate 이후 처음으로 사용자가 다음 흐름을
-로컬에서 끝까지 확인하게 한다.
+다음 feature-unit은 추천 전 단계의 draft state를 사용자가 직접 편집하고
+브라우저에서 이어서 작업할 수 있게 한다.
 
 ```text
-현재 픽 입력 -> 추천 확인 -> 실제 선택 기록 -> 중립 피드백 JSONL 저장
+카드 검색 -> offered/selected/seen/passed 편집 -> localStorage 복원 -> 추천 요청 준비
 ```
 
-이 조각의 목표는 UI가 `DraftScoringInput`과 `DraftRecommendation` 계약을
-그대로 소비할 수 있음을 증명하는 것이다. 드래프트 판단 로직은 계속
-`src/features/draft`에 남기고, API/UI는 얇은 어댑터여야 한다.
+이 조각의 목표는 UI가 `DraftScoringInput`에 맞는 입력 상태를 만들 수 있음을
+증명하는 것이다. 드래프트 판단 로직은 계속 `src/features/draft`에 남기고,
+API/UI는 얇은 어댑터여야 한다.
 
 ## Non-Goals
 
@@ -21,20 +21,20 @@ Status: Draft for first integration slice
 - 외부 DB, 인증, 클라우드 동기화
 - OCR 또는 화면 인식
 - 자동 학습, 자동 weight 조정, 자동 fixture 생성
-- 카드 검색/상세의 product-ready 구현
+- 카드 상세/source viewer의 product-ready 구현
 - broad strategy data curation
+- JSONL 피드백 저장 구현
 - 모델 추천과 다른 사용자 선택을 "모델 오류"로 판정하는 UI
 
 ## Local API
 
-첫 구현은 localhost 전용 API로 충분하다. 런타임 데이터 쓰기는 피드백 JSONL만
-허용하고, normalized data와 fixture data는 읽기 전용으로 다룬다.
+첫 구현은 localhost 전용 API로 충분하다. 이 feature-unit의 API 쓰기는 없다.
+normalized data와 fixture data는 읽기 전용으로 다룬다.
 
 Expected endpoints:
 
 ```text
 GET /api/health
-GET /api/draft/sample
 GET /api/cards?type=occupation|minor_improvement&q=<query>
 POST /api/draft/recommend
 POST /api/draft/feedback
@@ -50,10 +50,14 @@ POST /api/draft/feedback
 - 카드 chip/autocomplete 입력에 필요한 compact card list를 반환한다.
 - `type`은 직업/보조설비 입력 화면을 나누기 위한 필터다.
 - `q`는 한글명, 영문명, alias 검색에 사용한다.
+- 빈 `q`는 인기순/기본순 전체 목록이 아니라 짧은 기본 후보만 반환한다.
+- response item은 `id`, `type`, `name`, `aliases`, 선택적 `cardPoolStatus`를
+  담는 compact shape다.
 - 이 endpoint는 추천 판단을 하지 않는다.
 
 `POST /api/draft/recommend`
 
+- 이 feature-unit에서는 호출 준비까지만 보장해도 된다.
 - request body는 `DraftScoringInput` shape를 따른다.
 - 서버는 카드 참조와 기본 입력 shape를 검증한 뒤 `rankDraftOptions`를 호출한다.
 - response는 `{ "recommendations": DraftRecommendation[] }` 형태를 기본으로 한다.
@@ -62,15 +66,32 @@ POST /api/draft/feedback
 
 `POST /api/draft/feedback`
 
+- 이 feature-unit의 구현 범위가 아니다.
 - 사용자 실제 선택이 model top pick과 다를 때 호출한다.
 - 서버는 중립 `model_user_disagreement` event를 JSONL에 append한다.
 - response는 저장된 event id와 append 성공 여부만 반환한다.
 - 이 endpoint는 scoring behavior를 변경하지 않는다.
 
+## Browser Draft State Policy
+
+브라우저 `localStorage`의 draft state는 사용자 로컬 편의 데이터다. 새로고침이나
+브라우저 재방문 때 입력 중인 상태를 복원하기 위한 것이며, 학습 데이터가 아니다.
+
+Policy:
+
+- 저장 범위는 draft card type, format, pick number, explanation depth, tracking mode,
+  offered cards, selected cards, seen cards, passed cards다.
+- 저장 key는 `agricola-korean-gosu:draft-memory-coach:draft-input:v1`이다.
+- 저장 값은 `DraftScoringInput`으로 변환 가능한 UI state여야 한다.
+- 카드 id만 저장하고 card text snapshot은 저장하지 않는다.
+- localStorage state는 JSONL feedback event와 분리한다.
+- localStorage state를 fixture, scoring weight, strategy profile로 자동 승격하지 않는다.
+- 사용자가 reset하면 localStorage state만 지운다. JSONL feedback은 지우지 않는다.
+
 ## Feedback JSONL Policy
 
-런타임 피드백은 fixture와 분리한다. 추천 결과가 틀렸다는 결론이 아니라,
-"사용자가 다른 카드를 골랐다"는 관찰을 보존하는 기록이다.
+런타임 피드백은 fixture와 localStorage draft state 모두에서 분리한다. 추천 결과가
+틀렸다는 결론이 아니라, "사용자가 다른 카드를 골랐다"는 관찰을 보존하는 기록이다.
 
 Policy:
 
@@ -106,16 +127,20 @@ user_error
 1. 사용자는 draft card type, draft format, pick number, explanation depth를 고른다.
 2. 기본 입력은 `full_pack` tracking이다.
 3. 시간 압박용 fallback으로 `selected_only` 입력을 허용한다.
-4. 현재 pack의 offered cards를 card chip으로 입력한다.
-5. 이미 고른 카드, 본 카드, 넘긴 카드는 draft state에서 누적한다.
-6. 추천 버튼은 `POST /api/draft/recommend`만 호출한다.
-7. UI는 rank 1 추천을 가장 크게 보여주고, 대안 2~3개를 함께 보여준다.
-8. 추천 row는 reason, risk, warning, return likelihood, next-pick direction을
+4. 카드 입력은 `/api/cards` autocomplete로 검색하고 chip으로 확정한다.
+5. 현재 pack의 offered cards를 편집할 수 있다.
+6. 이미 고른 카드, 본 카드, 넘긴 카드는 draft state에서 추가/삭제할 수 있다.
+7. draft state는 변경 때마다 browser localStorage에 저장된다.
+8. 화면 진입 시 localStorage draft state가 있으면 복원한다.
+9. reset은 localStorage draft state만 지운다.
+10. 추천 버튼은 `POST /api/draft/recommend` 호출 준비 상태까지만 보장해도 된다.
+11. UI는 rank 1 추천을 가장 크게 보여주고, 대안 2~3개를 함께 보여준다.
+12. 추천 row는 reason, risk, warning, return likelihood, next-pick direction을
    계약 필드에서 그대로 렌더링한다.
-9. missing data는 `warnings`와 `evaluationMeta`로 표시하고 `reasons`에 섞지 않는다.
-10. component 숫자는 deep/debug view에서만 보여준다.
-11. 사용자가 실제 선택을 확정하면 local draft state를 갱신한다.
-12. 실제 선택이 model top pick과 다르면 중립 피드백 저장 affordance를 보여준다.
+13. missing data는 `warnings`와 `evaluationMeta`로 표시하고 `reasons`에 섞지 않는다.
+14. component 숫자는 deep/debug view에서만 보여준다.
+15. 사용자가 실제 선택을 확정하면 local draft state를 갱신한다.
+16. 실제 선택이 model top pick과 다르면 중립 피드백 저장 affordance를 보여준다.
 
 UI는 "왜 이 추천인가"를 설명해야 하지만, "정답"을 선언하면 안 된다.
 
@@ -135,10 +160,12 @@ yarn typecheck
 yarn validate:data
 yarn score:fixtures
 yarn test:draft-coach-api
+yarn test:draft-state-store
 ```
 
-API/UI smoke test script가 추가되면 같은 feature-unit 안에서 package script와
-문서를 함께 갱신하고, 최종 확인은 여전히 `yarn test`로 닫는다.
+이 feature-unit에는 `/api/cards` autocomplete, draft state editor, localStorage
+복원 smoke test를 포함한다. test script가 추가되면 같은 feature-unit 안에서
+package script와 문서를 함께 갱신하고, 최종 확인은 여전히 `yarn test`로 닫는다.
 
 ## Feature-Unit Commit Boundary
 
@@ -157,10 +184,11 @@ Feature-unit 기준:
 권장 feature-unit 예:
 
 ```text
-1. local draft recommendation API adapter
-2. static Draft Memory Coach UI shell and local draft state
-3. neutral JSONL feedback persistence
-4. API/UI smoke tests and final docs alignment
+1. editable draft state editor with /api/cards autocomplete
+2. browser localStorage draft state persistence
+3. local draft recommendation API adapter
+4. neutral JSONL feedback persistence
+5. API/UI smoke tests and final docs alignment
 ```
 
 각 feature-unit은 green test와 짧은 review note가 있어야 merge-ready로 본다.

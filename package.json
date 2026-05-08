@@ -3,11 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "yarn typecheck && yarn validate:data && yarn score:fixtures && yarn test:draft-coach-api",
+    "test": "yarn typecheck && yarn validate:data && yarn score:fixtures && yarn test:draft-coach-api && yarn test:draft-state-store",
     "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
     "validate:data": "node scripts/validate-data.ts",
     "score:fixtures": "node scripts/score-draft-fixtures.ts",
     "test:draft-coach-api": "node scripts/test-draft-coach-api.ts",
+    "test:draft-state-store": "node scripts/test-draft-state-store.ts",
     "report:fixture-gates": "node scripts/report-draft-fixture-gates.ts",
     "dev:draft": "node scripts/serve-draft-coach.ts"
   },

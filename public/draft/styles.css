@@ -43,7 +43,9 @@ body {
 }
 
 button,
-textarea {
+textarea,
+input,
+select {
   font: inherit;
 }
 
@@ -73,9 +75,21 @@ textarea {
   line-height: 1.45;
 }
 
+input,
+select {
+  width: 100%;
+  min-height: 38px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 10px;
+}
+
 textarea:focus-visible,
 button:focus-visible,
-input[type="radio"]:focus-visible {
+input:focus-visible,
+select:focus-visible {
   outline: 3px solid rgba(15, 118, 110, 0.25);
   outline-offset: 2px;
 }
@@ -241,6 +255,42 @@ h3 {
   width: 100%;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.draft-editor {
+  margin-bottom: 14px;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.editor-field {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.editor-field span,
+.section-count {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
 .meta-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -285,6 +335,93 @@ h3 {
   font-weight: 800;
 }
 
+.group-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.group-heading .section-title {
+  margin-bottom: 0;
+}
+
+.card-editor-block {
+  min-width: 0;
+}
+
+.card-search {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.card-search-input {
+  min-width: 0;
+}
+
+.add-card-button {
+  min-width: 58px;
+  padding: 0 10px;
+}
+
+.search-results {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+  min-height: 28px;
+}
+
+.search-result-button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: start;
+  min-height: 44px;
+  padding: 7px 9px;
+  color: var(--text);
+  background: var(--surface-muted);
+  border-color: var(--line);
+  font-weight: 700;
+  text-align: left;
+}
+
+.search-result-button:hover,
+.search-result-button.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.search-result-name,
+.search-result-meta {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.search-result-name {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.search-result-meta,
+.search-message {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.search-message {
+  min-height: 26px;
+  padding: 6px 0;
+}
+
+.search-message.is-error {
+  color: var(--risk);
+}
+
 .card-list,
 .recommendation-list,
 .compact-stack {
@@ -294,8 +431,9 @@ h3 {
 
 .mini-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: start;
   min-height: 56px;
   padding: 10px;
   background: var(--surface-muted);
@@ -306,6 +444,10 @@ h3 {
 .mini-card.is-selected {
   background: var(--accent-soft);
   border-color: #8ccbc3;
+}
+
+.mini-card-text {
+  min-width: 0;
 }
 
 .mini-card-name {
@@ -336,8 +478,9 @@ h3 {
   display: inline-flex;
   max-width: 100%;
   align-items: center;
+  gap: 5px;
   min-height: 26px;
-  padding: 4px 8px;
+  padding: 4px 5px 4px 8px;
   color: var(--text);
   background: var(--surface-muted);
   border: 1px solid var(--line);
@@ -346,6 +489,34 @@ h3 {
   font-weight: 700;
   line-height: 1.2;
   overflow-wrap: anywhere;
+}
+
+.token-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.remove-card-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  flex: 0 0 auto;
+  padding: 0;
+  color: var(--muted);
+  background: transparent;
+  border-color: transparent;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.remove-card-button:hover {
+  color: var(--risk);
+  background: var(--risk-soft);
 }
 
 .recommendation-list {
@@ -625,6 +796,10 @@ h3 {
   }
 
   .meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .editor-grid {
     grid-template-columns: 1fr;
   }
 

@@ -52,6 +52,14 @@ type HttpResult = {
   json: unknown;
 };
 
+type CompactCardType = "occupation" | "minor_improvement" | "major_improvement";
+
+type CompactCard = {
+  id: string;
+  type: CompactCardType;
+  name: string;
+};
+
 try {
   await main(parseCliOptions(process.argv.slice(2)));
 } catch (error) {
@@ -83,6 +91,8 @@ async function runDraftCoachApiSmoke(baseUrl: string): Promise<void> {
   const offeredCardIds = extractOfferedCardIds(sample);
 
   assert.ok(offeredCardIds.length > 0, "GET /api/draft/sample must include offered cards.");
+
+  await assertCardsEndpoint(baseUrl, offeredCardIds);
 
   const recommendationInput = buildRecommendationInput(sample, offeredCardIds);
   const recommendationResponse = await postFirstAccepted(baseUrl, "/api/draft/recommend", [
@@ -139,6 +149,48 @@ async function runDraftCoachApiSmoke(baseUrl: string): Promise<void> {
   }
 
   assertNeutralFeedbackEvent(feedbackEvent);
+}
+
+async function assertCardsEndpoint(baseUrl: string, offeredCardIds: string[]): Promise<void> {
+  const cardsResponse = await requestJson(baseUrl, "GET", "/api/cards");
+  const cards = extractCompactCards(cardsResponse, "GET /api/cards");
+
+  assert.ok(cards.length > 0, "GET /api/cards must return cards.");
+
+  const searchSeed = cards.find((card) => offeredCardIds.includes(card.id)) ?? cards[0];
+  assert.ok(searchSeed, "GET /api/cards must return a searchable card.");
+  const searchResponse = await requestJson(
+    baseUrl,
+    "GET",
+    `/api/cards?q=${encodeURIComponent(searchSeed.name)}`
+  );
+  const searchCards = extractCompactCards(searchResponse, "GET /api/cards?q");
+
+  assert.ok(searchCards.length > 0, "GET /api/cards?q must return matching cards.");
+  assert.ok(
+    searchCards.some((card) => card.id === searchSeed.id),
+    `GET /api/cards?q must include the searched card ${searchSeed.id}.`
+  );
+
+  await assertCardsTypeFilter(baseUrl, cards, "occupation");
+  await assertCardsTypeFilter(baseUrl, cards, "minor_improvement");
+}
+
+async function assertCardsTypeFilter(
+  baseUrl: string,
+  cards: CompactCard[],
+  type: "occupation" | "minor_improvement"
+): Promise<void> {
+  if (!cards.some((card) => card.type === type)) return;
+
+  const response = await requestJson(baseUrl, "GET", `/api/cards?type=${type}`);
+  const filteredCards = extractCompactCards(response, `GET /api/cards?type=${type}`);
+
+  assert.ok(filteredCards.length > 0, `GET /api/cards?type=${type} must return cards when available.`);
+  assert.ok(
+    filteredCards.every((card) => card.type === type),
+    `GET /api/cards?type=${type} must return only ${type} cards.`
+  );
 }
 
 async function resolveApiTarget(options: CliOptions): Promise<ApiTarget> {
@@ -392,6 +444,25 @@ function extractOfferedCardIds(sample: unknown): string[] {
   return [];
 }
 
+function extractCompactCards(response: unknown, label: string): CompactCard[] {
+  const cards = Array.isArray(response) ? response : getPath(response, ["cards"]);
+  assert.ok(Array.isArray(cards), `${label} must return a cards array.`);
+
+  return cards.map((card, index) => {
+    assert.ok(isRecord(card), `${label} cards[${index}] must be an object.`);
+
+    const id = readString(card, "id");
+    const type = readString(card, "type");
+    const name = readString(card, "name");
+
+    assert.ok(id, `${label} cards[${index}] must include id.`);
+    assert.ok(isCompactCardType(type), `${label} cards[${index}] must include a valid type.`);
+    assert.ok(name, `${label} cards[${index}] must include name.`);
+
+    return { id, type, name };
+  });
+}
+
 function buildRecommendationInput(sample: unknown, offeredCardIds: string[]): JsonObject {
   const input = findFirstRecordAtPaths(sample, [
     ["input"],
@@ -526,6 +597,10 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === "string");
 }
 
+function isCompactCardType(value: unknown): value is CompactCardType {
+  return value === "occupation" || value === "minor_improvement" || value === "major_improvement";
+}
+
 function isDefined<T>(value: T | undefined): value is T {
   return value !== undefined;
 }
@@ -579,6 +654,7 @@ function printHelp(): void {
   console.log(`Usage: node scripts/test-draft-coach-api.ts [--base-url URL] [--module PATH]
 
 Runs a dependency-free smoke/regression test for:
+- GET /api/cards
 - GET /api/draft/sample
 - POST /api/draft/recommend
 - POST /api/draft/feedback

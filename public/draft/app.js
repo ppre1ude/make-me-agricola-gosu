@@ -3,11 +3,17 @@
 
   const endpoints = {
     sample: "/api/draft/sample",
+    cards: "/api/cards",
     recommend: "/api/draft/recommend",
     feedback: "/api/draft/feedback"
   };
 
   const labels = {
+    draftFormat: {
+      "10-to-7": "10장 중 7장",
+      "9-to-7": "9장 중 7장",
+      "8-to-7": "8장 중 7장"
+    },
     draftCardType: {
       occupation: "직업",
       minor_improvement: "보조설비"
@@ -71,12 +77,67 @@
     explanationDepth: new Set(["compact", "standard", "deep"])
   };
 
+  const localDraftInputKey = "agricola-korean-gosu:draft-memory-coach:draft-input:v1";
+  const cardGroupNames = ["offered", "picked", "seen", "passed"];
+  const cardGroups = {
+    offered: {
+      inputKey: "offeredCardIds",
+      listRef: "offeredCards",
+      searchRef: "offeredCardSearch",
+      resultsRef: "offeredCardResults",
+      addButtonRef: "addOfferedCardButton",
+      countRef: "offeredCardsCount",
+      label: "보이는 카드",
+      emptyText: "보이는 카드 없음",
+      variant: "card"
+    },
+    picked: {
+      inputKey: "pickedCardIds",
+      listRef: "pickedCards",
+      searchRef: "pickedCardSearch",
+      resultsRef: "pickedCardResults",
+      addButtonRef: "addPickedCardButton",
+      countRef: "pickedCardsCount",
+      label: "집은 카드",
+      emptyText: "없음",
+      variant: "token"
+    },
+    seen: {
+      inputKey: "seenCardIds",
+      listRef: "seenCards",
+      searchRef: "seenCardSearch",
+      resultsRef: "seenCardResults",
+      addButtonRef: "addSeenCardButton",
+      countRef: "seenCardsCount",
+      label: "본 카드",
+      emptyText: "없음",
+      variant: "token"
+    },
+    passed: {
+      inputKey: "passedCardIds",
+      listRef: "passedCards",
+      searchRef: "passedCardSearch",
+      resultsRef: "passedCardResults",
+      addButtonRef: "addPassedCardButton",
+      countRef: "passedCardsCount",
+      label: "넘긴 카드",
+      emptyText: "없음",
+      variant: "token"
+    }
+  };
+
   const state = {
     input: null,
     recommendations: [],
     selectedCardId: null,
     samplePayload: null,
     cardNames: new Map(),
+    cardSearch: {
+      offered: createCardSearchState(),
+      picked: createCardSearchState(),
+      seen: createCardSearchState(),
+      passed: createCardSearchState()
+    },
     requestBusy: false,
     feedbackBusy: false
   };
@@ -86,13 +147,19 @@
   document.addEventListener("DOMContentLoaded", function () {
     bindRefs();
     bindEvents();
-    loadSample();
+    startApp();
   });
 
   function bindRefs() {
     refs.appStatus = document.getElementById("appStatus");
     refs.loadSampleButton = document.getElementById("loadSampleButton");
     refs.recommendButton = document.getElementById("recommendButton");
+    refs.draftEditor = document.getElementById("draftEditor");
+    refs.pickNumberInput = document.getElementById("pickNumberInput");
+    refs.draftCardTypeSelect = document.getElementById("draftCardTypeSelect");
+    refs.draftFormatSelect = document.getElementById("draftFormatSelect");
+    refs.trackingModeSelect = document.getElementById("trackingModeSelect");
+    refs.explanationDepthSelect = document.getElementById("explanationDepthSelect");
     refs.draftMeta = document.getElementById("draftMeta");
     refs.offeredCards = document.getElementById("offeredCards");
     refs.pickedCards = document.getElementById("pickedCards");
@@ -107,12 +174,86 @@
     refs.feedbackHint = document.getElementById("feedbackHint");
     refs.feedbackStatus = document.getElementById("feedbackStatus");
     refs.submitFeedbackButton = document.getElementById("submitFeedbackButton");
+
+    cardGroupNames.forEach(function (groupName) {
+      const config = cardGroups[groupName];
+      refs[config.searchRef] = document.getElementById(config.searchRef);
+      refs[config.resultsRef] = document.getElementById(config.resultsRef);
+      refs[config.addButtonRef] = document.getElementById(config.addButtonRef);
+      refs[config.countRef] = document.getElementById(config.countRef);
+    });
   }
 
   function bindEvents() {
+    refs.draftEditor.addEventListener("submit", function (event) {
+      event.preventDefault();
+    });
     refs.loadSampleButton.addEventListener("click", loadSample);
     refs.recommendButton.addEventListener("click", requestRecommendations);
     refs.feedbackForm.addEventListener("submit", submitFeedback);
+
+    refs.pickNumberInput.addEventListener("change", function () {
+      updateDraftField("pickNumber", clampPickNumber(refs.pickNumberInput.value));
+    });
+    refs.draftCardTypeSelect.addEventListener("change", function () {
+      updateDraftField("draftCardType", refs.draftCardTypeSelect.value);
+      clearAllSearchResults();
+    });
+    refs.draftFormatSelect.addEventListener("change", function () {
+      updateDraftField("draftFormat", refs.draftFormatSelect.value);
+    });
+    refs.trackingModeSelect.addEventListener("change", function () {
+      updateDraftField("trackingMode", refs.trackingModeSelect.value);
+    });
+    refs.explanationDepthSelect.addEventListener("change", function () {
+      updateDraftField("explanationDepth", refs.explanationDepthSelect.value);
+    });
+
+    cardGroupNames.forEach(function (groupName) {
+      const config = cardGroups[groupName];
+      const input = refs[config.searchRef];
+      const addButton = refs[config.addButtonRef];
+
+      input.addEventListener("input", function () {
+        updateCardSearch(groupName, input.value);
+      });
+      input.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        addFirstSearchResult(groupName);
+      });
+      addButton.addEventListener("click", function () {
+        addFirstSearchResult(groupName);
+      });
+    });
+  }
+
+  async function startApp() {
+    setBusy(true);
+    setAppStatus("초기화", "busy");
+    setRecommendationStatus("저장된 입력을 확인하는 중");
+
+    try {
+      const storedInput = await loadStoredDraftInput();
+      if (storedInput) {
+        state.input = normalizeDraftInput(storedInput, {});
+        state.recommendations = [];
+        state.selectedCardId = null;
+        renderDraftState();
+        renderRecommendations();
+        setAppStatus("준비됨", "ready");
+        setRecommendationStatus("저장된 입력을 불러왔습니다.");
+        setBusy(false);
+        if (state.input.offeredCardIds.length > 0) await requestRecommendations();
+        return;
+      }
+    } catch (error) {
+      setRecommendationStatus(errorMessage(error, "저장된 입력을 읽지 못했습니다."));
+    } finally {
+      setBusy(false);
+    }
+
+    await loadSample();
   }
 
   async function loadSample() {
@@ -128,10 +269,11 @@
       state.input = normalizeDraftInput(extractDraftInput(payload), payload);
       state.recommendations = [];
       state.selectedCardId = null;
+      persistDraftInput();
       renderDraftState();
       await requestRecommendations();
     } catch (error) {
-      state.input = null;
+      state.input = createDefaultDraftInput();
       state.recommendations = [];
       state.selectedCardId = null;
       renderDraftState();
@@ -146,7 +288,10 @@
   }
 
   async function requestRecommendations() {
-    if (!state.input) return;
+    if (!canRequestRecommendations()) {
+      setRecommendationStatus("보이는 카드를 먼저 추가하세요.");
+      return;
+    }
 
     setBusy(true);
     setAppStatus("추천 계산", "busy");
@@ -228,6 +373,286 @@
 
     if (note) event.note = note;
     return event;
+  }
+
+  function updateDraftField(key, value) {
+    const nextInput = normalizeDraftInput({ ...(state.input || createDefaultDraftInput()), [key]: value }, state.samplePayload);
+    state.input = nextInput;
+    markDraftInputChanged();
+  }
+
+  function addCardToGroup(groupName, card) {
+    const config = cardGroups[groupName];
+    if (!config || !card?.id) return;
+
+    ensureDraftInput();
+    rememberCompactCard(card);
+    const currentCardIds = state.input[config.inputKey];
+    if (currentCardIds.includes(card.id)) {
+      setAppStatus("이미 추가됨", "ready");
+      return;
+    }
+
+    state.input = normalizeDraftInput(
+      {
+        ...state.input,
+        [config.inputKey]: [...currentCardIds, card.id]
+      },
+      state.samplePayload
+    );
+    clearCardSearch(groupName);
+    markDraftInputChanged();
+  }
+
+  function removeCardFromGroup(groupName, cardId) {
+    const config = cardGroups[groupName];
+    if (!state.input || !config) return;
+
+    const currentCardIds = state.input[config.inputKey];
+    state.input = normalizeDraftInput(
+      {
+        ...state.input,
+        [config.inputKey]: currentCardIds.filter(function (currentCardId) {
+          return currentCardId !== cardId;
+        })
+      },
+      state.samplePayload
+    );
+    markDraftInputChanged();
+  }
+
+  function markDraftInputChanged() {
+    persistDraftInput();
+    state.recommendations = [];
+    state.selectedCardId = null;
+    renderDraftState();
+    renderRecommendations();
+    setRecommendationStatus("입력이 바뀌었습니다. 추천 갱신을 누르세요.");
+    setAppStatus("저장됨", "ready");
+    updateFeedbackPanel();
+  }
+
+  function ensureDraftInput() {
+    if (!state.input) state.input = createDefaultDraftInput();
+    return state.input;
+  }
+
+  function canRequestRecommendations() {
+    return Boolean(state.input && state.input.offeredCardIds.length > 0);
+  }
+
+  function createDefaultDraftInput() {
+    return {
+      playerCount: 4,
+      draftCardType: "occupation",
+      pickNumber: 1,
+      offeredCardIds: [],
+      pickedCardIds: [],
+      seenCardIds: [],
+      passedCardIds: [],
+      draftFormat: "10-to-7",
+      trackingMode: "selected_only",
+      cardPoolProfileId: "bga-arena-prototype",
+      explanationDepth: "standard"
+    };
+  }
+
+  function createCardSearchState() {
+    return {
+      query: "",
+      results: [],
+      selectedCard: null,
+      loading: false,
+      error: "",
+      debounceId: null,
+      requestId: 0
+    };
+  }
+
+  function updateCardSearch(groupName, query) {
+    const search = state.cardSearch[groupName];
+    if (!search) return;
+
+    search.query = query;
+    search.selectedCard = null;
+    search.error = "";
+    if (search.debounceId) clearTimeout(search.debounceId);
+
+    if (!query.trim()) {
+      search.requestId += 1;
+      search.results = [];
+      search.loading = false;
+      renderCardSearch(groupName);
+      return;
+    }
+
+    search.loading = true;
+    renderCardSearch(groupName);
+    search.debounceId = setTimeout(function () {
+      void searchCards(groupName);
+    }, 180);
+  }
+
+  async function searchCards(groupName) {
+    const search = state.cardSearch[groupName];
+    if (!search) return;
+
+    const requestId = search.requestId + 1;
+    search.requestId = requestId;
+    search.loading = true;
+    search.error = "";
+    renderCardSearch(groupName);
+
+    try {
+      const url = new URL(endpoints.cards, window.location.origin);
+      url.searchParams.set("q", search.query.trim());
+      url.searchParams.set("type", state.input?.draftCardType || "occupation");
+      const payload = await fetchJson(url.toString());
+      if (search.requestId !== requestId) return;
+      readCatalog(payload);
+      search.results = extractCardSearchResults(payload);
+      search.selectedCard = search.results[0] || null;
+    } catch (error) {
+      if (search.requestId !== requestId) return;
+      search.results = [];
+      search.selectedCard = null;
+      search.error = errorMessage(error, "카드를 검색하지 못했습니다.");
+    } finally {
+      if (search.requestId === requestId) {
+        search.loading = false;
+        renderCardSearch(groupName);
+      }
+    }
+  }
+
+  function addFirstSearchResult(groupName) {
+    const search = state.cardSearch[groupName];
+    if (!search || search.loading) return;
+    const card = search.selectedCard || search.results[0];
+    if (!card) return;
+    addCardToGroup(groupName, card);
+  }
+
+  function clearCardSearch(groupName) {
+    const config = cardGroups[groupName];
+    const search = state.cardSearch[groupName];
+    if (!config || !search) return;
+
+    if (search.debounceId) clearTimeout(search.debounceId);
+    search.requestId += 1;
+    search.query = "";
+    search.results = [];
+    search.selectedCard = null;
+    search.loading = false;
+    search.error = "";
+    const input = refs[config.searchRef];
+    if (input) input.value = "";
+    renderCardSearch(groupName);
+  }
+
+  function clearAllSearchResults() {
+    cardGroupNames.forEach(clearCardSearch);
+  }
+
+  async function loadStoredDraftInput() {
+    const externalInput = await loadExternalDraftInput();
+    if (externalInput) return externalInput;
+    return loadLocalDraftInput();
+  }
+
+  async function loadExternalDraftInput() {
+    const store = window.DraftStateStore;
+    if (!store) return null;
+
+    const methodNames = ["loadDraftInput", "getDraftInput", "load", "get", "read"];
+    for (const methodName of methodNames) {
+      if (typeof store[methodName] !== "function") continue;
+      try {
+        const value = await maybeAwait(store[methodName]());
+        const input = coerceDraftInput(value);
+        if (input) return input;
+      } catch (error) {
+        continue;
+      }
+    }
+
+    return coerceDraftInput(store.input) || coerceDraftInput(store.draftInput) || null;
+  }
+
+  function loadLocalDraftInput() {
+    try {
+      const raw = window.localStorage?.getItem(localDraftInputKey);
+      if (!raw) return null;
+      return coerceDraftInput(JSON.parse(raw));
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function persistDraftInput() {
+    if (!state.input) return;
+    const snapshot = cloneDraftInput(state.input);
+    saveExternalDraftInput(snapshot);
+
+    try {
+      window.localStorage?.setItem(localDraftInputKey, JSON.stringify(snapshot));
+    } catch (error) {
+      // Local storage can be unavailable in private or restricted browser contexts.
+    }
+  }
+
+  function saveExternalDraftInput(input) {
+    const store = window.DraftStateStore;
+    if (!store) return;
+
+    const methodNames = ["saveDraftInput", "setDraftInput", "save", "set", "write"];
+    for (const methodName of methodNames) {
+      if (typeof store[methodName] !== "function") continue;
+      try {
+        void store[methodName](cloneDraftInput(input));
+        return;
+      } catch (error) {
+        continue;
+      }
+    }
+
+    try {
+      store.input = cloneDraftInput(input);
+    } catch (error) {
+      // Read-only external stores are allowed; localStorage remains the fallback.
+    }
+  }
+
+  function coerceDraftInput(value) {
+    if (looksLikeDraftInput(value)) return value;
+    if (!value || typeof value !== "object") return null;
+
+    const candidates = [value.input, value.draftInput, value.state?.input, value.draftState?.input];
+    return candidates.find(looksLikeDraftInput) || null;
+  }
+
+  async function maybeAwait(value) {
+    return value && typeof value.then === "function" ? await value : value;
+  }
+
+  function cloneDraftInput(input) {
+    const clone = {
+      playerCount: input.playerCount,
+      draftCardType: input.draftCardType,
+      pickNumber: input.pickNumber,
+      offeredCardIds: [...input.offeredCardIds],
+      pickedCardIds: [...input.pickedCardIds],
+      seenCardIds: [...input.seenCardIds],
+      passedCardIds: [...input.passedCardIds],
+      draftFormat: input.draftFormat,
+      trackingMode: input.trackingMode,
+      cardPoolProfileId: input.cardPoolProfileId,
+      explanationDepth: input.explanationDepth
+    };
+
+    if (input.previousPackCardIds) clone.previousPackCardIds = [...input.previousPackCardIds];
+    if (input.missingFromPreviousPack) clone.missingFromPreviousPack = [...input.missingFromPreviousPack];
+    return clone;
   }
 
   async function fetchJson(url, options) {
@@ -337,6 +762,26 @@
       });
   }
 
+  function extractCardSearchResults(payload) {
+    const candidates = [payload?.cards, payload?.data?.cards, payload];
+    const cards = candidates.find(Array.isArray) || [];
+
+    return cards
+      .map(function (card) {
+        const id = stringOr(card?.id, card?.cardId);
+        if (!id) return null;
+        const result = {
+          id,
+          type: card.type,
+          name: stringOr(card.name, card.koreanName || card.koName || card.displayName || id),
+          aliases: Array.isArray(card.aliases) ? stringArray(card.aliases) : []
+        };
+        rememberCompactCard(result);
+        return result;
+      })
+      .filter(Boolean);
+  }
+
   function readCatalog(payload) {
     visitPayload(payload, function (item) {
       const cardId = stringOr(item.cardId, item.id);
@@ -353,6 +798,12 @@
         state.cardNames.set(cardId, name.trim());
       }
     });
+  }
+
+  function rememberCompactCard(card) {
+    if (card?.id && typeof card.name === "string" && card.name.trim()) {
+      state.cardNames.set(card.id, card.name.trim());
+    }
   }
 
   function visitPayload(value, visitor, depth) {
@@ -382,24 +833,42 @@
     refs.passedCards.replaceChildren();
 
     if (!state.input) {
+      syncDraftEditor(createDefaultDraftInput());
       renderEmpty(refs.draftMeta, "샘플 상태 없음");
       renderEmpty(refs.offeredCards, "샘플을 불러오면 현재 팩이 표시됩니다.");
       refs.recommendButton.disabled = true;
       return;
     }
 
-    refs.recommendButton.disabled = state.requestBusy;
+    syncDraftEditor(state.input);
+    refs.recommendButton.disabled = state.requestBusy || !state.input.offeredCardIds.length;
     appendMeta("픽", `${state.input.pickNumber} / 7`);
-    appendMeta("드래프트", state.input.draftFormat);
+    appendMeta("드래프트", labelFor("draftFormat", state.input.draftFormat));
     appendMeta("카드", labelFor("draftCardType", state.input.draftCardType));
     appendMeta("추적", labelFor("trackingMode", state.input.trackingMode));
     appendMeta("인원", `${state.input.playerCount}인`);
     appendMeta("설명", labelFor("explanationDepth", state.input.explanationDepth));
 
-    renderCardList(refs.offeredCards, state.input.offeredCardIds, "보이는 카드 없음", true);
-    renderTokenList(refs.pickedCards, state.input.pickedCardIds, "없음");
-    renderTokenList(refs.seenCards, state.input.seenCardIds, "없음");
-    renderTokenList(refs.passedCards, state.input.passedCardIds, "없음");
+    cardGroupNames.forEach(function (groupName) {
+      const config = cardGroups[groupName];
+      const cardIds = state.input[config.inputKey];
+      const count = refs[config.countRef];
+      if (count) count.textContent = `${cardIds.length}장`;
+      if (config.variant === "card") {
+        renderCardList(refs[config.listRef], cardIds, config.emptyText, true, groupName);
+      } else {
+        renderTokenList(refs[config.listRef], cardIds, config.emptyText, groupName);
+      }
+      renderCardSearch(groupName);
+    });
+  }
+
+  function syncDraftEditor(input) {
+    refs.pickNumberInput.value = input.pickNumber;
+    refs.draftCardTypeSelect.value = input.draftCardType;
+    refs.draftFormatSelect.value = input.draftFormat;
+    refs.trackingModeSelect.value = input.trackingMode;
+    refs.explanationDepthSelect.value = input.explanationDepth;
   }
 
   function appendMeta(label, value) {
@@ -415,7 +884,7 @@
     refs.draftMeta.append(wrapper);
   }
 
-  function renderCardList(container, cardIds, emptyText, highlightSelected) {
+  function renderCardList(container, cardIds, emptyText, highlightSelected, groupName) {
     container.replaceChildren();
     if (!cardIds.length) {
       renderEmpty(container, emptyText);
@@ -435,12 +904,16 @@
       id.className = "mini-card-id";
       id.textContent = cardId;
 
-      item.append(name, id);
+      const text = document.createElement("div");
+      text.className = "mini-card-text";
+      text.append(name, id);
+
+      item.append(text, renderRemoveCardButton(groupName, cardId));
       container.append(item);
     });
   }
 
-  function renderTokenList(container, cardIds, emptyText) {
+  function renderTokenList(container, cardIds, emptyText, groupName) {
     container.replaceChildren();
     if (!cardIds.length) {
       renderEmpty(container, emptyText);
@@ -450,10 +923,88 @@
     cardIds.forEach(function (cardId) {
       const token = document.createElement("span");
       token.className = "token";
-      token.textContent = cardName(cardId);
       token.title = cardId;
+      const name = document.createElement("span");
+      name.className = "token-name";
+      name.textContent = cardName(cardId);
+      token.append(name, renderRemoveCardButton(groupName, cardId));
       container.append(token);
     });
+  }
+
+  function renderRemoveCardButton(groupName, cardId) {
+    const button = document.createElement("button");
+    button.className = "remove-card-button";
+    button.type = "button";
+    button.textContent = "×";
+    button.setAttribute("aria-label", `${cardName(cardId)} 제거`);
+    button.addEventListener("click", function (event) {
+      event.stopPropagation();
+      removeCardFromGroup(groupName, cardId);
+    });
+    return button;
+  }
+
+  function renderCardSearch(groupName) {
+    const config = cardGroups[groupName];
+    const search = state.cardSearch[groupName];
+    if (!config || !search) return;
+
+    const results = refs[config.resultsRef];
+    const addButton = refs[config.addButtonRef];
+    if (!results || !addButton) return;
+
+    results.replaceChildren();
+    addButton.disabled = search.loading || !search.results.length;
+
+    if (search.loading) {
+      renderSearchMessage(results, "검색 중");
+      return;
+    }
+
+    if (search.error) {
+      renderSearchMessage(results, search.error, "is-error");
+      return;
+    }
+
+    if (!search.query.trim()) {
+      renderSearchMessage(results, `${labelFor("draftCardType", state.input?.draftCardType || "occupation")} 이름 또는 ID 검색`);
+      return;
+    }
+
+    if (!search.results.length) {
+      renderSearchMessage(results, "검색 결과 없음");
+      return;
+    }
+
+    search.results.slice(0, 8).forEach(function (card, index) {
+      const button = document.createElement("button");
+      button.className = "search-result-button";
+      if (index === 0) button.classList.add("is-active");
+      button.type = "button";
+      button.setAttribute("role", "option");
+
+      const name = document.createElement("span");
+      name.className = "search-result-name";
+      name.textContent = card.name || card.id;
+
+      const meta = document.createElement("span");
+      meta.className = "search-result-meta";
+      meta.textContent = `${labelFor("draftCardType", card.type)} · ${card.id}`;
+
+      button.append(name, meta);
+      button.addEventListener("click", function () {
+        addCardToGroup(groupName, card);
+      });
+      results.append(button);
+    });
+  }
+
+  function renderSearchMessage(container, text, modifier) {
+    const message = document.createElement("div");
+    message.className = `search-message${modifier ? ` ${modifier}` : ""}`;
+    message.textContent = text;
+    container.append(message);
   }
 
   function renderRecommendations() {
@@ -668,7 +1219,7 @@
   function setBusy(isBusy) {
     state.requestBusy = isBusy;
     refs.loadSampleButton.disabled = isBusy;
-    refs.recommendButton.disabled = isBusy || !state.input;
+    refs.recommendButton.disabled = isBusy || !state.input || !state.input.offeredCardIds.length;
   }
 
   function setAppStatus(text, type) {

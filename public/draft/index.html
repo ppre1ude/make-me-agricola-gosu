@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>드래프트 메모리 코치</title>
     <link rel="stylesheet" href="./styles.css" />
+    <script src="./draft-state-store.js" defer></script>
     <script src="./app.js" defer></script>
   </head>
   <body>
@@ -30,24 +31,99 @@
             </div>
           </div>
 
+          <form class="draft-editor" id="draftEditor" aria-label="드래프트 상태 편집">
+            <div class="editor-grid">
+              <label class="editor-field" for="pickNumberInput">
+                <span>픽 번호</span>
+                <input id="pickNumberInput" type="number" min="1" max="7" step="1" inputmode="numeric" />
+              </label>
+              <label class="editor-field" for="draftCardTypeSelect">
+                <span>카드 종류</span>
+                <select id="draftCardTypeSelect">
+                  <option value="occupation">직업</option>
+                  <option value="minor_improvement">보조설비</option>
+                </select>
+              </label>
+              <label class="editor-field" for="draftFormatSelect">
+                <span>드래프트</span>
+                <select id="draftFormatSelect">
+                  <option value="10-to-7">10장 중 7장</option>
+                  <option value="9-to-7">9장 중 7장</option>
+                  <option value="8-to-7">8장 중 7장</option>
+                </select>
+              </label>
+              <label class="editor-field" for="trackingModeSelect">
+                <span>추적 방식</span>
+                <select id="trackingModeSelect">
+                  <option value="selected_only">선택 카드</option>
+                  <option value="full_pack">전체 팩</option>
+                </select>
+              </label>
+              <label class="editor-field" for="explanationDepthSelect">
+                <span>설명 깊이</span>
+                <select id="explanationDepthSelect">
+                  <option value="compact">간단</option>
+                  <option value="standard">표준</option>
+                  <option value="deep">상세</option>
+                </select>
+              </label>
+            </div>
+          </form>
+
           <dl class="meta-grid" id="draftMeta" aria-label="드래프트 요약"></dl>
 
-          <div class="section-block">
-            <div class="section-title">보이는 카드</div>
+          <div class="section-block card-editor-block">
+            <div class="group-heading">
+              <div class="section-title">보이는 카드</div>
+              <div class="section-count" id="offeredCardsCount">0장</div>
+            </div>
+            <div class="card-search">
+              <label class="sr-only" for="offeredCardSearch">보이는 카드 검색</label>
+              <input id="offeredCardSearch" class="card-search-input" type="search" autocomplete="off" placeholder="카드 이름 또는 ID" />
+              <button class="secondary-button add-card-button" id="addOfferedCardButton" type="button" disabled>추가</button>
+              <div class="search-results" id="offeredCardResults" role="listbox" aria-label="보이는 카드 검색 결과"></div>
+            </div>
             <div class="card-list" id="offeredCards"></div>
           </div>
 
           <div class="section-block compact-stack">
-            <div>
-              <div class="section-title">집은 카드</div>
+            <div class="card-editor-block">
+              <div class="group-heading">
+                <div class="section-title">집은 카드</div>
+                <div class="section-count" id="pickedCardsCount">0장</div>
+              </div>
+              <div class="card-search">
+                <label class="sr-only" for="pickedCardSearch">집은 카드 검색</label>
+                <input id="pickedCardSearch" class="card-search-input" type="search" autocomplete="off" placeholder="카드 검색" />
+                <button class="secondary-button add-card-button" id="addPickedCardButton" type="button" disabled>추가</button>
+                <div class="search-results" id="pickedCardResults" role="listbox" aria-label="집은 카드 검색 결과"></div>
+              </div>
               <div class="token-list" id="pickedCards"></div>
             </div>
-            <div>
-              <div class="section-title">본 카드</div>
+            <div class="card-editor-block">
+              <div class="group-heading">
+                <div class="section-title">본 카드</div>
+                <div class="section-count" id="seenCardsCount">0장</div>
+              </div>
+              <div class="card-search">
+                <label class="sr-only" for="seenCardSearch">본 카드 검색</label>
+                <input id="seenCardSearch" class="card-search-input" type="search" autocomplete="off" placeholder="카드 검색" />
+                <button class="secondary-button add-card-button" id="addSeenCardButton" type="button" disabled>추가</button>
+                <div class="search-results" id="seenCardResults" role="listbox" aria-label="본 카드 검색 결과"></div>
+              </div>
               <div class="token-list" id="seenCards"></div>
             </div>
-            <div>
-              <div class="section-title">넘긴 카드</div>
+            <div class="card-editor-block">
+              <div class="group-heading">
+                <div class="section-title">넘긴 카드</div>
+                <div class="section-count" id="passedCardsCount">0장</div>
+              </div>
+              <div class="card-search">
+                <label class="sr-only" for="passedCardSearch">넘긴 카드 검색</label>
+                <input id="passedCardSearch" class="card-search-input" type="search" autocomplete="off" placeholder="카드 검색" />
+                <button class="secondary-button add-card-button" id="addPassedCardButton" type="button" disabled>추가</button>
+                <div class="search-results" id="passedCardResults" role="listbox" aria-label="넘긴 카드 검색 결과"></div>
+              </div>
               <div class="token-list" id="passedCards"></div>
             </div>
           </div>
