@@ -1,4 +1,3 @@
-import { useState } from "react";
 import type {
   DraftCardType,
   DraftFormat,
@@ -13,11 +12,12 @@ import {
   SKILL_LEVEL_LABELS,
   TRACKING_MODE_LABELS
 } from "./labels";
-import type { DraftCardGroupConfig } from "./types";
+import type { DraftCardGroupConfig, DraftCardSearchState } from "./types";
 
 type DraftStatePanelProps = {
   input: UIDraftInput;
   cardGroups: DraftCardGroupConfig[];
+  cardSearchByGroup: Record<DraftCardGroupConfig["key"], DraftCardSearchState>;
   cardNameById: (cardId: string) => string;
   canRecommend: boolean;
   requestBusy: boolean;
@@ -26,11 +26,14 @@ type DraftStatePanelProps = {
   onInputChange: (nextInput: UIDraftInput) => void;
   onAddCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
   onRemoveCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
+  onCardSearchChange: (groupKey: DraftCardGroupConfig["key"], query: string) => void;
+  onSelectSearchResult: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
 };
 
 export function DraftStatePanel({
   input,
   cardGroups,
+  cardSearchByGroup,
   cardNameById,
   canRecommend,
   requestBusy,
@@ -38,7 +41,9 @@ export function DraftStatePanel({
   onRecommend,
   onInputChange,
   onAddCard,
-  onRemoveCard
+  onRemoveCard,
+  onCardSearchChange,
+  onSelectSearchResult
 }: DraftStatePanelProps) {
   return (
     <section className="tool-panel draft-panel" aria-labelledby="draftHeading">
@@ -173,9 +178,12 @@ export function DraftStatePanel({
         <CardGroupEditor
           config={cardGroups[0]}
           cardIds={input.offeredCardIds}
+          searchState={cardSearchByGroup.offered}
           cardNameById={cardNameById}
           onAddCard={onAddCard}
           onRemoveCard={onRemoveCard}
+          onCardSearchChange={onCardSearchChange}
+          onSelectSearchResult={onSelectSearchResult}
         />
       </div>
 
@@ -185,9 +193,12 @@ export function DraftStatePanel({
             <CardGroupEditor
               config={config}
               cardIds={input[config.inputKey]}
+              searchState={cardSearchByGroup[config.key]}
               cardNameById={cardNameById}
               onAddCard={onAddCard}
               onRemoveCard={onRemoveCard}
+              onCardSearchChange={onCardSearchChange}
+              onSelectSearchResult={onSelectSearchResult}
             />
           </div>
         ))}
@@ -208,79 +219,177 @@ function MetaItem({ label, value }: { label: string; value: string }) {
 function CardGroupEditor({
   config,
   cardIds,
+  searchState,
   cardNameById,
   onAddCard,
-  onRemoveCard
+  onRemoveCard,
+  onCardSearchChange,
+  onSelectSearchResult
 }: {
   config: DraftCardGroupConfig | undefined;
   cardIds: string[];
+  searchState: DraftCardSearchState | undefined;
   cardNameById: (cardId: string) => string;
   onAddCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
   onRemoveCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
+  onCardSearchChange: (groupKey: DraftCardGroupConfig["key"], query: string) => void;
+  onSelectSearchResult: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
 }) {
-  const [draftCardId, setDraftCardId] = useDraftCardInput();
   if (!config) return null;
+  const groupConfig = config;
 
-  const trimmedCardId = draftCardId.trim();
-  const canAdd = trimmedCardId.length > 0;
+  const cardSearch = searchState ?? EMPTY_CARD_SEARCH_STATE;
+  const trimmedQuery = cardSearch.query.trim();
+  const selectedCard = selectedSearchCard(cardSearch);
+  const canAdd = Boolean(selectedCard || trimmedQuery) && !cardSearch.loading;
+
+  function addCurrentSearchValue() {
+    const cardId = selectedCard?.id ?? trimmedQuery;
+    if (!cardId) return;
+
+    onAddCard(groupConfig.key, cardId);
+    onCardSearchChange(groupConfig.key, "");
+  }
+
+  function moveSelection(direction: 1 | -1) {
+    if (cardSearch.results.length === 0) return;
+
+    const currentIndex = Math.max(
+      0,
+      cardSearch.results.findIndex((card) => card.id === selectedCard?.id)
+    );
+    const nextIndex = (currentIndex + direction + cardSearch.results.length) % cardSearch.results.length;
+    const nextCard = cardSearch.results[nextIndex];
+    if (nextCard) onSelectSearchResult(groupConfig.key, nextCard.id);
+  }
 
   return (
     <>
       <div className="group-heading">
-        <div className="section-title">{config.label}</div>
-        <div className="section-count" id={config.countId}>
+        <div className="section-title">{groupConfig.label}</div>
+        <div className="section-count" id={groupConfig.countId}>
           {cardIds.length}장
         </div>
       </div>
       <div className="card-search">
-        <label className="sr-only" htmlFor={config.searchId}>
-          {config.label} 검색
+        <label className="sr-only" htmlFor={groupConfig.searchId}>
+          {groupConfig.label} 검색
         </label>
         <input
-          id={config.searchId}
+          id={groupConfig.searchId}
           className="card-search-input"
           type="search"
           autoComplete="off"
           placeholder="카드 이름 또는 ID"
-          value={draftCardId}
-          onChange={(event) => setDraftCardId(event.target.value)}
+          value={cardSearch.query}
+          onChange={(event) => onCardSearchChange(groupConfig.key, event.target.value)}
           onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              moveSelection(1);
+              return;
+            }
+            if (event.key === "ArrowUp") {
+              event.preventDefault();
+              moveSelection(-1);
+              return;
+            }
             if (event.key !== "Enter" || !canAdd) return;
             event.preventDefault();
-            onAddCard(config.key, trimmedCardId);
-            setDraftCardId("");
+            addCurrentSearchValue();
           }}
         />
         <button
           className="secondary-button add-card-button"
-          id={config.addButtonId}
+          id={groupConfig.addButtonId}
           type="button"
           disabled={!canAdd}
-          onClick={() => {
-            onAddCard(config.key, trimmedCardId);
-            setDraftCardId("");
-          }}
+          onClick={addCurrentSearchValue}
         >
           추가
         </button>
         <div
           className="search-results"
-          id={config.resultsId}
+          id={groupConfig.resultsId}
           role="listbox"
-          aria-label={`${config.label} 검색 결과`}
+          aria-label={`${groupConfig.label} 검색 결과`}
         >
-          <div className="search-message">어댑터 카드 검색 연결 전에는 카드 ID를 직접 입력합니다.</div>
+          <CardSearchResults
+            config={groupConfig}
+            searchState={cardSearch}
+            onAddCard={(cardId) => {
+              onAddCard(groupConfig.key, cardId);
+              onCardSearchChange(groupConfig.key, "");
+            }}
+            onSelectCard={(cardId) => onSelectSearchResult(groupConfig.key, cardId)}
+          />
         </div>
       </div>
       <CardIdList
-        variant={config.variant}
-        groupKey={config.key}
+        variant={groupConfig.variant}
+        groupKey={groupConfig.key}
         cardIds={cardIds}
-        emptyText={config.emptyText}
-        listId={config.listId}
+        emptyText={groupConfig.emptyText}
+        listId={groupConfig.listId}
         cardNameById={cardNameById}
         onRemoveCard={onRemoveCard}
       />
+    </>
+  );
+}
+
+function CardSearchResults({
+  config,
+  searchState,
+  onAddCard,
+  onSelectCard
+}: {
+  config: DraftCardGroupConfig;
+  searchState: DraftCardSearchState;
+  onAddCard: (cardId: string) => void;
+  onSelectCard: (cardId: string) => void;
+}) {
+  if (searchState.loading) {
+    return <div className="search-message">검색 중</div>;
+  }
+
+  if (searchState.error) {
+    return <div className="search-message is-error">{searchState.error}</div>;
+  }
+
+  if (!searchState.query.trim()) {
+    return <div className="search-message">카드 이름 또는 ID 검색</div>;
+  }
+
+  if (searchState.results.length === 0) {
+    return <div className="search-message">검색 결과 없음</div>;
+  }
+
+  return (
+    <>
+      {searchState.results.slice(0, 8).map((card, index) => {
+        const isSelected = searchState.selectedCardId === card.id || (!searchState.selectedCardId && index === 0);
+        return (
+          <button
+            className={`search-result-button${isSelected ? " is-active" : ""}`}
+            type="button"
+            role="option"
+            aria-selected={isSelected}
+            key={card.id}
+            onFocus={() => onSelectCard(card.id)}
+            onMouseEnter={() => onSelectCard(card.id)}
+            onClick={() => onAddCard(card.id)}
+          >
+            <span className="search-result-name">{card.name}</span>
+            <span className="search-result-meta">
+              {card.type && card.type in DRAFT_CARD_TYPE_LABELS
+                ? DRAFT_CARD_TYPE_LABELS[card.type as keyof typeof DRAFT_CARD_TYPE_LABELS]
+                : card.type ?? "카드"}{" "}
+              · {card.id}
+            </span>
+          </button>
+        );
+      })}
     </>
   );
 }
@@ -362,6 +471,16 @@ function typedEntries<T extends Record<string, string>>(record: T): Array<[Extra
   return Object.entries(record) as Array<[Extract<keyof T, string>, string]>;
 }
 
-function useDraftCardInput(): [string, (value: string) => void] {
-  return useState("");
+function selectedSearchCard(searchState: DraftCardSearchState) {
+  return (
+    searchState.results.find((card) => card.id === searchState.selectedCardId) ?? searchState.results[0] ?? null
+  );
 }
+
+const EMPTY_CARD_SEARCH_STATE: DraftCardSearchState = {
+  query: "",
+  results: [],
+  loading: false,
+  error: "",
+  selectedCardId: null
+};

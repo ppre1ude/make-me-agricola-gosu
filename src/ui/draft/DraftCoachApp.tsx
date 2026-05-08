@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { DraftFeedbackPossibleCause } from "../../features/draft/index.ts";
 import { createDefaultDraftInput, type UIDraftInput } from "./contract-adapter.ts";
 import {
@@ -14,6 +14,8 @@ import { RecommendationList } from "./components/RecommendationList";
 import { TopBar } from "./components/TopBar";
 import type {
   DraftCardGroupConfig,
+  DraftCardSearchState,
+  DraftCardSummary,
   DraftCoachRecommendationView,
   DraftStatusTone
 } from "./components/types";
@@ -85,10 +87,14 @@ const CARD_GROUPS: DraftCardGroupConfig[] = [
   }
 ];
 
+const CARD_GROUP_KEYS = ["offered", "picked", "seen", "passed"] as const;
+
 export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   const activeAdapter = adapter ?? defaultDraftCoachAdapter;
   const [input, setInput] = useState<UIDraftInput>(DEFAULT_INPUT);
   const [recommendations, setRecommendations] = useState<DraftCoachRecommendationView[]>([]);
+  const [cardSearchByGroup, setCardSearchByGroup] = useState(createCardSearchByGroup);
+  const [cardNameCatalog, setCardNameCatalog] = useState<Record<string, string>>({});
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [feedbackNote, setFeedbackNote] = useState("");
   const [resolutionNote, setResolutionNote] = useState("");
@@ -103,8 +109,15 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     feedbackBusy: false,
     resolveBusy: false
   });
+  const searchRequestIdsRef = useRef<Record<DraftCardGroupConfig["key"], number>>(createSearchRequestIds());
+  const searchDebounceIdsRef = useRef<Record<DraftCardGroupConfig["key"], ReturnType<typeof setTimeout> | null>>(
+    createSearchDebounceIds()
+  );
 
-  const cardNames = useMemo(() => buildCardNameMap(recommendations), [recommendations]);
+  const cardNames = useMemo(
+    () => buildCardNameMap(cardNameCatalog, recommendations),
+    [cardNameCatalog, recommendations]
+  );
   const modelTopCardId = recommendations[0]?.cardId;
   const selectedCardLabel = selectedCardId ? cardDisplay(selectedCardId, cardNames) : "";
   const canResolvePick = Boolean(selectedCardId && activeAdapter.canResolvePick(input, selectedCardId));
@@ -155,10 +168,13 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     };
   }, [activeAdapter]);
 
+  useEffect(() => () => clearAllSearchTimers(), []);
+
   async function loadSample() {
     setBusyRequest("샘플 로딩", "샘플을 불러오는 중");
     try {
       const payload = await activeAdapter.loadSample();
+      rememberRecommendationNames(payload.recommendations);
       setInput(payload.input);
       setRecommendations(payload.recommendations);
       setSelectedCardId(payload.recommendations[0]?.cardId ?? null);
@@ -198,6 +214,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     setBusyRequest("추천 계산", "추천을 요청하는 중");
     try {
       const payload = await activeAdapter.requestRecommendations(nextInput);
+      rememberRecommendationNames(payload.recommendations);
       setInput(payload.input);
       setRecommendations(payload.recommendations);
       setSelectedCardId(payload.recommendations[0]?.cardId ?? null);
@@ -224,9 +241,11 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   }
 
   async function updateInput(nextInput: UIDraftInput) {
+    const draftCardTypeChanged = nextInput.draftCardType !== input.draftCardType;
     setInput(nextInput);
     setRecommendations([]);
     setSelectedCardId(null);
+    if (draftCardTypeChanged) resetAllCardSearches();
     await activeAdapter.saveDraftInput(nextInput);
     setRequestState((current) => ({
       ...current,
@@ -247,6 +266,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     const currentCardIds = input[group.inputKey];
     if (currentCardIds.includes(normalizedCardId)) return;
 
+    resetCardSearch(groupKey);
     void updateInput({
       ...input,
       [group.inputKey]: [...currentCardIds, normalizedCardId]
@@ -261,6 +281,80 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
       ...input,
       [group.inputKey]: input[group.inputKey].filter((currentCardId) => currentCardId !== cardId)
     });
+  }
+
+  function updateCardSearch(groupKey: DraftCardGroupConfig["key"], query: string) {
+    const requestId = searchRequestIdsRef.current[groupKey] + 1;
+    searchRequestIdsRef.current[groupKey] = requestId;
+    clearSearchTimer(groupKey);
+
+    const trimmedQuery = query.trim();
+    setCardSearchByGroup((current) => ({
+      ...current,
+      [groupKey]: {
+        ...current[groupKey],
+        query,
+        selectedCardId: null,
+        error: "",
+        loading: Boolean(trimmedQuery),
+        results: trimmedQuery ? current[groupKey].results : []
+      }
+    }));
+
+    if (!trimmedQuery) return;
+
+    searchDebounceIdsRef.current[groupKey] = setTimeout(() => {
+      void runCardSearch(groupKey, trimmedQuery, requestId);
+    }, 180);
+  }
+
+  async function runCardSearch(
+    groupKey: DraftCardGroupConfig["key"],
+    query: string,
+    requestId: number
+  ) {
+    try {
+      const results = await activeAdapter.searchCards({
+        query,
+        type: input.draftCardType,
+        limit: 8
+      });
+      if (searchRequestIdsRef.current[groupKey] !== requestId) return;
+
+      rememberCardSummaries(results);
+      setCardSearchByGroup((current) => ({
+        ...current,
+        [groupKey]: {
+          ...current[groupKey],
+          results,
+          loading: false,
+          error: "",
+          selectedCardId: results[0]?.id ?? null
+        }
+      }));
+    } catch (error) {
+      if (searchRequestIdsRef.current[groupKey] !== requestId) return;
+      setCardSearchByGroup((current) => ({
+        ...current,
+        [groupKey]: {
+          ...current[groupKey],
+          results: [],
+          loading: false,
+          selectedCardId: null,
+          error: errorMessage(error, "카드를 검색하지 못했습니다.")
+        }
+      }));
+    }
+  }
+
+  function selectSearchResult(groupKey: DraftCardGroupConfig["key"], cardId: string) {
+    setCardSearchByGroup((current) => ({
+      ...current,
+      [groupKey]: {
+        ...current[groupKey],
+        selectedCardId: cardId
+      }
+    }));
   }
 
   async function submitFeedback() {
@@ -374,6 +468,58 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     setCanUndo(Boolean(await activeAdapter.peekUndoSnapshot()));
   }
 
+  function resetCardSearch(groupKey: DraftCardGroupConfig["key"]) {
+    searchRequestIdsRef.current[groupKey] += 1;
+    clearSearchTimer(groupKey);
+    setCardSearchByGroup((current) => ({
+      ...current,
+      [groupKey]: createCardSearchState()
+    }));
+  }
+
+  function resetAllCardSearches() {
+    CARD_GROUP_KEYS.forEach((groupKey) => {
+      searchRequestIdsRef.current[groupKey] += 1;
+      clearSearchTimer(groupKey);
+    });
+    setCardSearchByGroup(createCardSearchByGroup());
+  }
+
+  function clearSearchTimer(groupKey: DraftCardGroupConfig["key"]) {
+    const debounceId = searchDebounceIdsRef.current[groupKey];
+    if (debounceId) clearTimeout(debounceId);
+    searchDebounceIdsRef.current[groupKey] = null;
+  }
+
+  function clearAllSearchTimers() {
+    CARD_GROUP_KEYS.forEach(clearSearchTimer);
+  }
+
+  function rememberCardSummaries(cards: readonly DraftCardSummary[]) {
+    if (cards.length === 0) return;
+
+    setCardNameCatalog((current) => {
+      const next = { ...current };
+      cards.forEach((card) => {
+        next[card.id] = card.name;
+      });
+      return next;
+    });
+  }
+
+  function rememberRecommendationNames(nextRecommendations: readonly DraftCoachRecommendationView[]) {
+    if (nextRecommendations.length === 0) return;
+
+    setCardNameCatalog((current) => {
+      const next = { ...current };
+      nextRecommendations.forEach((recommendation) => {
+        next[recommendation.cardId] =
+          recommendation.cardNameKo ?? recommendation.cardName ?? recommendation.cardId;
+      });
+      return next;
+    });
+  }
+
   function setBusyRequest(appStatus: string, recommendationStatus: string) {
     setRequestState((current) => ({
       ...current,
@@ -398,6 +544,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
         <DraftStatePanel
           input={input}
           cardGroups={CARD_GROUPS}
+          cardSearchByGroup={cardSearchByGroup}
           cardNameById={(cardId) => cardDisplayName(cardId, cardNames)}
           canRecommend={input.offeredCardIds.length > 0}
           requestBusy={requestState.requestBusy}
@@ -406,6 +553,8 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
           onInputChange={(nextInput) => void updateInput(nextInput)}
           onAddCard={addCard}
           onRemoveCard={removeCard}
+          onCardSearchChange={updateCardSearch}
+          onSelectSearchResult={selectSearchResult}
         />
         <RecommendationList
           recommendations={recommendations}
@@ -445,8 +594,11 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   );
 }
 
-function buildCardNameMap(recommendations: DraftCoachRecommendationView[]): Map<string, string> {
-  const cardNames = new Map<string, string>();
+function buildCardNameMap(
+  cardNameCatalog: Record<string, string>,
+  recommendations: DraftCoachRecommendationView[]
+): Map<string, string> {
+  const cardNames = new Map(Object.entries(cardNameCatalog));
   for (const recommendation of recommendations) {
     cardNames.set(
       recommendation.cardId,
@@ -454,6 +606,43 @@ function buildCardNameMap(recommendations: DraftCoachRecommendationView[]): Map<
     );
   }
   return cardNames;
+}
+
+function createCardSearchByGroup(): Record<DraftCardGroupConfig["key"], DraftCardSearchState> {
+  return {
+    offered: createCardSearchState(),
+    picked: createCardSearchState(),
+    seen: createCardSearchState(),
+    passed: createCardSearchState()
+  };
+}
+
+function createCardSearchState(): DraftCardSearchState {
+  return {
+    query: "",
+    results: [],
+    loading: false,
+    error: "",
+    selectedCardId: null
+  };
+}
+
+function createSearchRequestIds(): Record<DraftCardGroupConfig["key"], number> {
+  return {
+    offered: 0,
+    picked: 0,
+    seen: 0,
+    passed: 0
+  };
+}
+
+function createSearchDebounceIds(): Record<DraftCardGroupConfig["key"], ReturnType<typeof setTimeout> | null> {
+  return {
+    offered: null,
+    picked: null,
+    seen: null,
+    passed: null
+  };
 }
 
 function cardDisplayName(cardId: string, cardNames: Map<string, string>): string {

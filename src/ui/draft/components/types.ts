@@ -31,6 +31,14 @@ export type DraftCardGroupConfig = {
   variant: "card" | "token";
 };
 
+export type DraftCardSearchState = {
+  query: string;
+  results: DraftCardSummary[];
+  loading: boolean;
+  error: string;
+  selectedCardId: string | null;
+};
+
 export type DraftCoachRecommendationView = DraftRecommendation & {
   cardName?: string;
   cardNameKo?: string;

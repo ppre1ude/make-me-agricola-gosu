@@ -35,6 +35,17 @@ const requiredDomIds = [
   "confirmPickButton"
 ] as const;
 
+const requiredCardSearchDomIds = [
+  "offeredCardResults",
+  "pickedCardResults",
+  "seenCardResults",
+  "passedCardResults",
+  "addOfferedCardButton",
+  "addPickedCardButton",
+  "addSeenCardButton",
+  "addPassedCardButton"
+] as const;
+
 const requiredApiTokens = [
   "/api/draft/sample",
   "/api/cards",
@@ -74,6 +85,20 @@ const requiredClassTokens = [
   "confirm-dialog"
 ] as const;
 
+const requiredCardSearchTokens = [
+  "card-search",
+  "card-search-input",
+  "search-results",
+  "search-result-button",
+  "search-result-name",
+  "search-result-meta"
+] as const;
+
+const requiredReactCardSearchContractTokens = [
+  "DraftCardSearchOptions",
+  "DraftCardSummary"
+] as const;
+
 const reactSearchRoots = [
   path.join(rootDir, "app"),
   path.join(rootDir, "src", "app"),
@@ -93,15 +118,15 @@ assertStaticReference(reference);
 
 const reactFiles = await findReactSourceFiles(reactSearchRoots);
 if (reactFiles.length === 0) {
-  console.log("Draft React parity reference passed; React/Next draft source is not scaffolded yet.");
+  console.log("Draft documented-flow marker coverage passed; React/Next draft source is not scaffolded yet.");
 } else {
   const reactSource = await readCombinedSource(reactFiles);
   if (shouldEnforceReactParity(reactSource, reactFiles)) {
     assertReactParity(reactSource, reactFiles);
-    console.log(`Draft React parity passed across ${reactFiles.length} draft source file(s).`);
+    console.log(`Draft documented-flow marker coverage passed across ${reactFiles.length} draft source file(s).`);
   } else {
     console.log(
-      `Draft React parity reference passed; found ${reactFiles.length} partial draft source file(s), full parity pending.`
+      `Draft documented-flow marker coverage passed; found ${reactFiles.length} partial draft source file(s), full coverage pending.`
     );
   }
 }
@@ -119,27 +144,39 @@ async function readRequiredText(filePath: string): Promise<string> {
 }
 
 function assertStaticReference(source: ReferenceSource): void {
-  assert.ok(source.html.includes('<html lang="ko">'), "static reference should keep Korean document locale.");
+  assert.ok(source.html.includes('<html lang="ko">'), "static reference marker file should keep Korean document locale.");
   assertOrdered(source.html, ["./draft-state-store.js", "./pick-resolution.js", "./app.js"]);
 
   requiredDomIds.forEach((id) => {
-    assert.ok(source.html.includes(`id="${id}"`), `static reference should expose #${id}.`);
+    assert.ok(source.html.includes(`id="${id}"`), `static reference marker file should expose #${id}.`);
+  });
+
+  requiredCardSearchDomIds.forEach((id) => {
+    assert.ok(source.html.includes(`id="${id}"`), `static reference marker file should expose card search #${id}.`);
   });
 
   requiredApiTokens.forEach((token) => {
-    assert.ok(source.app.includes(token), `static reference app.js should include ${token}.`);
+    assert.ok(source.app.includes(token), `static reference marker file should include ${token}.`);
   });
 
   requiredStateTokens.forEach((token) => {
-    assert.ok(source.app.includes(token), `static reference app.js should include ${token}.`);
+    assert.ok(source.app.includes(token), `static reference marker file should include ${token}.`);
   });
 
   requiredClassTokens.forEach((className) => {
-    assert.ok(source.styles.includes(`.${className}`), `static reference styles.css should include .${className}.`);
+    assert.ok(source.styles.includes(`.${className}`), `static reference marker file should include .${className}.`);
   });
 
-  assert.ok(source.styles.includes("@media (max-width: 960px)"), "static reference should keep tablet/mobile layout breakpoint.");
-  assert.ok(source.styles.includes("@media (max-width: 620px)"), "static reference should keep compact mobile layout breakpoint.");
+  requiredCardSearchTokens.forEach((token) => {
+    assert.ok(
+      `${source.html}\n${source.app}\n${source.styles}`.includes(token),
+      `static reference marker files should include card search token ${token}.`
+    );
+  });
+  assertCardSearchRoles(`${source.html}\n${source.app}\n${source.styles}`, "static reference marker files");
+
+  assert.ok(source.styles.includes("@media (max-width: 960px)"), "static reference marker files should keep tablet/mobile layout breakpoint.");
+  assert.ok(source.styles.includes("@media (max-width: 620px)"), "static reference marker files should keep compact mobile layout breakpoint.");
 }
 
 function assertReactParity(source: string, files: string[]): void {
@@ -150,6 +187,10 @@ function assertReactParity(source: string, files: string[]): void {
 
   requiredDomIds.forEach((id) => {
     assertIncludesToken(source, id, `React draft source should preserve #${id}.`);
+  });
+
+  requiredCardSearchDomIds.forEach((id) => {
+    assertIncludesToken(source, id, `React draft source should preserve card search #${id}.`);
   });
 
   requiredApiTokens.forEach((token) => {
@@ -163,6 +204,20 @@ function assertReactParity(source: string, files: string[]): void {
   requiredClassTokens.forEach((className) => {
     assertIncludesToken(source, className, `React draft source should preserve layout class ${className}.`);
   });
+
+  requiredCardSearchTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React draft source should preserve card search token ${token}.`);
+  });
+  assertCardSearchRoles(source, "React draft source");
+
+  requiredReactCardSearchContractTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React draft source should preserve card search contract token ${token}.`);
+  });
+
+  assert.ok(
+    /\bsearchCards\b/.test(source) || source.includes("/api/cards"),
+    "React draft source should connect card autocomplete through adapter.searchCards or /api/cards."
+  );
 }
 
 function shouldEnforceReactParity(source: string, files: readonly string[]): boolean {
@@ -175,6 +230,20 @@ function shouldEnforceReactParity(source: string, files: readonly string[]): boo
 
 function assertIncludesToken(source: string, token: string, message: string): void {
   assert.ok(source.includes(token), message);
+}
+
+function assertCardSearchRoles(source: string, sourceLabel: string): void {
+  assert.ok(
+    source.includes('role="listbox"') || source.includes("role='listbox'"),
+    `${sourceLabel} should expose card search result lists with role=listbox.`
+  );
+  assert.ok(
+    source.includes('role="option"') ||
+      source.includes("role='option'") ||
+      source.includes('"role", "option"') ||
+      source.includes("'role', 'option'"),
+    `${sourceLabel} should expose selectable card search results with role=option.`
+  );
 }
 
 function assertOrdered(text: string, values: readonly string[]): void {

@@ -4,7 +4,7 @@ Status: React/Next scaffold wired; `/draft` route switched after parity guard
 
 ## Purpose
 
-The current user-visible Draft Memory Coach reference lives in:
+The current user-visible Draft Memory Coach reference implementation lives in:
 
 ```text
 public/draft/index.html
@@ -12,14 +12,19 @@ public/draft/app.js
 public/draft/styles.css
 ```
 
-The React/Next port should preserve the current workflow before changing
-product behavior. This document defines the parity surface and a lightweight
-static test that can run before a Next scaffold exists.
+This static implementation is useful evidence, but it is not the absolute
+source of truth. The source of truth is the documented Draft Memory Coach
+product flow plus the scoring, validation, pick-resolution, feedback, and undo
+contracts already defined in the codebase. If the static reference conflicts
+with that documented flow, the expected action is to report the conflict for
+human review instead of copying the static behavior blindly.
 
-## Reference Contract
+This document defines documented-flow coverage markers and a lightweight static
+test that can run before or during React/Next work.
 
-The static draft reference is the behavioral baseline for the first React/Next
-port. The port should keep these user-facing flows equivalent:
+## Documented Flow Contract
+
+The React/Next port should keep the documented user-facing flows covered:
 
 1. Load a sample draft state.
 2. Edit draft type, format, pick number, tracking mode, explanation depth,
@@ -36,13 +41,19 @@ port. The port should keep these user-facing flows equivalent:
 The port must not move scoring, validation, or pick-resolution rules into
 React components. Those contracts stay independent from UI framework code.
 
-## Static Parity Surface
+## Flow Marker Coverage Surface
 
-The first parity gate checks for stable, framework-agnostic markers rather than
-rendering a browser page. This is intentionally weaker than browser QA, but it
-catches accidental omissions during scaffold and component extraction.
+The first guard checks stable, framework-agnostic markers rather than rendering
+a browser page. This is intentionally weaker than browser QA, but it catches
+accidental omissions during scaffold and component extraction.
 
-Reference app shell markers:
+The static reference files are checked as marker files because they record the
+current implementation shape. Passing those checks does not mean the static
+implementation is product-correct; failing those checks means a human should
+review whether the marker drift is intentional or whether the reference no
+longer covers the documented flow.
+
+App shell markers:
 
 ```text
 recommendButton
@@ -65,7 +76,7 @@ pickConfirmModal
 confirmPickButton
 ```
 
-Reference API and state markers:
+API and state markers:
 
 ```text
 /api/draft/sample
@@ -84,7 +95,7 @@ passedCardIds
 model_user_disagreement
 ```
 
-Reference layout/class markers:
+Layout/class markers:
 
 ```text
 app-shell
@@ -99,6 +110,30 @@ chip-list
 alert-list
 modal-backdrop
 confirm-dialog
+```
+
+Card search/autocomplete markers for the next feature unit:
+
+```text
+offeredCardResults
+pickedCardResults
+seenCardResults
+passedCardResults
+addOfferedCardButton
+addPickedCardButton
+addSeenCardButton
+addPassedCardButton
+card-search
+card-search-input
+search-results
+search-result-button
+search-result-name
+search-result-meta
+role=listbox
+role=option
+DraftCardSearchOptions
+DraftCardSummary
+adapter.searchCards or /api/cards
 ```
 
 React/Next candidates are searched in common scaffold locations:
@@ -120,6 +155,20 @@ appears. At that point, the same script asserts that the combined React source
 still contains the key IDs, API contracts, state fields, and CSS class markers
 above.
 
+## Next Feature Unit
+
+The next feature unit connects React card search/autocomplete parity. The
+current manual ID input can remain as a fallback, but it is not sufficient by
+itself. React should search cards through `adapter.searchCards` or `/api/cards`,
+render selectable result buttons for each card group, and add the selected card
+through the existing group input contract.
+
+The parity guard now expects concrete search-result containers, add buttons,
+selectable result button markers, listbox/option roles, and the typed card
+search adapter surface. If these markers fail while the documented product flow
+still expects autocomplete, report the gap for human review before changing the
+product behavior.
+
 ## Test Command
 
 Run directly with Node:
@@ -129,7 +178,7 @@ node scripts/test-draft-react-parity.ts
 ```
 
 The command is also available through `yarn test:draft-react-parity` and is
-included in `yarn test` so future React edits keep the static reference contract
+included in `yarn test` so future React edits keep documented-flow coverage
 visible.
 
 ## Acceptance Criteria
@@ -137,13 +186,16 @@ visible.
 The React/Next port is parity-ready when:
 
 - `node scripts/test-draft-react-parity.ts` passes with React files present.
-- The existing static reference checks still pass.
+- The marker checks for the static reference files still pass, or any conflict
+  with the documented flow has been reported for human review.
 - `yarn test` remains green.
 - Any intentional UI behavior change is documented separately from parity.
 - Scoring and validation contracts remain under `src/features/draft`.
 - Pick resolution still uses the existing contract semantics.
+- Card search/autocomplete uses `adapter.searchCards` or `/api/cards`.
+- Card search results are selectable buttons, not only manual ID text input.
 - `/draft` serves the React Draft Memory Coach while `public/draft` remains the
-  fixed reference implementation.
+  fixed reference implementation for comparison.
 
 ## Limits
 
