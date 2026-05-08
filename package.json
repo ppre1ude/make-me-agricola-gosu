@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "yarn typecheck && yarn validate:data && yarn score:fixtures && yarn test:draft-coach-api && yarn test:draft-state-store && yarn test:pick-resolution && yarn test:draft-feedback-store && yarn test:draft-static-assets",
+    "dev": "node ./node_modules/next/dist/bin/next dev",
+    "build": "node ./node_modules/next/dist/bin/next build",
+    "start": "node ./node_modules/next/dist/bin/next start",
+    "test": "yarn typecheck && yarn validate:data && yarn score:fixtures && yarn test:draft-coach-api && yarn test:draft-state-store && yarn test:pick-resolution && yarn test:draft-feedback-store && yarn test:draft-static-assets && yarn test:draft-react-parity",
     "typecheck": "node ./node_modules/typescript/bin/tsc --noEmit",
     "validate:data": "node scripts/validate-data.ts",
     "score:fixtures": "node scripts/score-draft-fixtures.ts",
@@ -12,11 +15,21 @@
     "test:pick-resolution": "node scripts/test-pick-resolution.ts",
     "test:draft-feedback-store": "node scripts/test-draft-feedback-store.ts",
     "test:draft-static-assets": "node scripts/test-draft-static-assets.ts",
+    "test:draft-react-parity": "node scripts/test-draft-react-parity.ts",
     "report:fixture-gates": "node scripts/report-draft-fixture-gates.ts",
     "dev:draft": "node scripts/serve-draft-coach.ts"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^10.3.0",
+    "eslint-config-next": "^16.2.6",
     "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "next": "^16.2.6",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   }
 }
