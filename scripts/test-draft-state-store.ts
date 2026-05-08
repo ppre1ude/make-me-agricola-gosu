@@ -15,6 +15,10 @@ type DraftStateStore = {
   save(draftInput: unknown): DraftStateStoreValidation;
   load(): Record<string, unknown> | null;
   clear(): boolean;
+  pushUndo(draftInput: unknown): DraftStateStoreValidation;
+  peekUndo(): Record<string, unknown> | null;
+  popUndo(): Record<string, unknown> | null;
+  clearUndo(): boolean;
   validate(draftInput: unknown): DraftStateStoreValidation;
 };
 
@@ -76,12 +80,34 @@ const invalidResult = store.save({
 assert.equal(invalidResult.ok, false, "invalid pickNumber should be rejected.");
 assert.deepEqual(toPlainJson(store.load()), validDraftInput, "invalid save should not replace stored input.");
 
+const undoSnapshot = {
+  ...validDraftInput,
+  pickNumber: 1,
+  offeredCardIds: ["occ-field-watchman", "minor-grain-supply", "occ-food-engine"]
+};
+const pushUndoResult = store.pushUndo(undoSnapshot);
+assert.equal(pushUndoResult.ok, true, "valid undo snapshot should save.");
+assert.deepEqual(toPlainJson(store.peekUndo()), undoSnapshot, "undo snapshot should be readable without clearing.");
+assert.deepEqual(toPlainJson(store.popUndo()), undoSnapshot, "undo snapshot should pop once.");
+assert.equal(store.peekUndo(), null, "popped undo snapshot should be cleared.");
+
+const invalidUndoResult = store.pushUndo({
+  ...validDraftInput,
+  offeredCardIds: "occ-field-watchman"
+});
+assert.equal(invalidUndoResult.ok, false, "invalid undo snapshot should be rejected.");
+assert.equal(store.peekUndo(), null, "invalid undo snapshot should not be stored.");
+
 storage.set(store.storageKey, "{not json");
 assert.equal(store.load(), null, "malformed storage should load as null.");
 assert.equal(storage.has(store.storageKey), false, "malformed storage should be cleared.");
 
+storage.set(`${store.storageKey.replace(":draft-input:", ":draft-input-undo:")}`, "{not json");
+assert.equal(store.peekUndo(), null, "malformed undo storage should load as null.");
+
 assert.equal(store.clear(), true, "clear should report success.");
 assert.equal(store.load(), null, "cleared storage should load as null.");
+assert.equal(store.clearUndo(), true, "clearUndo should report success.");
 console.log("Draft state store smoke passed.");
 
 function toPlainJson(value: unknown): unknown {

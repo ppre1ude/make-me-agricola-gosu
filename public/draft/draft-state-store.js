@@ -2,6 +2,7 @@
   "use strict";
 
   const storageKey = "agricola-korean-gosu:draft-memory-coach:draft-input:v1";
+  const undoStorageKey = "agricola-korean-gosu:draft-memory-coach:draft-input-undo:v1";
 
   const allowed = Object.freeze({
     draftCardType: new Set(["occupation", "minor_improvement"]),
@@ -59,6 +60,71 @@
   function clear() {
     try {
       window.localStorage.removeItem(storageKey);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function pushUndo(snapshot) {
+    const validation = validate(snapshot);
+    if (!validation.ok) {
+      return { ok: false, errors: validation.errors };
+    }
+
+    try {
+      window.localStorage.setItem(undoStorageKey, JSON.stringify(validation.draftInput));
+    } catch (error) {
+      return { ok: false, errors: ["localStorage is unavailable."] };
+    }
+
+    return { ok: true, draftInput: validation.draftInput };
+  }
+
+  function popUndo() {
+    const snapshot = peekUndo();
+    if (!snapshot) return null;
+
+    try {
+      window.localStorage.removeItem(undoStorageKey);
+    } catch (error) {
+      return null;
+    }
+
+    return snapshot;
+  }
+
+  function peekUndo() {
+    let rawValue;
+
+    try {
+      rawValue = window.localStorage.getItem(undoStorageKey);
+    } catch (error) {
+      return null;
+    }
+
+    if (!rawValue) return null;
+
+    let parsed;
+    try {
+      parsed = JSON.parse(rawValue);
+    } catch (error) {
+      clearUndo();
+      return null;
+    }
+
+    const validation = validate(parsed);
+    if (!validation.ok) {
+      clearUndo();
+      return null;
+    }
+
+    return validation.draftInput;
+  }
+
+  function clearUndo() {
+    try {
+      window.localStorage.removeItem(undoStorageKey);
       return true;
     } catch (error) {
       return false;
@@ -171,6 +237,10 @@
     save,
     load,
     clear,
+    pushUndo,
+    popUndo,
+    peekUndo,
+    clearUndo,
     validate
   });
 })();
