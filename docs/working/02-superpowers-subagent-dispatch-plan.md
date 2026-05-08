@@ -1,6 +1,6 @@
 # 02 Superpowers Subagent Dispatch Plan
 
-Status: Draft
+Status: Pre-UI automated lanes complete; human strategy review pending
 
 Latest checkpoint:
 
@@ -10,6 +10,7 @@ Domain Logic Gate: 17 passing fixtures; pending human review.
 Stretch Fixture Coverage: 5/5 direct; feedback event fixture covered.
 Fixture Gate Report: available through yarn report:fixture-gates.
 Human Review Guide: docs/working/03-domain-fixture-human-review.md.
+UI Readiness Checkpoint: docs/working/05-pre-ui-readiness-checkpoint.md.
 ```
 
 ## Scope
@@ -19,16 +20,18 @@ It follows the project gate in `docs/agents/00-agent-operating-model.md` and the
 
 ## Current Gate
 
-The active gate is:
+The original active gate was:
 
 ```text
 scoring contract + data validation + fixture matrix
 ```
 
-Why UI, API, and DB are deferred:
+That automated gate is now covered. Initial UI integration may start after the
+user-provided wireframe. Product-ready UI remains blocked until human strategy
+review has no critical or high unresolved fixture issues.
 
-- UI would encode draft logic before the engine contract is stable.
-- API is not needed until the contract is stable enough to expose.
+Why DB remains deferred:
+
 - DB work is premature because schema decisions should follow the validated contract and fixtures.
 
 ## Safe Parallel Lanes Now
@@ -52,11 +55,12 @@ Why UI, API, and DB are deferred:
 
 ## Deferred Lanes
 
-These stay future-only until Schema Stabilization is complete:
+These stay future-only until a separate scope decision:
 
-- API lane: expose the contract only after it stops shifting.
 - DB lane: persist only after the validated data model is stable.
-- UI lane: begin Draft Memory Coach scaffold only after the schema gate closes.
+- OCR lane: screen tracking is outside the current manual Draft Memory Coach flow.
+- Broad curation lane: 50-100 card strategy profile expansion comes after the
+  wireframe-based slice remains usable.
 
 ## Human Review Checkpoints
 
@@ -130,7 +134,10 @@ This gate is complete when all of the following are true:
 
 ## Dispatch Rule
 
-Run the contract, validation, and fixture lanes in parallel. Keep docs/review in the loop after each meaningful contract or fixture change. Do not dispatch UI, API, or DB work until Schema Stabilization is explicitly complete.
+Run new work as feature-unit commits. Keep docs/review in the loop after each
+meaningful contract, fixture, persistence, or user-visible behavior change.
+Do not dispatch DB, OCR, or broad curation work unless the user explicitly
+widens the scope.
 
 Commit boundaries should follow this order unless the human reviewer chooses otherwise:
 

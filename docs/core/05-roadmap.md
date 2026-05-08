@@ -64,6 +64,15 @@ data/manual/card-strategy-profiles.json
 
 ### Milestone 2: 비UI 드래프트 추천 프로토타입
 
+현재 상태:
+
+```text
+Automated gate: covered.
+Schema Stabilization Gate: 7/7 direct coverage.
+Domain Logic Gate: 17 passing fixtures, human strategy review pending.
+Next step: user wireframe 기반 Draft Memory Coach UI integration.
+```
+
 목표:
 
 - 최신 light spec과 현재 prototype 사이의 contract gap 닫기
@@ -103,11 +112,10 @@ scripts/score-draft-fixtures.ts
 
 성공 기준:
 
-- 현재 `yarn test` 통과만으로는 Milestone 2 완료로 보지 않는다.
-- Schema Stabilization fixture 5~7개가 통과한다.
-- rank 1 추천은 항상 non-empty `candidateGroups`를 가진다.
-- missing stat/profile은 `warnings`와 `evaluationMeta`로 표현하고 `reasons`를 오염시키지 않는다.
-- Domain Logic / Product Readiness는 15개 이상의 고품질 전략 fixture를 목표로 한다.
+- Schema Stabilization fixture 5~7개가 통과한다. 완료.
+- rank 1 추천은 항상 non-empty `candidateGroups`를 가진다. 완료.
+- missing stat/profile은 `warnings`와 `evaluationMeta`로 표현하고 `reasons`를 오염시키지 않는다. 완료.
+- Domain Logic / Product Readiness는 15개 이상의 고품질 전략 fixture를 목표로 한다. 자동화 커버리지는 완료, 사람 전략 검수는 pending.
 - strong card라도 이미 해결된 역할과 겹치면 내려간다.
 - broken/plan anchor는 초반에 충분히 우선된다.
 - 3~4픽부터 콤보와 역할 보완이 점수에 반영된다.
@@ -133,8 +141,9 @@ scripts/score-draft-fixtures.ts
 진입 조건:
 
 ```text
-Schema Stabilization Gate 통과 전에는 `/draft` UI scaffold를 시작하지 않는다.
-Domain Logic / Product Readiness Gate 통과 전에는 UI를 product-ready 또는 merge-ready로 보지 않는다.
+Schema Stabilization Gate는 통과했으므로 초기 UI integration은 시작 가능하다.
+사용자 wireframe을 받은 뒤 pick confirmation/undo를 user-visible하게 연결한다.
+Domain Logic 사람 검수 전에는 UI를 product-ready 또는 merge-ready로 보지 않는다.
 ```
 
 산출물:

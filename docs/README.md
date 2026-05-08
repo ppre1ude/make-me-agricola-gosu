@@ -56,7 +56,15 @@ Codex와 사람이 이 프로젝트를 이해할 때 먼저 봐야 하는 핵심
 
 특정 구현 단계나 의사결정 게이트를 다루는 작업 문서입니다. 장기 제품 원칙보다는 현재 단계의 실행 품질을 높이는 데 사용합니다.
 
-- [00 Pre-UI Engineering Review](./working/00-pre-ui-engineering-review.md): UI 구현 전 scoring contract, data validation, fixture matrix 검토
+- [00 Pre-UI Engineering Review](./working/00-pre-ui-engineering-review.md):
+  UI 구현 전 scoring contract, data validation, fixture matrix 검토
+- [02 Superpowers Subagent Dispatch Plan](./working/02-superpowers-subagent-dispatch-plan.md):
+  subagent-driven 작업 분배와 게이트 기록
+- [03 Domain Fixture Human Review](./working/03-domain-fixture-human-review.md): 전략 fixture 사람 검수 가이드
+- [04 Draft Memory Coach Vertical Slice](./working/04-draft-memory-coach-vertical-slice.md):
+  로컬 API, draft state, feedback, smoke 테스트 세로 조각
+- [05 Pre-UI Readiness Checkpoint](./working/05-pre-ui-readiness-checkpoint.md):
+  와이어프레임 기반 UI 시작 전 최종 readiness 상태
 
 ## 현재 결론
 

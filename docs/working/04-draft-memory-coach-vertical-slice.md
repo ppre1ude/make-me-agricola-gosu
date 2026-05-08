@@ -1,6 +1,9 @@
 # 04 Draft Memory Coach Vertical Slice
 
-Status: Current feature-unit: API/UI smoke tests and final docs alignment
+Status: Non-UI vertical slice covered; user wireframe pending
+
+See `docs/working/05-pre-ui-readiness-checkpoint.md` for the current
+pre-UI readiness summary.
 
 ## Goal
 
