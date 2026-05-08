@@ -13,14 +13,14 @@ export type DraftCardSummary = {
   aliases?: string[];
 };
 
-export type DraftCardGroupKey = "offered" | "picked" | "seen" | "passed";
+export type DraftCardGroupKey = "offered" | "picked" | "seen" | "passed" | "previous";
 
 export type DraftCardGroupConfig = {
   key: DraftCardGroupKey;
   label: string;
   inputKey: keyof Pick<
     UIDraftInput,
-    "offeredCardIds" | "pickedCardIds" | "seenCardIds" | "passedCardIds"
+    "offeredCardIds" | "pickedCardIds" | "seenCardIds" | "passedCardIds" | "previousPackCardIds"
   >;
   listId: string;
   searchId: string;

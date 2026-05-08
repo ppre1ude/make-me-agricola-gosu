@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { DraftFeedbackPossibleCause } from "../../features/draft/index.ts";
-import { createDefaultDraftInput, type UIDraftInput } from "./contract-adapter.ts";
+import { createDefaultDraftInput, normalizeDraftInput, type UIDraftInput } from "./contract-adapter.ts";
 import {
   defaultDraftCoachAdapter,
   type DraftCardDetail,
@@ -86,10 +86,22 @@ const CARD_GROUPS: DraftCardGroupConfig[] = [
     countId: "passedCardsCount",
     emptyText: "없음",
     variant: "token"
+  },
+  {
+    key: "previous",
+    label: "이전에 본 팩",
+    inputKey: "previousPackCardIds",
+    listId: "previousPackCardList",
+    searchId: "previousPackCardSearch",
+    resultsId: "previousPackCardResults",
+    addButtonId: "addPreviousPackCardButton",
+    countId: "previousPackCardsCount",
+    emptyText: "이전에 본 팩 없음",
+    variant: "token"
   }
 ];
 
-const CARD_GROUP_KEYS = ["offered", "picked", "seen", "passed"] as const;
+const CARD_GROUP_KEYS = ["offered", "picked", "seen", "passed", "previous"] as const;
 
 export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   const activeAdapter = adapter ?? defaultDraftCoachAdapter;
@@ -139,7 +151,8 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
         if (cancelled) return;
 
         if (restoredInput) {
-          setInput(restoredInput);
+          const normalizedRestoredInput = normalizeDraftInput(restoredInput);
+          setInput(normalizedRestoredInput);
           setRecommendations([]);
           setSelectedCardId(null);
           setRequestState((current) => ({
@@ -150,8 +163,8 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
             requestBusy: false
           }));
           await refreshUndoAvailability();
-          if (restoredInput.offeredCardIds.length > 0) {
-            await requestRecommendations(restoredInput);
+          if (normalizedRestoredInput.offeredCardIds.length > 0) {
+            await requestRecommendations(normalizedRestoredInput);
           }
           return;
         }
@@ -210,7 +223,8 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   }
 
   async function requestRecommendations(nextInput = input) {
-    if (nextInput.offeredCardIds.length === 0) {
+    const normalizedInput = normalizeDraftInput(nextInput);
+    if (normalizedInput.offeredCardIds.length === 0) {
       setRequestState((current) => ({
         ...current,
         recommendationStatus: "보이는 카드를 먼저 추가하세요."
@@ -220,7 +234,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
 
     setBusyRequest("추천 계산", "추천을 요청하는 중");
     try {
-      const payload = await activeAdapter.requestRecommendations(nextInput);
+      const payload = await activeAdapter.requestRecommendations(normalizedInput);
       rememberRecommendationNames(payload.recommendations);
       setInput(payload.input);
       setRecommendations(payload.recommendations);
@@ -248,12 +262,13 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   }
 
   async function updateInput(nextInput: UIDraftInput) {
-    const draftCardTypeChanged = nextInput.draftCardType !== input.draftCardType;
-    setInput(nextInput);
+    const normalizedInput = normalizeDraftInput(nextInput);
+    const draftCardTypeChanged = normalizedInput.draftCardType !== input.draftCardType;
+    setInput(normalizedInput);
     setRecommendations([]);
     setSelectedCardId(null);
     if (draftCardTypeChanged) resetAllCardSearches();
-    await activeAdapter.saveDraftInput(nextInput);
+    await activeAdapter.saveDraftInput(normalizedInput);
     setRequestState((current) => ({
       ...current,
       appStatus: "저장됨",
@@ -270,7 +285,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     const normalizedCardId = cardId.trim();
     if (!normalizedCardId) return;
 
-    const currentCardIds = input[group.inputKey];
+    const currentCardIds = input[group.inputKey] ?? [];
     if (currentCardIds.includes(normalizedCardId)) return;
 
     resetCardSearch(groupKey);
@@ -286,7 +301,14 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
 
     void updateInput({
       ...input,
-      [group.inputKey]: input[group.inputKey].filter((currentCardId) => currentCardId !== cardId)
+      [group.inputKey]: (input[group.inputKey] ?? []).filter((currentCardId) => currentCardId !== cardId)
+    });
+  }
+
+  function copyOfferedToPreviousPack() {
+    void updateInput({
+      ...input,
+      previousPackCardIds: [...input.offeredCardIds]
     });
   }
 
@@ -605,6 +627,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
           onCardSearchChange={updateCardSearch}
           onSelectSearchResult={selectSearchResult}
           onOpenCardDetail={(cardId) => void openCardDetail(cardId)}
+          onCopyOfferedToPreviousPack={copyOfferedToPreviousPack}
         />
         <RecommendationList
           recommendations={recommendations}
@@ -672,7 +695,8 @@ function createCardSearchByGroup(): Record<DraftCardGroupConfig["key"], DraftCar
     offered: createCardSearchState(),
     picked: createCardSearchState(),
     seen: createCardSearchState(),
-    passed: createCardSearchState()
+    passed: createCardSearchState(),
+    previous: createCardSearchState()
   };
 }
 
@@ -691,7 +715,8 @@ function createSearchRequestIds(): Record<DraftCardGroupConfig["key"], number> {
     offered: 0,
     picked: 0,
     seen: 0,
-    passed: 0
+    passed: 0,
+    previous: 0
   };
 }
 
@@ -700,7 +725,8 @@ function createSearchDebounceIds(): Record<DraftCardGroupConfig["key"], ReturnTy
     offered: null,
     picked: null,
     seen: null,
-    passed: null
+    passed: null,
+    previous: null
   };
 }
 

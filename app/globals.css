@@ -1,5 +1,43 @@
 @import "../public/draft/styles.css";
 
+.full-visible-pack,
+.previous-pack-comparison,
+.tracking-warning {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.full-visible-pack {
+  background: #fbfefd;
+}
+
+.current-visible-pack {
+  margin-bottom: 10px;
+}
+
+.previous-pack-comparison {
+  display: grid;
+  gap: 12px;
+  background: var(--surface-muted);
+}
+
+.previous-pack-card-search {
+  display: grid;
+  gap: 8px;
+}
+
+.missing-from-previous-pack {
+  display: grid;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.tracking-warning {
+  background: var(--warning-soft);
+}
+
 .card-detail-open-button {
   min-width: 0;
   padding: 0;

@@ -4,7 +4,12 @@ import type {
   ExplanationDepth,
   TrackingMode
 } from "../../../features/draft/index.ts";
-import type { DraftSkillLevel, UIDraftInput } from "../contract-adapter.ts";
+import {
+  buildDraftPreviousPackComparison,
+  shouldComparePreviousPack,
+  type DraftSkillLevel,
+  type UIDraftInput
+} from "../contract-adapter.ts";
 import {
   DRAFT_CARD_TYPE_LABELS,
   DRAFT_FORMAT_LABELS,
@@ -29,6 +34,7 @@ type DraftStatePanelProps = {
   onCardSearchChange: (groupKey: DraftCardGroupConfig["key"], query: string) => void;
   onSelectSearchResult: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
   onOpenCardDetail: (cardId: string) => void;
+  onCopyOfferedToPreviousPack: () => void;
 };
 
 export function DraftStatePanel({
@@ -45,8 +51,15 @@ export function DraftStatePanel({
   onRemoveCard,
   onCardSearchChange,
   onSelectSearchResult,
-  onOpenCardDetail
+  onOpenCardDetail,
+  onCopyOfferedToPreviousPack
 }: DraftStatePanelProps) {
+  const offeredGroup = cardGroups.find((config) => config.key === "offered");
+  const previousGroup = cardGroups.find((config) => config.key === "previous");
+  const compactGroups = cardGroups.filter((config) => config.key === "picked" || config.key === "seen" || config.key === "passed");
+  const previousPackComparison = buildDraftPreviousPackComparison(input);
+  const shouldShowPreviousPackComparison = shouldComparePreviousPack(input);
+
   return (
     <section className="tool-panel draft-panel" aria-labelledby="draftHeading">
       <div className="panel-heading">
@@ -176,9 +189,12 @@ export function DraftStatePanel({
         <MetaItem label="넘긴 카드" value={`${input.passedCardIds.length}장`} />
       </dl>
 
-      <div className="section-block card-editor-block">
+      <div className="section-block card-editor-block full-visible-pack" id="fullVisiblePackPanel">
+        <div className="current-visible-pack" id="currentVisiblePackList">
+          <div className="section-title">현재 visible pack</div>
+        </div>
         <CardGroupEditor
-          config={cardGroups[0]}
+          config={offeredGroup}
           cardIds={input.offeredCardIds}
           searchState={cardSearchByGroup.offered}
           cardNameById={cardNameById}
@@ -190,12 +206,61 @@ export function DraftStatePanel({
         />
       </div>
 
+      {shouldShowPreviousPackComparison ? (
+        <div
+          className="section-block card-editor-block previous-pack-comparison"
+          id="previousPackComparisonPanel"
+          data-comparison-enabled={previousPackComparison.enabled}
+        >
+          <div className="group-heading">
+            <div>
+              <div className="section-title">이전 팩 비교</div>
+              <p className="muted-line">돌아온 팩에서 보이지 않는 카드를 약한 추적 신호로 기록합니다.</p>
+            </div>
+            <button
+              className="secondary-button compact-button"
+              id="copyOfferedToPreviousPackButton"
+              type="button"
+              disabled={input.offeredCardIds.length === 0}
+              onClick={onCopyOfferedToPreviousPack}
+            >
+              현재 팩 복사
+            </button>
+          </div>
+          <div className="previous-pack-card-search">
+            <CardGroupEditor
+              config={previousGroup}
+              cardIds={previousPackComparison.previousPackCardIds}
+              searchState={cardSearchByGroup.previous}
+              cardNameById={cardNameById}
+              onAddCard={onAddCard}
+              onRemoveCard={onRemoveCard}
+              onCardSearchChange={onCardSearchChange}
+              onSelectSearchResult={onSelectSearchResult}
+              onOpenCardDetail={onOpenCardDetail}
+            />
+          </div>
+          <MissingFromPreviousPackList
+            cardIds={previousPackComparison.missingFromPreviousPack}
+            cardNameById={cardNameById}
+            onOpenCardDetail={onOpenCardDetail}
+          />
+        </div>
+      ) : input.pickNumber >= 5 ? (
+        <div className="section-block tracking-warning" id="quickTrackingWarning">
+          <div className="section-title">빠른 입력 모드</div>
+          <p className="muted-line">
+            선택 카드 모드에서는 돌아온 팩의 사라진 카드 요약과 role pressure 신호가 낮아집니다.
+          </p>
+        </div>
+      ) : null}
+
       <div className="section-block compact-stack">
-        {cardGroups.slice(1).map((config) => (
+        {compactGroups.map((config) => (
           <div className="card-editor-block" key={config.key}>
             <CardGroupEditor
               config={config}
-              cardIds={input[config.inputKey]}
+              cardIds={input[config.inputKey] ?? []}
               searchState={cardSearchByGroup[config.key]}
               cardNameById={cardNameById}
               onAddCard={onAddCard}
@@ -208,6 +273,46 @@ export function DraftStatePanel({
         ))}
       </div>
     </section>
+  );
+}
+
+function MissingFromPreviousPackList({
+  cardIds,
+  cardNameById,
+  onOpenCardDetail
+}: {
+  cardIds: string[];
+  cardNameById: (cardId: string) => string;
+  onOpenCardDetail: (cardId: string) => void;
+}) {
+  return (
+    <div className="missing-from-previous-pack" id="missingFromPreviousPackList">
+      <div className="group-heading">
+        <div>
+          <div className="section-title">돌아오지 않은 카드</div>
+          <p className="muted-line">상대가 집었다고 단정하지 않고 이전 팩 대비 사라진 카드로만 기록합니다.</p>
+        </div>
+        <div className="section-count">{cardIds.length}장</div>
+      </div>
+      {cardIds.length === 0 ? (
+        <div className="empty-state">이전 팩 대비 사라진 카드 없음</div>
+      ) : (
+        <div className="token-list">
+          {cardIds.map((cardId) => (
+            <span className="token" title={cardId} key={cardId}>
+              <button
+                className="card-detail-open-button token-detail-button"
+                type="button"
+                aria-label={`${cardNameById(cardId)} 상세 보기`}
+                onClick={() => onOpenCardDetail(cardId)}
+              >
+                <span className="token-name">{cardNameById(cardId)}</span>
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

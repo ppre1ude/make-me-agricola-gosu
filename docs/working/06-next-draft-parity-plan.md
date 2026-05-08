@@ -92,6 +92,8 @@ offeredCardIds
 pickedCardIds
 seenCardIds
 passedCardIds
+previousPackCardIds
+missingFromPreviousPack
 model_user_disagreement
 ```
 
@@ -172,6 +174,36 @@ Strategy Profile: roles, broken/plan anchor status, solved problems,
   operation sequence, next-pick guidance
 ```
 
+Full visible pack / previous pack comparison markers for the next input UX
+feature unit:
+
+```text
+fullVisiblePackPanel
+currentVisiblePackList
+previousPackComparisonPanel
+previousPackCardSearch
+previousPackCardResults
+addPreviousPackCardButton
+previousPackCardList
+missingFromPreviousPackList
+full-visible-pack
+current-visible-pack
+previous-pack-comparison
+previous-pack-card-search
+missing-from-previous-pack
+DraftPreviousPackComparison
+previousPackCardIds
+missingFromPreviousPack
+```
+
+The static `public/draft` reference includes contract fields for previous pack
+and missing-card state, but it is not the source of truth for this input UX.
+The source of truth is the Draft Memory Coach input UX in
+`docs/core/04-feature-specs.md`: 1-7 picks support full visible pack input,
+5-7 picks compare a returned pack with the previously seen pack, and missing
+cards remain visible as missing-from-previous-pack evidence rather than being
+silently converted into picked or passed cards.
+
 React/Next candidates are searched in common scaffold locations:
 
 ```text
@@ -193,27 +225,22 @@ above.
 
 ## Next Feature Unit
 
-The next feature unit connects React card search/autocomplete parity. The
-current manual ID input can remain as a fallback, but it is not sufficient by
-itself. React should search cards through `adapter.searchCards` or `/api/cards`,
-render selectable result buttons for each card group, and add the selected card
-through the existing group input contract.
+Completed React parity guard units:
 
-The parity guard now expects concrete search-result containers, add buttons,
-selectable result button markers, listbox/option roles, and the typed card
-search adapter surface. If these markers fail while the documented product flow
-still expects autocomplete, report the gap for human review before changing the
-product behavior.
+- Card search/autocomplete: concrete search-result containers, add buttons,
+  selectable result button markers, listbox/option roles, and typed card search
+  adapter surface.
+- Card detail drawer: drawer component presence, open/close markers, detail
+  API/adapter contract, and visible markers for Header, Card Body, Stats, and
+  Strategy Profile fields.
 
-The next feature unit after card search is the React card detail drawer. It
-should let a user open detail from a recommendation or card chip, fetch detail
-through `adapter.getCardDetail` or `/api/cards/[cardId]`, and close the drawer
-without changing the draft state. The marker guard checks drawer component
-presence, open/close markers, the detail API/adapter contract, and visible
-markers for Header, Card Body, Stats, and Strategy Profile fields. This remains
-static source coverage only; browser QA is still required for focus handling,
-keyboard dismissal, scroll lock, async loading/error states, and responsive
-layout.
+The next input UX feature unit is full visible pack / previous pack comparison.
+React should keep the current offered cards framed as the full visible pack,
+support previous pack card entry through the same search/add pattern, and show
+`missingFromPreviousPack` evidence explicitly after comparing the returned pack.
+The marker guard checks only static source markers that this feature unit can
+satisfy; browser QA is still required for runtime calculation behavior,
+keyboard flow, async search states, and responsive layout.
 
 ## Test Command
 
@@ -243,6 +270,10 @@ The React/Next port is parity-ready when:
 - Card detail drawer uses `adapter.getCardDetail` or `/api/cards/[cardId]`.
 - Card detail drawer exposes Header, Card Body, Stats, and Strategy Profile
   markers from `docs/core/04-feature-specs.md`.
+- Full visible pack input keeps current pack visibility explicit.
+- Previous pack comparison exposes `previousPackCardIds` input markers.
+- Missing previous-pack cards expose `missingFromPreviousPack` visibility
+  markers without treating them as picked or passed cards.
 - `/draft` serves the React Draft Memory Coach while `public/draft` remains the
   fixed reference implementation for comparison.
 

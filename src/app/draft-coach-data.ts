@@ -55,7 +55,7 @@ export const DRAFT_COACH_DEFAULTS: Pick<
   playerCount: 4,
   draftCardType: "occupation",
   draftFormat: "10-to-7",
-  trackingMode: "selected_only",
+  trackingMode: "full_pack",
   explanationDepth: "standard"
 };
 

@@ -35,11 +35,21 @@ export type UIDraftNormalizeOptions = {
   };
 };
 
+export type DraftPreviousPackComparison = {
+  enabled: boolean;
+  previousPackCardIds: string[];
+  currentVisiblePackCardIds: string[];
+  missingFromPreviousPack: string[];
+};
+
 export type DraftLabelNamespace = keyof typeof DRAFT_UI_LABELS;
-export type DraftCardGroupName = "offered" | "picked" | "seen" | "passed";
+export type DraftCardGroupName = "offered" | "picked" | "seen" | "passed" | "previous";
 
 export type DraftCardGroupConfig = {
-  inputKey: keyof Pick<UIDraftInput, "offeredCardIds" | "pickedCardIds" | "seenCardIds" | "passedCardIds">;
+  inputKey: keyof Pick<
+    UIDraftInput,
+    "offeredCardIds" | "pickedCardIds" | "seenCardIds" | "passedCardIds" | "previousPackCardIds"
+  >;
   label: string;
   listId: string;
   searchId: string;
@@ -62,7 +72,7 @@ export const DEFAULT_UI_DRAFT_INPUT: UIDraftInput = {
   seenCardIds: [],
   passedCardIds: [],
   draftFormat: "10-to-7",
-  trackingMode: "selected_only",
+  trackingMode: "full_pack",
   cardPoolProfileId: DEFAULT_CARD_POOL_PROFILE_ID,
   explanationDepth: "standard",
   skillLevel: DEFAULT_SKILL_LEVEL
@@ -191,6 +201,17 @@ export const DRAFT_CARD_GROUPS = {
     countId: "passedCardsCount",
     emptyText: "없음",
     variant: "token"
+  },
+  previous: {
+    inputKey: "previousPackCardIds",
+    label: "이전에 본 팩",
+    listId: "previousPackCardList",
+    searchId: "previousPackCardSearch",
+    resultsId: "previousPackCardResults",
+    addButtonId: "addPreviousPackCardButton",
+    countId: "previousPackCardsCount",
+    emptyText: "이전에 본 팩 없음",
+    variant: "token"
   }
 } satisfies Record<DraftCardGroupName, DraftCardGroupConfig>;
 
@@ -209,6 +230,7 @@ export function normalizeDraftInput(
   options: UIDraftNormalizeOptions = {}
 ): UIDraftInput {
   const offeredCardIds = stringArray(input.offeredCardIds);
+  const previousPackCardIds = stringArray(input.previousPackCardIds);
   const draftCardType = isAllowed(input.draftCardType, ALLOWED_DRAFT_CARD_TYPES)
     ? input.draftCardType
     : inferDraftCardType(offeredCardIds);
@@ -239,10 +261,11 @@ export function normalizeDraftInput(
     skillLevel: isAllowed(input.skillLevel, ALLOWED_SKILL_LEVELS) ? input.skillLevel : DEFAULT_SKILL_LEVEL
   };
 
-  const previousPackCardIds = stringArray(input.previousPackCardIds);
-  const missingFromPreviousPack = stringArray(input.missingFromPreviousPack);
-  if (previousPackCardIds.length > 0) normalized.previousPackCardIds = previousPackCardIds;
-  if (missingFromPreviousPack.length > 0) normalized.missingFromPreviousPack = missingFromPreviousPack;
+  if (shouldComparePreviousPack(normalized) && previousPackCardIds.length > 0) {
+    normalized.previousPackCardIds = previousPackCardIds;
+    const missingFromPreviousPack = computeMissingFromPreviousPack(previousPackCardIds, offeredCardIds);
+    if (missingFromPreviousPack.length > 0) normalized.missingFromPreviousPack = missingFromPreviousPack;
+  }
 
   return normalized;
 }
@@ -299,6 +322,37 @@ export function labelFor(namespace: DraftLabelNamespace, value: string | undefin
 
 export function canRequestRecommendations(input: UIDraftInput | undefined): boolean {
   return Boolean(input && input.offeredCardIds.length > 0);
+}
+
+export function buildDraftPreviousPackComparison(input: UIDraftInput): DraftPreviousPackComparison {
+  const previousPackCardIds = input.previousPackCardIds ?? [];
+  return {
+    enabled: shouldComparePreviousPack(input),
+    previousPackCardIds,
+    currentVisiblePackCardIds: input.offeredCardIds,
+    missingFromPreviousPack: input.missingFromPreviousPack ?? []
+  };
+}
+
+export function shouldComparePreviousPack(
+  input: Pick<UIDraftInput, "pickNumber" | "trackingMode">
+): boolean {
+  return input.trackingMode === "full_pack" && input.pickNumber >= 5;
+}
+
+export function computeMissingFromPreviousPack(
+  previousPackCardIds: readonly string[],
+  offeredCardIds: readonly string[]
+): string[] {
+  const offeredCardIdSet = new Set(offeredCardIds);
+  const missingCardIds: string[] = [];
+
+  previousPackCardIds.forEach((cardId) => {
+    if (offeredCardIdSet.has(cardId) || missingCardIds.includes(cardId)) return;
+    missingCardIds.push(cardId);
+  });
+
+  return missingCardIds;
 }
 
 export function formatScore(value: number): string | number {

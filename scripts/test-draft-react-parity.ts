@@ -64,6 +64,8 @@ const requiredStateTokens = [
   "pickedCardIds",
   "seenCardIds",
   "passedCardIds",
+  "previousPackCardIds",
+  "missingFromPreviousPack",
   "draftFormat",
   "trackingMode",
   "explanationDepth",
@@ -97,6 +99,31 @@ const requiredCardSearchTokens = [
 const requiredReactCardSearchContractTokens = [
   "DraftCardSearchOptions",
   "DraftCardSummary"
+] as const;
+
+const requiredFullPackInputDomIds = [
+  "fullVisiblePackPanel",
+  "currentVisiblePackList",
+  "previousPackComparisonPanel",
+  "previousPackCardSearch",
+  "previousPackCardResults",
+  "addPreviousPackCardButton",
+  "previousPackCardList",
+  "missingFromPreviousPackList"
+] as const;
+
+const requiredFullPackInputClassTokens = [
+  "full-visible-pack",
+  "current-visible-pack",
+  "previous-pack-comparison",
+  "previous-pack-card-search",
+  "missing-from-previous-pack"
+] as const;
+
+const requiredReactFullPackInputContractTokens = [
+  "DraftPreviousPackComparison",
+  "previousPackCardIds",
+  "missingFromPreviousPack"
 ] as const;
 
 const requiredCardDetailDomIds = [
@@ -286,6 +313,7 @@ function assertReactParity(source: string, files: string[]): void {
   );
 
   assertReactCardDetailDrawer(source);
+  assertReactFullPackInput(source);
 }
 
 function shouldEnforceReactParity(source: string, files: readonly string[]): boolean {
@@ -334,6 +362,20 @@ function assertReactCardDetailDrawer(source: string): void {
 
   requiredCardDetailStrategyTokens.forEach((token) => {
     assertIncludesToken(source, token, `React card detail drawer should expose Strategy Profile marker ${token}.`);
+  });
+}
+
+function assertReactFullPackInput(source: string): void {
+  requiredReactFullPackInputContractTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React draft source should preserve full-pack input contract token ${token}.`);
+  });
+
+  requiredFullPackInputDomIds.forEach((id) => {
+    assertIncludesToken(source, id, `React draft source should preserve full-pack input #${id}.`);
+  });
+
+  requiredFullPackInputClassTokens.forEach((className) => {
+    assertIncludesToken(source, className, `React draft source should preserve full-pack input class ${className}.`);
   });
 }
 
