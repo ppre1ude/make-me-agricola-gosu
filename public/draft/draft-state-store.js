@@ -8,7 +8,8 @@
     draftCardType: new Set(["occupation", "minor_improvement"]),
     draftFormat: new Set(["10-to-7", "9-to-7", "8-to-7"]),
     trackingMode: new Set(["selected_only", "full_pack"]),
-    explanationDepth: new Set(["compact", "standard", "deep"])
+    explanationDepth: new Set(["compact", "standard", "deep"]),
+    skillLevel: new Set(["beginner", "intermediate", "advanced"])
   });
 
   const requiredArrayFields = Object.freeze(["offeredCardIds", "pickedCardIds", "seenCardIds", "passedCardIds"]);
@@ -150,6 +151,7 @@
     validateAllowedValue(draftInput, normalized, errors, "draftFormat");
     validateAllowedValue(draftInput, normalized, errors, "trackingMode");
     validateAllowedValue(draftInput, normalized, errors, "explanationDepth");
+    validateOptionalAllowedValue(draftInput, normalized, errors, "skillLevel");
 
     if (draftInput.playerCount !== undefined) {
       const playerCount = Number(draftInput.playerCount);
@@ -203,6 +205,11 @@
     }
 
     target[fieldName] = source[fieldName];
+  }
+
+  function validateOptionalAllowedValue(source, target, errors, fieldName) {
+    if (source[fieldName] === undefined) return;
+    validateAllowedValue(source, target, errors, fieldName);
   }
 
   function normalizePickNumber(value) {

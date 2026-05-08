@@ -27,6 +27,11 @@
       standard: "표준",
       deep: "상세"
     },
+    skillLevel: {
+      beginner: "입문",
+      intermediate: "중급",
+      advanced: "고급"
+    },
     draftPickBand: {
       early_anchor: "초반 앵커",
       middle_direction: "중반 방향",
@@ -74,7 +79,8 @@
     draftCardType: new Set(["occupation", "minor_improvement"]),
     draftFormat: new Set(["10-to-7", "9-to-7", "8-to-7"]),
     trackingMode: new Set(["selected_only", "full_pack"]),
-    explanationDepth: new Set(["compact", "standard", "deep"])
+    explanationDepth: new Set(["compact", "standard", "deep"]),
+    skillLevel: new Set(["beginner", "intermediate", "advanced"])
   };
 
   const localDraftInputKey = "agricola-korean-gosu:draft-memory-coach:draft-input:v1";
@@ -139,7 +145,8 @@
       passed: createCardSearchState()
     },
     requestBusy: false,
-    feedbackBusy: false
+    feedbackBusy: false,
+    resolveBusy: false
   };
 
   const refs = {};
@@ -152,6 +159,10 @@
 
   function bindRefs() {
     refs.appStatus = document.getElementById("appStatus");
+    refs.contextCardType = document.getElementById("contextCardType");
+    refs.contextPickNumber = document.getElementById("contextPickNumber");
+    refs.contextDraftFormat = document.getElementById("contextDraftFormat");
+    refs.undoPickButton = document.getElementById("undoPickButton");
     refs.loadSampleButton = document.getElementById("loadSampleButton");
     refs.recommendButton = document.getElementById("recommendButton");
     refs.draftEditor = document.getElementById("draftEditor");
@@ -160,6 +171,7 @@
     refs.draftFormatSelect = document.getElementById("draftFormatSelect");
     refs.trackingModeSelect = document.getElementById("trackingModeSelect");
     refs.explanationDepthSelect = document.getElementById("explanationDepthSelect");
+    refs.skillLevelSelect = document.getElementById("skillLevelSelect");
     refs.draftMeta = document.getElementById("draftMeta");
     refs.offeredCards = document.getElementById("offeredCards");
     refs.pickedCards = document.getElementById("pickedCards");
@@ -167,6 +179,12 @@
     refs.passedCards = document.getElementById("passedCards");
     refs.recommendations = document.getElementById("recommendations");
     refs.recommendationStatus = document.getElementById("recommendationStatus");
+    refs.resolvePickButton = document.getElementById("resolvePickButton");
+    refs.resolutionHint = document.getElementById("resolutionHint");
+    refs.handSummary = document.getElementById("handSummary");
+    refs.memorySummary = document.getElementById("memorySummary");
+    refs.pickedSummaryCount = document.getElementById("pickedSummaryCount");
+    refs.memorySummaryCount = document.getElementById("memorySummaryCount");
     refs.feedbackForm = document.getElementById("feedbackForm");
     refs.modelTopCard = document.getElementById("modelTopCard");
     refs.selectedCard = document.getElementById("selectedCard");
@@ -174,6 +192,14 @@
     refs.feedbackHint = document.getElementById("feedbackHint");
     refs.feedbackStatus = document.getElementById("feedbackStatus");
     refs.submitFeedbackButton = document.getElementById("submitFeedbackButton");
+    refs.pickConfirmModal = document.getElementById("pickConfirmModal");
+    refs.confirmSelectedCard = document.getElementById("confirmSelectedCard");
+    refs.confirmMatchStatus = document.getElementById("confirmMatchStatus");
+    refs.resolutionNote = document.getElementById("resolutionNote");
+    refs.confirmPickHint = document.getElementById("confirmPickHint");
+    refs.cancelPickButton = document.getElementById("cancelPickButton");
+    refs.backToDraftButton = document.getElementById("backToDraftButton");
+    refs.confirmPickButton = document.getElementById("confirmPickButton");
 
     cardGroupNames.forEach(function (groupName) {
       const config = cardGroups[groupName];
@@ -190,6 +216,17 @@
     });
     refs.loadSampleButton.addEventListener("click", loadSample);
     refs.recommendButton.addEventListener("click", requestRecommendations);
+    refs.undoPickButton.addEventListener("click", undoLastPick);
+    refs.resolvePickButton.addEventListener("click", openPickConfirmModal);
+    refs.cancelPickButton.addEventListener("click", closePickConfirmModal);
+    refs.backToDraftButton.addEventListener("click", closePickConfirmModal);
+    refs.confirmPickButton.addEventListener("click", confirmResolvedPick);
+    refs.pickConfirmModal.addEventListener("click", function (event) {
+      if (event.target === refs.pickConfirmModal) closePickConfirmModal();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !refs.pickConfirmModal.hidden) closePickConfirmModal();
+    });
     refs.feedbackForm.addEventListener("submit", submitFeedback);
 
     refs.pickNumberInput.addEventListener("change", function () {
@@ -207,6 +244,9 @@
     });
     refs.explanationDepthSelect.addEventListener("change", function () {
       updateDraftField("explanationDepth", refs.explanationDepthSelect.value);
+    });
+    refs.skillLevelSelect.addEventListener("change", function () {
+      updateDraftField("skillLevel", refs.skillLevelSelect.value);
     });
 
     cardGroupNames.forEach(function (groupName) {
@@ -302,7 +342,7 @@
       const payload = await fetchJson(endpoints.recommend, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(state.input)
+        body: JSON.stringify(buildScoringInput(state.input))
       });
       readCatalog(payload);
       state.recommendations = extractRecommendations(payload);
@@ -339,7 +379,9 @@
     setFeedbackStatus("피드백 전송 중");
 
     try {
-      const payload = buildFeedbackPayload(modelTopCardId, userSelectedCardId);
+      const payload = buildFeedbackPayload(modelTopCardId, userSelectedCardId, {
+        note: refs.feedbackNote.value.trim()
+      });
       await fetchJson(endpoints.feedback, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -355,14 +397,15 @@
     }
   }
 
-  function buildFeedbackPayload(modelTopCardId, userSelectedCardId) {
-    const note = refs.feedbackNote.value.trim();
+  function buildFeedbackPayload(modelTopCardId, userSelectedCardId, options) {
+    const note = stringOr(options?.note, "");
+    const recommendations = Array.isArray(options?.recommendations) ? options.recommendations : state.recommendations;
     const event = {
       id: `ui-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       eventType: "model_user_disagreement",
       occurredAt: new Date().toISOString(),
-      input: state.input,
-      recommendationCardIds: state.recommendations.map(function (recommendation) {
+      input: buildScoringInput(options?.input || state.input),
+      recommendationCardIds: recommendations.map(function (recommendation) {
         return recommendation.cardId;
       }),
       modelTopCardId,
@@ -453,7 +496,8 @@
       draftFormat: "10-to-7",
       trackingMode: "selected_only",
       cardPoolProfileId: "bga-arena-prototype",
-      explanationDepth: "standard"
+      explanationDepth: "standard",
+      skillLevel: "advanced"
     };
   }
 
@@ -647,12 +691,19 @@
       draftFormat: input.draftFormat,
       trackingMode: input.trackingMode,
       cardPoolProfileId: input.cardPoolProfileId,
-      explanationDepth: input.explanationDepth
+      explanationDepth: input.explanationDepth,
+      skillLevel: input.skillLevel
     };
 
     if (input.previousPackCardIds) clone.previousPackCardIds = [...input.previousPackCardIds];
     if (input.missingFromPreviousPack) clone.missingFromPreviousPack = [...input.missingFromPreviousPack];
     return clone;
+  }
+
+  function buildScoringInput(input) {
+    const scoringInput = cloneDraftInput(input || createDefaultDraftInput());
+    delete scoringInput.skillLevel;
+    return scoringInput;
   }
 
   async function fetchJson(url, options) {
@@ -719,7 +770,8 @@
       draftFormat: allowed.draftFormat.has(input.draftFormat) ? input.draftFormat : "10-to-7",
       trackingMode: allowed.trackingMode.has(input.trackingMode) ? input.trackingMode : "selected_only",
       cardPoolProfileId: stringOr(input.cardPoolProfileId, payload?.cardPoolProfile?.id || "bga-arena-prototype"),
-      explanationDepth: allowed.explanationDepth.has(input.explanationDepth) ? input.explanationDepth : "standard"
+      explanationDepth: allowed.explanationDepth.has(input.explanationDepth) ? input.explanationDepth : "standard",
+      skillLevel: allowed.skillLevel.has(input.skillLevel) ? input.skillLevel : "advanced"
     };
 
     const previousPackCardIds = stringArray(input.previousPackCardIds);
@@ -831,16 +883,22 @@
     refs.pickedCards.replaceChildren();
     refs.seenCards.replaceChildren();
     refs.passedCards.replaceChildren();
+    refs.handSummary.replaceChildren();
+    refs.memorySummary.replaceChildren();
 
     if (!state.input) {
       syncDraftEditor(createDefaultDraftInput());
+      updateTopContext(createDefaultDraftInput());
       renderEmpty(refs.draftMeta, "샘플 상태 없음");
       renderEmpty(refs.offeredCards, "샘플을 불러오면 현재 팩이 표시됩니다.");
+      renderSideSummaries(createDefaultDraftInput());
       refs.recommendButton.disabled = true;
       return;
     }
 
     syncDraftEditor(state.input);
+    updateTopContext(state.input);
+    refreshUndoAvailability();
     refs.recommendButton.disabled = state.requestBusy || !state.input.offeredCardIds.length;
     appendMeta("픽", `${state.input.pickNumber} / 7`);
     appendMeta("드래프트", labelFor("draftFormat", state.input.draftFormat));
@@ -848,6 +906,7 @@
     appendMeta("추적", labelFor("trackingMode", state.input.trackingMode));
     appendMeta("인원", `${state.input.playerCount}인`);
     appendMeta("설명", labelFor("explanationDepth", state.input.explanationDepth));
+    appendMeta("숙련도", labelFor("skillLevel", state.input.skillLevel));
 
     cardGroupNames.forEach(function (groupName) {
       const config = cardGroups[groupName];
@@ -861,6 +920,7 @@
       }
       renderCardSearch(groupName);
     });
+    renderSideSummaries(state.input);
   }
 
   function syncDraftEditor(input) {
@@ -869,6 +929,13 @@
     refs.draftFormatSelect.value = input.draftFormat;
     refs.trackingModeSelect.value = input.trackingMode;
     refs.explanationDepthSelect.value = input.explanationDepth;
+    refs.skillLevelSelect.value = input.skillLevel;
+  }
+
+  function updateTopContext(input) {
+    refs.contextCardType.textContent = `${labelFor("draftCardType", input.draftCardType)} 드래프트`;
+    refs.contextPickNumber.textContent = `Pick ${input.pickNumber} / 7`;
+    refs.contextDraftFormat.textContent = labelFor("draftFormat", input.draftFormat);
   }
 
   function appendMeta(label, value) {
@@ -884,6 +951,101 @@
     refs.draftMeta.append(wrapper);
   }
 
+  function renderSideSummaries(input) {
+    refs.pickedSummaryCount.textContent = `${input.pickedCardIds.length}장`;
+    refs.memorySummaryCount.textContent = `${input.seenCardIds.length + input.passedCardIds.length}장 기록`;
+
+    const topRecommendation = state.recommendations[0];
+    const selectedRecommendation = state.recommendations.find(function (recommendation) {
+      return recommendation.cardId === state.selectedCardId;
+    });
+
+    appendSummaryCard(
+      refs.handSummary,
+      "현재 중심 판단",
+      topRecommendation
+        ? `${cardName(topRecommendation.cardId, topRecommendation)} 기준으로 ${candidateGroupSummary(topRecommendation)}`
+        : "추천을 갱신하면 현재 손패 기준의 중심 판단이 표시됩니다.",
+      true
+    );
+    appendSummaryCard(
+      refs.handSummary,
+      "다음 픽 방향",
+      firstNonEmpty(selectedRecommendation?.nextPickDirection, topRecommendation?.nextPickDirection) ||
+        "추천 결과에서 다음에 볼 역할이 표시됩니다."
+    );
+    appendSummaryCard(
+      refs.handSummary,
+      "선택 상태",
+      state.selectedCardId
+        ? `${cardName(state.selectedCardId)} 선택 중. 확정 전까지 손패에는 반영되지 않습니다.`
+        : "추천 카드나 현재 팩 카드를 선택하면 확정할 수 있습니다."
+    );
+
+    appendSummaryCard(
+      refs.memorySummary,
+      "본 카드",
+      input.seenCardIds.length ? `${input.seenCardIds.length}장 기록됨` : "아직 본 카드 기록이 없습니다.",
+      true
+    );
+    appendSummaryCard(
+      refs.memorySummary,
+      "넘긴 카드",
+      input.passedCardIds.length ? `${input.passedCardIds.length}장 기록됨` : "픽 확정 뒤 나머지 카드가 넘긴 카드로 기록됩니다."
+    );
+    appendSummaryCard(
+      refs.memorySummary,
+      "Tracking Signal",
+      trackingSignalSummary(selectedRecommendation || topRecommendation, input)
+    );
+  }
+
+  function appendSummaryCard(container, title, text, isDark) {
+    const card = document.createElement("div");
+    card.className = `summary-card${isDark ? " is-dark" : ""}`;
+
+    const heading = document.createElement("div");
+    heading.className = "summary-card-title";
+    heading.textContent = title;
+
+    const body = document.createElement("div");
+    body.className = "summary-card-text";
+    body.textContent = text;
+
+    card.append(heading, body);
+    container.append(card);
+  }
+
+  function candidateGroupSummary(recommendation) {
+    const group = recommendation.candidateGroups[0];
+    return group ? labelFor("candidateGroup", group) : "범용 평가";
+  }
+
+  function firstNonEmpty() {
+    for (let index = 0; index < arguments.length; index += 1) {
+      const value = arguments[index];
+      if (Array.isArray(value) && value.length) return value[0];
+    }
+    return "";
+  }
+
+  function trackingSignalSummary(recommendation, input) {
+    if (!recommendation) {
+      return input.trackingMode === "full_pack"
+        ? "full tracking 입력을 쌓으면 5~7픽에서 사라진 카드 요약이 활성화됩니다."
+        : "quick mode에서는 돌아올 가능성과 사라진 카드 요약의 정확도가 낮습니다.";
+    }
+
+    if (recommendation.trackingSignals.length) {
+      return warningText(recommendation.trackingSignals[0]);
+    }
+
+    return `${labelFor("returnLikelihood", recommendation.returnLikelihood)} · ${labelFor(
+      "confidence",
+      recommendation.evaluationMeta?.confidence
+    )}`;
+  }
+
   function renderCardList(container, cardIds, emptyText, highlightSelected, groupName) {
     container.replaceChildren();
     if (!cardIds.length) {
@@ -891,10 +1053,14 @@
       return;
     }
 
-    cardIds.forEach(function (cardId) {
+    cardIds.forEach(function (cardId, index) {
       const item = document.createElement("div");
       item.className = "mini-card";
       if (highlightSelected && cardId === state.selectedCardId) item.classList.add("is-selected");
+
+      const order = document.createElement("span");
+      order.className = "mini-card-index";
+      order.textContent = String(index + 1);
 
       const name = document.createElement("div");
       name.className = "mini-card-name";
@@ -908,7 +1074,7 @@
       text.className = "mini-card-text";
       text.append(name, id);
 
-      item.append(text, renderRemoveCardButton(groupName, cardId));
+      item.append(order, text, renderRemoveCardButton(groupName, cardId));
       container.append(item);
     });
   }
@@ -1202,24 +1368,151 @@
     const modelTopCardId = state.recommendations[0]?.cardId;
     const selectedCardId = state.selectedCardId;
     const canSubmit = Boolean(modelTopCardId && selectedCardId && modelTopCardId !== selectedCardId && !state.feedbackBusy);
+    const canResolve = canResolveSelectedPick();
 
     refs.modelTopCard.textContent = modelTopCardId ? cardDisplay(modelTopCardId) : "-";
     refs.selectedCard.textContent = selectedCardId ? cardDisplay(selectedCardId) : "-";
     refs.submitFeedbackButton.disabled = !canSubmit;
+    refs.resolvePickButton.disabled = !canResolve || state.resolveBusy;
 
     if (!state.recommendations.length) {
       refs.feedbackHint.textContent = "추천 결과를 기다리는 중입니다.";
+      refs.resolutionHint.textContent = "추천 결과를 기다리는 중입니다.";
+    } else if (!selectedCardId) {
+      refs.feedbackHint.textContent = "확정할 카드를 선택하세요.";
+      refs.resolutionHint.textContent = "추천 카드 중 하나를 선택하면 픽을 확정할 수 있습니다.";
     } else if (modelTopCardId === selectedCardId) {
       refs.feedbackHint.textContent = "추천과 다른 카드를 선택하면 차이를 기록할 수 있습니다.";
+      refs.resolutionHint.textContent = "추천 1순위와 같은 선택입니다. 확정하면 다음 픽으로 넘어갑니다.";
     } else {
       refs.feedbackHint.textContent = "모델 추천과 다른 선택을 neutral disagreement로 기록합니다.";
+      refs.resolutionHint.textContent = "추천과 다른 선택입니다. 확정 시 중립 피드백 이벤트로 보존됩니다.";
     }
+  }
+
+  function canResolveSelectedPick() {
+    if (!state.input || !state.selectedCardId || !window.DraftPickResolution) return false;
+    return window.DraftPickResolution.canResolvePick(state.input, state.selectedCardId);
+  }
+
+  function openPickConfirmModal() {
+    if (!canResolveSelectedPick()) {
+      refs.resolutionHint.textContent = "현재 팩 안의 카드를 선택해야 픽을 확정할 수 있습니다.";
+      return;
+    }
+
+    const modelTopCardId = state.recommendations[0]?.cardId;
+    const selectedCardId = state.selectedCardId;
+    refs.confirmSelectedCard.textContent = selectedCardId ? cardDisplay(selectedCardId) : "-";
+    refs.confirmMatchStatus.textContent =
+      modelTopCardId && selectedCardId === modelTopCardId ? "AI RANK 1과 일치" : "AI RANK 1과 다름";
+    refs.resolutionNote.value = refs.feedbackNote.value.trim();
+    refs.confirmPickHint.textContent = "확정하면 현재 팩의 나머지 카드는 본 카드/넘긴 카드로 기록됩니다.";
+    refs.pickConfirmModal.hidden = false;
+    refs.confirmPickButton.focus();
+  }
+
+  function closePickConfirmModal() {
+    refs.pickConfirmModal.hidden = true;
+  }
+
+  async function confirmResolvedPick() {
+    if (!canResolveSelectedPick() || state.resolveBusy) return;
+
+    const beforeInput = cloneDraftInput(state.input);
+    const beforeRecommendations = state.recommendations.slice();
+    const modelTopCardId = beforeRecommendations[0]?.cardId;
+    const selectedCardId = state.selectedCardId;
+    const note = refs.resolutionNote.value.trim();
+    let result;
+
+    try {
+      result = window.DraftPickResolution.resolvePick(beforeInput, selectedCardId, { modelTopCardId });
+    } catch (error) {
+      refs.confirmPickHint.textContent = errorMessage(error, "픽을 확정할 수 없습니다.");
+      return;
+    }
+
+    pushUndoSnapshot(beforeInput);
+    state.resolveBusy = true;
+    state.input = normalizeDraftInput(result.after, state.samplePayload);
+    state.recommendations = [];
+    state.selectedCardId = null;
+    persistDraftInput();
+    renderDraftState();
+    renderRecommendations();
+    closePickConfirmModal();
+    setRecommendationStatus(`Pick ${beforeInput.pickNumber} 확정. 다음 팩을 입력하세요.`);
+    setAppStatus("픽 확정됨", "ready");
+
+    try {
+      if (result.feedbackNeeded) {
+        const payload = buildFeedbackPayload(modelTopCardId, selectedCardId, {
+          input: beforeInput,
+          recommendations: beforeRecommendations,
+          note
+        });
+        await fetchJson(endpoints.feedback, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        setFeedbackStatus("추천과 다른 선택을 중립 피드백으로 기록했습니다.");
+      } else {
+        setFeedbackStatus("추천과 같은 선택으로 확정했습니다.");
+      }
+      refs.feedbackNote.value = "";
+    } catch (error) {
+      setFeedbackStatus(errorMessage(error, "픽은 확정됐지만 피드백 기록은 실패했습니다."));
+    } finally {
+      state.resolveBusy = false;
+      updateFeedbackPanel();
+      refreshUndoAvailability();
+    }
+  }
+
+  function pushUndoSnapshot(snapshot) {
+    const store = window.DraftStateStore;
+    if (!store || typeof store.pushUndo !== "function") return;
+
+    const result = store.pushUndo(snapshot);
+    if (!result?.ok) {
+      setFeedbackStatus("Undo snapshot을 저장하지 못했습니다.");
+    }
+  }
+
+  function undoLastPick() {
+    const store = window.DraftStateStore;
+    if (!store || typeof store.popUndo !== "function") return;
+
+    const snapshot = store.popUndo();
+    if (!snapshot) {
+      setAppStatus("Undo 없음", "ready");
+      refreshUndoAvailability();
+      return;
+    }
+
+    state.input = normalizeDraftInput(snapshot, state.samplePayload);
+    state.recommendations = [];
+    state.selectedCardId = null;
+    persistDraftInput();
+    renderDraftState();
+    renderRecommendations();
+    setRecommendationStatus("직전 픽 확정 전 상태로 되돌렸습니다.");
+    setAppStatus("되돌림", "ready");
+    setFeedbackStatus("Undo는 로컬 입력만 되돌리며 피드백 기록은 수정하지 않습니다.");
+  }
+
+  function refreshUndoAvailability() {
+    const store = window.DraftStateStore;
+    refs.undoPickButton.disabled = !store || typeof store.peekUndo !== "function" || !store.peekUndo();
   }
 
   function setBusy(isBusy) {
     state.requestBusy = isBusy;
     refs.loadSampleButton.disabled = isBusy;
     refs.recommendButton.disabled = isBusy || !state.input || !state.input.offeredCardIds.length;
+    refs.resolvePickButton.disabled = isBusy || !canResolveSelectedPick();
   }
 
   function setAppStatus(text, type) {

@@ -16,7 +16,15 @@
           <p class="eyebrow">BGA Arena</p>
           <h1>드래프트 메모리 코치</h1>
         </div>
-        <div class="status-pill" id="appStatus" role="status" aria-live="polite">대기</div>
+        <div class="top-context" aria-label="현재 드래프트 맥락">
+          <span id="contextCardType">직업</span>
+          <span id="contextPickNumber">Pick 1 / 7</span>
+          <span id="contextDraftFormat">10장 중 7장</span>
+        </div>
+        <div class="top-actions">
+          <button class="secondary-button compact-button" id="undoPickButton" type="button" disabled>Undo</button>
+          <div class="status-pill" id="appStatus" role="status" aria-live="polite">대기</div>
+        </div>
       </header>
 
       <main class="coach-layout">
@@ -66,6 +74,14 @@
                   <option value="compact">간단</option>
                   <option value="standard">표준</option>
                   <option value="deep">상세</option>
+                </select>
+              </label>
+              <label class="editor-field" for="skillLevelSelect">
+                <span>숙련도</span>
+                <select id="skillLevelSelect">
+                  <option value="beginner">입문</option>
+                  <option value="intermediate">중급</option>
+                  <option value="advanced">고급</option>
                 </select>
               </label>
             </div>
@@ -147,12 +163,12 @@
         <section class="tool-panel feedback-panel" aria-labelledby="feedbackHeading">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">복기 기록</p>
-              <h2 id="feedbackHeading">선택 피드백</h2>
+              <p class="eyebrow">픽 확정</p>
+              <h2 id="feedbackHeading">선택과 복기</h2>
             </div>
           </div>
 
-          <form id="feedbackForm">
+          <div class="resolution-block">
             <dl class="feedback-summary">
               <div>
                 <dt>모델 1순위</dt>
@@ -163,18 +179,71 @@
                 <dd id="selectedCard">-</dd>
               </div>
             </dl>
+            <button class="primary-button full-width" id="resolvePickButton" type="button" disabled>
+              선택 카드로 픽 확정
+            </button>
+            <p class="feedback-hint" id="resolutionHint">추천 결과를 기다리는 중입니다.</p>
+          </div>
 
+          <div class="side-section" aria-labelledby="handSummaryHeading">
+            <div class="group-heading">
+              <div class="section-title" id="handSummaryHeading">내 손패 진단</div>
+              <div class="section-count" id="pickedSummaryCount">0장</div>
+            </div>
+            <div class="compact-stack" id="handSummary"></div>
+          </div>
+
+          <div class="side-section" aria-labelledby="memorySummaryHeading">
+            <div class="group-heading">
+              <div class="section-title" id="memorySummaryHeading">메모리 트래커</div>
+              <div class="section-count" id="memorySummaryCount">0장 기록</div>
+            </div>
+            <div class="compact-stack" id="memorySummary"></div>
+          </div>
+
+          <form class="side-section" id="feedbackForm">
             <label class="field-label" for="feedbackNote">메모</label>
             <textarea id="feedbackNote" rows="3" placeholder="선택 이유나 화면 밖 정보를 짧게 기록"></textarea>
 
             <p class="feedback-hint" id="feedbackHint">추천 결과를 기다리는 중입니다.</p>
             <button class="primary-button full-width" id="submitFeedbackButton" type="submit" disabled>
-              차이 기록
+              차이만 기록
             </button>
             <div class="inline-status feedback-status" id="feedbackStatus" role="status" aria-live="polite"></div>
           </form>
         </section>
       </main>
+
+      <div class="modal-backdrop" id="pickConfirmModal" hidden>
+        <section class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="pickConfirmHeading">
+          <div class="confirm-header">
+            <div>
+              <p class="eyebrow">Pick Resolution</p>
+              <h2 id="pickConfirmHeading">픽 확정</h2>
+            </div>
+            <button class="secondary-button icon-button" id="cancelPickButton" type="button" aria-label="픽 확정 닫기">×</button>
+          </div>
+          <div class="confirm-body">
+            <dl class="feedback-summary">
+              <div>
+                <dt>확정할 카드</dt>
+                <dd id="confirmSelectedCard">-</dd>
+              </div>
+              <div>
+                <dt>추천 일치</dt>
+                <dd id="confirmMatchStatus">-</dd>
+              </div>
+            </dl>
+            <label class="field-label" for="resolutionNote">선택 이유</label>
+            <textarea id="resolutionNote" rows="3" placeholder="선택 사항. 추천과 다른 선택이면 neutral disagreement에 함께 기록됩니다."></textarea>
+            <p class="feedback-hint" id="confirmPickHint">확정하면 현재 팩의 나머지 카드는 본 카드/넘긴 카드로 기록됩니다.</p>
+          </div>
+          <div class="confirm-actions">
+            <button class="secondary-button" id="backToDraftButton" type="button">취소 및 변경</button>
+            <button class="primary-button" id="confirmPickButton" type="button">픽 확정 후 다음 픽</button>
+          </div>
+        </section>
+      </div>
     </div>
 
     <noscript>이 화면은 추천 API 호출과 선택 기록을 위해 JavaScript가 필요합니다.</noscript>

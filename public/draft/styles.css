@@ -110,6 +110,31 @@ select:focus-visible {
   padding: 0 0 16px;
 }
 
+.top-context,
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-context {
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.top-context span {
+  min-height: 30px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .eyebrow {
   margin: 0 0 4px;
   color: var(--muted);
@@ -182,10 +207,9 @@ h3 {
 
 .coach-layout {
   display: grid;
-  grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr) minmax(300px, 360px);
   grid-template-areas:
-    "draft recommendations"
-    "feedback recommendations";
+    "draft recommendations feedback";
   gap: 16px;
   align-items: start;
 }
@@ -206,6 +230,8 @@ h3 {
 .feedback-panel {
   grid-area: feedback;
   padding: 16px;
+  position: sticky;
+  top: 16px;
 }
 
 .recommendations-panel {
@@ -249,6 +275,22 @@ h3 {
 
 .secondary-button:hover:not(:disabled) {
   border-color: var(--line-strong);
+}
+
+.compact-button {
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  min-width: 38px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
 }
 
 .full-width {
@@ -431,7 +473,7 @@ h3 {
 
 .mini-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 8px;
   align-items: start;
   min-height: 56px;
@@ -439,6 +481,20 @@ h3 {
   background: var(--surface-muted);
   border: 1px solid var(--line);
   border-radius: 7px;
+}
+
+.mini-card-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  background: var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .mini-card.is-selected {
@@ -707,6 +763,52 @@ h3 {
   margin: 0 0 14px;
 }
 
+.resolution-block,
+.side-section {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 14px;
+}
+
+.resolution-block {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.summary-card {
+  min-height: 48px;
+  padding: 10px;
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.summary-card.is-dark {
+  color: #ffffff;
+  background: #263241;
+  border-color: #263241;
+}
+
+.summary-card-title {
+  margin-bottom: 4px;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.summary-card-text {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.summary-card.is-dark .summary-card-text {
+  color: #cbd5e1;
+}
+
 .feedback-summary div {
   min-height: 56px;
   padding: 10px;
@@ -762,6 +864,59 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.48);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.confirm-dialog {
+  width: min(560px, 100%);
+  max-height: min(760px, 90vh);
+  overflow: auto;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+}
+
+.confirm-header,
+.confirm-body,
+.confirm-actions {
+  padding: 18px;
+}
+
+.confirm-header,
+.confirm-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.confirm-header {
+  border-bottom: 1px solid var(--line);
+}
+
+.confirm-body {
+  display: grid;
+  gap: 14px;
+}
+
+.confirm-actions {
+  background: var(--surface-muted);
+  border-top: 1px solid var(--line);
+}
+
 @media (max-width: 960px) {
   .coach-layout {
     grid-template-columns: 1fr;
@@ -769,6 +924,10 @@ h3 {
       "draft"
       "recommendations"
       "feedback";
+  }
+
+  .feedback-panel {
+    position: static;
   }
 
   .recommendations-panel {
@@ -785,6 +944,16 @@ h3 {
   .panel-heading {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .top-context,
+  .top-actions {
+    justify-content: stretch;
+  }
+
+  .top-context span,
+  .top-actions > * {
+    flex: 1 1 auto;
   }
 
   .button-row {
@@ -816,5 +985,10 @@ h3 {
     justify-items: start;
     grid-template-columns: auto auto;
     align-items: baseline;
+  }
+
+  .confirm-actions {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
