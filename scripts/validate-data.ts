@@ -10,34 +10,65 @@ import {
 
 const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const data: DraftDataSet = {
-  cards: await readJson("data/normalized/cards.json"),
-  translations: await readJson("data/normalized/translations.ko-KR.json"),
-  stats: await readJson("data/normalized/stats.prototype.json"),
-  strategyRoles: await readJson("data/normalized/strategy-roles.json"),
-  strategyProfiles: await readJson("data/manual/card-strategy-profiles.json"),
-  cardPoolProfile: await readJson("data/normalized/card-pool.bga-arena.prototype.json")
+const sharedData = {
+  cards: await readJson<DraftDataSet["cards"]>("data/normalized/cards.json"),
+  translations: await readJson<DraftDataSet["translations"]>("data/normalized/translations.ko-KR.json"),
+  strategyRoles: await readJson<DraftDataSet["strategyRoles"]>("data/normalized/strategy-roles.json"),
+  strategyProfiles: await readJson<DraftDataSet["strategyProfiles"]>("data/manual/card-strategy-profiles.json")
 };
+const dataSetConfigs = [
+  {
+    id: "prototype",
+    stats: "data/normalized/stats.prototype.json",
+    cardPoolProfile: "data/normalized/card-pool.bga-arena.prototype.json"
+  },
+  {
+    id: "woongi-lumin-bga-2025-09-01",
+    stats: "data/normalized/stats.woongi-lumin-bga.2025-09-01.json",
+    cardPoolProfile: "data/normalized/card-pool.bga-arena.woongi-2025-09-01.json"
+  }
+];
 
 const fixtures = await readDraftFixtures();
 const feedbackEvents = await readDraftFeedbackEvents();
-const result = validateDraftDataSet(data, fixtures, feedbackEvents);
+const results = await Promise.all(
+  dataSetConfigs.map(async (config) => ({
+    id: config.id,
+    result: validateDraftDataSet(
+      {
+        ...sharedData,
+        stats: await readJson<DraftDataSet["stats"]>(config.stats),
+        cardPoolProfile: await readJson<DraftDataSet["cardPoolProfile"]>(config.cardPoolProfile)
+      },
+      fixtures,
+      feedbackEvents
+    )
+  }))
+);
 
-for (const issue of result.issues) {
-  const label = issue.severity.toUpperCase();
-  const line = `${label} ${issue.path}: ${issue.message}`;
-  if (issue.severity === "error") {
-    console.error(line);
-  } else {
-    console.warn(line);
+let errorCount = 0;
+let warningCount = 0;
+
+for (const { id, result } of results) {
+  errorCount += result.errorCount;
+  warningCount += result.warningCount;
+
+  for (const issue of result.issues) {
+    const label = issue.severity.toUpperCase();
+    const line = `${label} ${id}.${issue.path}: ${issue.message}`;
+    if (issue.severity === "error") {
+      console.error(line);
+    } else {
+      console.warn(line);
+    }
   }
 }
 
-if (!result.ok) {
-  console.error(`\nData validation failed: ${result.errorCount} errors, ${result.warningCount} warnings.`);
+if (errorCount > 0) {
+  console.error(`\nData validation failed: ${errorCount} errors, ${warningCount} warnings.`);
   process.exitCode = 1;
 } else {
-  console.log(`Data validation passed: ${result.warningCount} warnings.`);
+  console.log(`Data validation passed: ${warningCount} warnings.`);
 }
 
 async function readDraftFixtures(): Promise<DraftFixture[]> {

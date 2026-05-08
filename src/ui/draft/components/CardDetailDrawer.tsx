@@ -170,6 +170,25 @@ function CardDetailContent({ detail }: { detail: DraftCardDetail }) {
           ))}
         </ul>
       </section>
+
+      {detail.sourceAttributions.length > 0 ? (
+        <section className="card-detail-section card-detail-sources" aria-label="Sources">
+          <h3>Sources</h3>
+          <ul className="card-detail-note-list">
+            {detail.sourceAttributions.map((source) => (
+              <li key={source.sourceRef}>
+                {source.sourceUrl ? (
+                  <a href={source.sourceUrl} target="_blank" rel="noreferrer">
+                    {sourceAttributionText(source)}
+                  </a>
+                ) : (
+                  sourceAttributionText(source)
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
     </>
   );
 }
@@ -277,4 +296,8 @@ function profileExplanation(profile: DraftCardDetail["strategyProfile"]): string
     profile?.explanation?.deep?.["ko-KR"] ??
     ""
   );
+}
+
+function sourceAttributionText(source: DraftCardDetail["sourceAttributions"][number]): string {
+  return source.attributionTextKo ?? source.label;
 }

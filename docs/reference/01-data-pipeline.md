@@ -14,12 +14,16 @@ DB를 source of truth로 두지 않는다.
 
 DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에서 다시 seed할 수 있어야 한다.
 
+Firebase, MongoDB, Firestore 같은 외부 DB를 도입하더라도 카드 지식의
+source of truth는 Git으로 관리되는 raw/normalized/manual 데이터 파일이다.
+DB는 앱 런타임 조회, 사용자별 기록, 관리자 UI, 피드백 수집을 위한 seed target으로만 둔다.
+
 ## 디렉터리 구조
 
 ```text
 /data
   /raw
-    woong-tierlist-2025-09-01.xlsx
+    woongi-tierlist-2025-09-01.xlsx
     lumin-s-bga-stats-2026-xx.tsv
   /normalized
     cards.json
@@ -30,10 +34,10 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
     strategy-roles.json
     card-pool.bga-arena.2026-xx.json
     timing-tags.json
-    source-refs.json
   /manual
     aliases.json
     card-id-map.json
+    source-refs.json
     card-strategy-profiles.json
     combos.ko-KR.json
     card-rulings.ko-KR.json
@@ -42,7 +46,7 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
     /draft
       *.json
 /scripts
-  import-woong-xlsx.ts
+  import-woongi-xlsx.ts
   import-lumin-stats.ts
   normalize-cards.ts
   validate-strategy-profiles.ts
@@ -55,6 +59,10 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 
 ### 웅이님 엑셀
 
+Source ref:
+
+- `woongi-tierlist-2025-09-01`
+
 용도:
 
 - 한국어 공식명
@@ -63,10 +71,22 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 - 한국어 티어
 - wtdPWR 기반 가공 정보
 
+출처와 허가:
+
+- 제목: `아그리콜라 카드 티어리스트 검색기_250901_웅이_V2`
+- 작성자: 웅이 / bigman0603
+- 원문: `https://boardgamelaboratory.tistory.com/7`
+- 스냅샷 기준일: 2025-09-01
+- 사용 허가: 작성자가 "출처만 명확히 기재해주신다면 사용하셔도 괜찮습니다"라고 허가했다.
+- 허가 근거: 2025-05-10 댓글 답변 캡처
+
 주의:
 
 - 가공본이므로 원본 통계와 분리해서 저장한다.
-- 파일 자체의 재배포 가능 여부는 확인이 필요하다.
+- raw spreadsheet는 import seed로 보관하되, 공개 앱에는 필요한 normalized subset만 제공한다.
+- normalized/manual 데이터에서 이 출처를 사용한 row는 `sourceRefs`에
+  `woongi-tierlist-2025-09-01`을 기록한다.
+- UI 하단, 카드 상세, 데이터 문서에는 Woongi 자료 기반 데이터임을 명확히 표기한다.
 
 ### Lumin_S BGA 통계
 
@@ -158,6 +178,24 @@ DB는 배포와 조회를 위한 layer로 본다. 언제든 normalized JSON에�
 주의:
 
 - API 사용 정책과 요청량을 확인한다.
+
+## Source reference 관리
+
+출처 메타데이터는 `data/manual/source-refs.json`에 둔다.
+
+역할:
+
+- 사람이 검수한 출처 id를 안정적으로 관리한다.
+- normalized/manual 데이터의 `sourceRefs` 필드가 참조할 수 있는 id를 제공한다.
+- 사용 허가, attribution 문구, snapshot date를 데이터와 분리해서 추적한다.
+
+규칙:
+
+- raw source 파일명과 source ref id는 가능한 한 같은 날짜를 포함한다.
+- 외부 자료에서 가져온 카드명, 설명, 티어, 통계 row는 `sourceRefs`를 가진다.
+- 허가 조건이 있는 출처는 `permission.status`와 `attributionTextKo`를 채운다.
+- 외부 DB seed 단계에서는 source ref 정보를 같이 내보내거나, UI가 참조할 수 있는
+  별도 attribution payload로 제공한다.
 
 ## Import 흐름
 

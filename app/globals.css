@@ -205,6 +205,20 @@
   list-style: none;
 }
 
+.card-detail-note-list a,
+.draft-source-footer a {
+  color: var(--accent);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.card-detail-note-list a:hover,
+.card-detail-note-list a:focus-visible,
+.draft-source-footer a:hover,
+.draft-source-footer a:focus-visible {
+  text-decoration: underline;
+}
+
 .card-detail-tag-row {
   display: grid;
   gap: 6px;
@@ -223,6 +237,19 @@
 
 .empty-state.is-error {
   color: var(--risk);
+}
+
+.draft-source-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 10px 20px 22px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 @media (max-width: 620px) {

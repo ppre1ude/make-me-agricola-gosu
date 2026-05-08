@@ -1,51 +1,47 @@
 [
   {
-    "cardId": "occ-field-watchman",
+    "cardId": "minor-bake-access",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["broken", "plan_anchor", "field_engine", "grain_seeds_action_upgrade"],
-    "isBroken": true,
-    "isPlanAnchor": true,
-    "solves": ["field_engine"],
-    "increasesNeedFor": ["grain_supply", "bake_bread_access", "food_engine"],
-    "saturationPenaltyTo": ["field_engine", "minor-swing-plow"],
-    "synergyWith": ["minor-grain-supply", "minor-bake-access", "occ-food-engine"],
-    "conflictsWith": [],
-    "riskTags": ["needs_followup_grain_or_bake"],
-    "timingWindow": "early",
-    "nextPickGuidance": {
-      "ko-KR": ["grain_supply", "bake_bread_access", "food_engine"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Early anchor that solves field access and opens a food follow-up plan." },
-      "standard": { "ko-KR": "Field Watchman is a premium early anchor. After taking it, prioritize grain, bake, or food follow-up." },
-      "deep": { "ko-KR": "Prototype profile: strong field access, high follow-up demand, and light saturation resistance." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "minor-swing-plow",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["field_engine"],
+    "roles": [
+      "bake_bread_access",
+      "food_engine"
+    ],
     "isBroken": false,
     "isPlanAnchor": false,
-    "solves": ["field_engine"],
-    "increasesNeedFor": ["grain_supply"],
-    "saturationPenaltyTo": ["field_engine"],
-    "synergyWith": ["minor-grain-supply"],
+    "solves": [
+      "bake_bread_access",
+      "food_engine"
+    ],
+    "increasesNeedFor": [
+      "grain_supply"
+    ],
+    "saturationPenaltyTo": [
+      "bake_bread_access"
+    ],
+    "synergyWith": [
+      "occ-field-watchman",
+      "minor-grain-supply"
+    ],
     "conflictsWith": [],
-    "riskTags": ["redundant_if_field_access_solved"],
-    "timingWindow": "early",
+    "riskTags": [
+      "needs_grain"
+    ],
+    "timingWindow": "mid",
     "nextPickGuidance": {
-      "ko-KR": ["grain_supply"]
+      "ko-KR": [
+        "grain_supply",
+        "food_engine"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Field support is fine early, but redundant after field access is already solved." }
+      "compact": {
+        "ko-KR": "Converts grain into reliable food once the grain plan exists."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
   },
@@ -53,71 +49,41 @@
     "cardId": "minor-grain-supply",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["grain_supply"],
+    "roles": [
+      "grain_supply"
+    ],
     "isBroken": false,
     "isPlanAnchor": false,
-    "solves": ["grain_supply"],
-    "increasesNeedFor": ["bake_bread_access"],
-    "saturationPenaltyTo": ["grain_supply"],
-    "synergyWith": ["occ-field-watchman", "minor-bake-access"],
+    "solves": [
+      "grain_supply"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply"
+    ],
+    "synergyWith": [
+      "occ-field-watchman",
+      "minor-bake-access"
+    ],
     "conflictsWith": [],
     "riskTags": [],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["bake_bread_access", "food_engine"]
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Grain support makes the field plan real and points toward bake access next." }
+      "compact": {
+        "ko-KR": "Grain support makes the field plan real and points toward bake access next."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "minor-bake-access",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["bake_bread_access", "food_engine"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": ["bake_bread_access", "food_engine"],
-    "increasesNeedFor": ["grain_supply"],
-    "saturationPenaltyTo": ["bake_bread_access"],
-    "synergyWith": ["occ-field-watchman", "minor-grain-supply"],
-    "conflictsWith": [],
-    "riskTags": ["needs_grain"],
-    "timingWindow": "mid",
-    "nextPickGuidance": {
-      "ko-KR": ["grain_supply", "food_engine"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Converts grain into reliable food once the grain plan exists." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "occ-food-engine",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["food_engine"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": ["food_engine"],
-    "increasesNeedFor": [],
-    "saturationPenaltyTo": ["food_engine"],
-    "synergyWith": ["occ-field-watchman"],
-    "conflictsWith": [],
-    "riskTags": [],
-    "timingWindow": "early",
-    "nextPickGuidance": {
-      "ko-KR": ["tempo_conversion", "family_growth_setup"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Early food stability reduces pressure and improves later flexibility." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
   },
@@ -125,23 +91,38 @@
     "cardId": "minor-late-points",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["late_bonus_points"],
+    "roles": [
+      "late_bonus_points"
+    ],
     "isBroken": false,
     "isPlanAnchor": false,
-    "solves": ["late_bonus_points"],
+    "solves": [
+      "late_bonus_points"
+    ],
     "increasesNeedFor": [],
-    "saturationPenaltyTo": ["late_bonus_points"],
+    "saturationPenaltyTo": [
+      "late_bonus_points"
+    ],
     "synergyWith": [],
     "conflictsWith": [],
-    "riskTags": ["low_early_impact"],
+    "riskTags": [
+      "low_early_impact"
+    ],
     "timingWindow": "late",
     "nextPickGuidance": {
-      "ko-KR": ["survival_plan", "engine_completion"]
+      "ko-KR": [
+        "survival_plan",
+        "engine_completion"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Late points matter less than survival and engine completion in the early draft." }
+      "compact": {
+        "ko-KR": "Late points matter less than survival and engine completion in the early draft."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
   },
@@ -149,121 +130,41 @@
     "cardId": "minor-pantry-stall",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["food_engine"],
+    "roles": [
+      "food_engine"
+    ],
     "isBroken": false,
     "isPlanAnchor": false,
-    "solves": ["food_engine"],
-    "increasesNeedFor": ["grain_supply"],
-    "saturationPenaltyTo": ["food_engine"],
-    "synergyWith": ["occ-field-watchman", "minor-grain-supply"],
+    "solves": [
+      "food_engine"
+    ],
+    "increasesNeedFor": [
+      "grain_supply"
+    ],
+    "saturationPenaltyTo": [
+      "food_engine"
+    ],
+    "synergyWith": [
+      "occ-field-watchman",
+      "minor-grain-supply"
+    ],
     "conflictsWith": [],
     "riskTags": [],
     "timingWindow": "mid",
     "nextPickGuidance": {
-      "ko-KR": ["grain_supply", "bake_bread_access"]
+      "ko-KR": [
+        "grain_supply",
+        "bake_bread_access"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Manual prototype support card for food stability follow-up." }
+      "compact": {
+        "ko-KR": "Manual prototype support card for food stability follow-up."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "occ-clay-detour",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["late_bonus_points"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": ["late_bonus_points"],
-    "increasesNeedFor": [],
-    "saturationPenaltyTo": ["late_bonus_points"],
-    "synergyWith": [],
-    "conflictsWith": ["occ-field-watchman"],
-    "riskTags": [],
-    "timingWindow": "mid",
-    "nextPickGuidance": {
-      "ko-KR": ["engine_completion"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "High-value prototype that pulls away from the field-food plan." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "minor-seed-cart",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["grain_supply"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": ["grain_supply"],
-    "increasesNeedFor": ["bake_bread_access"],
-    "saturationPenaltyTo": ["grain_supply"],
-    "synergyWith": ["occ-field-watchman", "minor-bake-access"],
-    "conflictsWith": [],
-    "riskTags": [],
-    "timingWindow": "early",
-    "nextPickGuidance": {
-      "ko-KR": ["bake_bread_access", "food_engine"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Second prototype grain role card for full tracking pressure." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "minor-snack-basket",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["food_support"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": [],
-    "supports": ["food_engine"],
-    "increasesNeedFor": [],
-    "saturationPenaltyTo": ["food_support"],
-    "synergyWith": [],
-    "conflictsWith": [],
-    "riskTags": [],
-    "timingWindow": "mid",
-    "nextPickGuidance": {
-      "ko-KR": ["food_engine"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Small food help, not a complete food engine." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
-    "confidence": "manual_verified",
-    "updatedAt": "2026-05-08"
-  },
-  {
-    "cardId": "occ-flex-merchant",
-    "cardPoolProfileId": "bga-arena-prototype",
-    "arenaActive": true,
-    "roles": ["food_support"],
-    "isBroken": false,
-    "isPlanAnchor": false,
-    "solves": [],
-    "supports": ["food_engine"],
-    "increasesNeedFor": [],
-    "saturationPenaltyTo": ["food_support"],
-    "synergyWith": [],
-    "conflictsWith": [],
-    "riskTags": [],
-    "timingWindow": "mid",
-    "nextPickGuidance": {
-      "ko-KR": ["food_engine", "engine_completion"]
-    },
-    "explanation": {
-      "compact": { "ko-KR": "Scarce premium support card for pass-regret fixtures." }
-    },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
   },
@@ -271,23 +172,659 @@
     "cardId": "minor-risky-bonus",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["late_bonus_points", "risk_conditional"],
+    "roles": [
+      "late_bonus_points",
+      "risk_conditional"
+    ],
     "isBroken": false,
     "isPlanAnchor": false,
-    "solves": ["late_bonus_points"],
+    "solves": [
+      "late_bonus_points"
+    ],
     "increasesNeedFor": [],
-    "saturationPenaltyTo": ["late_bonus_points"],
+    "saturationPenaltyTo": [
+      "late_bonus_points"
+    ],
     "synergyWith": [],
     "conflictsWith": [],
-    "riskTags": ["conditional_bonus_unready", "low_early_impact", "needs_specific_followup"],
+    "riskTags": [
+      "conditional_bonus_unready",
+      "low_early_impact",
+      "needs_specific_followup"
+    ],
     "timingWindow": "late",
     "nextPickGuidance": {
-      "ko-KR": ["condition_support"]
+      "ko-KR": [
+        "condition_support"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Conditional points card that should expose risk clearly." }
+      "compact": {
+        "ko-KR": "Conditional points card that should expose risk clearly."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-seed-cart",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "grain_supply"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [
+      "grain_supply"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply"
+    ],
+    "synergyWith": [
+      "occ-field-watchman",
+      "minor-bake-access"
+    ],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Second prototype grain role card for full tracking pressure."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-snack-basket",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [],
+    "supports": [
+      "food_engine"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Small food help, not a complete food engine."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-swing-plow",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "field_engine"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [
+      "field_engine"
+    ],
+    "increasesNeedFor": [
+      "grain_supply"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine"
+    ],
+    "synergyWith": [
+      "minor-grain-supply"
+    ],
+    "conflictsWith": [],
+    "riskTags": [
+      "redundant_if_field_access_solved"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Field support is fine early, but redundant after field access is already solved."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "minor-woongi-001",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "food_engine",
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply",
+        "food_engine",
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.85 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-002",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.71 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-003",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.47 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-004",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.31 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-005",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.22 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-006",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.21 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-007",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "field_engine",
+      "grain_supply",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "field_engine",
+      "grain_supply",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "food_engine",
+      "bake_bread_access",
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine",
+      "grain_supply",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply",
+        "food_engine",
+        "bake_bread_access",
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.17 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-008",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.09 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-009",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.08 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-010",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.92 (1) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "minor-woongi-011",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "plan_anchor"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": true,
+    "solves": [],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.86 (1) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-clay-detour",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "late_bonus_points"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [
+      "late_bonus_points"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "late_bonus_points"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [
+      "occ-field-watchman"
+    ],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "engine_completion"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "High-value prototype that pulls away from the field-food plan."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
   },
@@ -295,24 +832,707 @@
     "cardId": "occ-field-prodigy",
     "cardPoolProfileId": "bga-arena-prototype",
     "arenaActive": true,
-    "roles": ["broken", "field_engine", "grain_seeds_action_upgrade"],
+    "roles": [
+      "broken",
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
     "isBroken": true,
     "isPlanAnchor": false,
-    "solves": ["field_engine"],
-    "increasesNeedFor": ["grain_supply", "bake_bread_access"],
-    "saturationPenaltyTo": ["field_engine"],
-    "synergyWith": ["minor-grain-supply", "minor-bake-access"],
+    "solves": [
+      "field_engine"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "bake_bread_access"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine"
+    ],
+    "synergyWith": [
+      "minor-grain-supply",
+      "minor-bake-access"
+    ],
     "conflictsWith": [],
-    "riskTags": ["needs_followup_grain_or_bake"],
+    "riskTags": [
+      "needs_followup_grain_or_bake"
+    ],
     "timingWindow": "early",
     "nextPickGuidance": {
-      "ko-KR": ["grain_supply", "bake_bread_access"]
+      "ko-KR": [
+        "grain_supply",
+        "bake_bread_access"
+      ]
     },
     "explanation": {
-      "compact": { "ko-KR": "Second broken field card for saturation-resistance coverage." }
+      "compact": {
+        "ko-KR": "Second broken field card for saturation-resistance coverage."
+      }
     },
-    "sourceRefs": ["manual-prototype-seed"],
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
     "confidence": "manual_verified",
     "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-field-watchman",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "field_engine"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "bake_bread_access",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine",
+      "minor-swing-plow"
+    ],
+    "synergyWith": [
+      "minor-grain-supply",
+      "minor-bake-access",
+      "occ-food-engine"
+    ],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_followup_grain_or_bake"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply",
+        "bake_bread_access",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Early anchor that solves field access and opens a food follow-up plan."
+      },
+      "standard": {
+        "ko-KR": "Field Watchman is a premium early anchor. After taking it, prioritize grain, bake, or food follow-up."
+      },
+      "deep": {
+        "ko-KR": "Prototype profile: strong field access, high follow-up demand, and light saturation resistance."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-flex-merchant",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [],
+    "supports": [
+      "food_engine"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "mid",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "food_engine",
+        "engine_completion"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Scarce premium support card for pass-regret fixtures."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-food-engine",
+    "cardPoolProfileId": "bga-arena-prototype",
+    "arenaActive": true,
+    "roles": [
+      "food_engine"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": false,
+    "solves": [
+      "food_engine"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_engine"
+    ],
+    "synergyWith": [
+      "occ-field-watchman"
+    ],
+    "conflictsWith": [],
+    "riskTags": [],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "tempo_conversion",
+        "family_growth_setup"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "Early food stability reduces pressure and improves later flexibility."
+      }
+    },
+    "sourceRefs": [
+      "manual-prototype-seed"
+    ],
+    "confidence": "manual_verified",
+    "updatedAt": "2026-05-08"
+  },
+  {
+    "cardId": "occ-woongi-001",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 6.22 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-002",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "grain_supply",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "grain_supply",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.85 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-003",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "grain_supply",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "grain_supply",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access",
+      "food_engine",
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine",
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.61 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-004",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "grain_supply",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "grain_supply",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.42 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-005",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.4 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-007",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "late_bonus_points"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "late_bonus_points"
+    ],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [
+      "late_bonus_points"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.32 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-008",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [],
+    "increasesNeedFor": [],
+    "saturationPenaltyTo": [],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "manual_strategy_review"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.18 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-009",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "grain_supply",
+      "food_support"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "grain_supply",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access",
+      "food_engine",
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine",
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 5.08 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-010",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "broken",
+      "plan_anchor",
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "isBroken": true,
+    "isPlanAnchor": true,
+    "solves": [
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine",
+      "grain_seeds_action_upgrade"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.99 (S) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-011",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "plan_anchor",
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": true,
+    "solves": [
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "risk_conditional"
+    ],
+    "saturationPenaltyTo": [
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "risk_conditional"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.95 (1) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-012",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "plan_anchor",
+      "field_engine",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": true,
+    "solves": [
+      "field_engine",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "grain_supply",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "field_engine",
+      "grain_seeds_action_upgrade",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "grain_supply",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.93 (1) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
+  },
+  {
+    "cardId": "occ-woongi-013",
+    "cardPoolProfileId": "bga-arena-woongi-2025-09-01",
+    "arenaActive": true,
+    "roles": [
+      "plan_anchor",
+      "grain_supply",
+      "food_support"
+    ],
+    "isBroken": false,
+    "isPlanAnchor": true,
+    "solves": [
+      "grain_supply",
+      "food_support"
+    ],
+    "increasesNeedFor": [
+      "bake_bread_access",
+      "food_engine"
+    ],
+    "saturationPenaltyTo": [
+      "grain_supply",
+      "food_support"
+    ],
+    "synergyWith": [],
+    "conflictsWith": [],
+    "riskTags": [
+      "needs_manual_strategy_review"
+    ],
+    "timingWindow": "early",
+    "nextPickGuidance": {
+      "ko-KR": [
+        "bake_bread_access",
+        "food_engine"
+      ]
+    },
+    "explanation": {
+      "compact": {
+        "ko-KR": "웅이/Lumin BGA wtdPWR 4.91 (1) 기반의 우선 큐레이션 후보입니다."
+      }
+    },
+    "sourceRefs": [
+      "woongi-tierlist-2025-09-01"
+    ],
+    "confidence": "stat_inferred",
+    "updatedAt": "2026-05-09"
   }
 ]

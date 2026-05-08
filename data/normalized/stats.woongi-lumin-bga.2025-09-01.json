@@ -1,0 +1,4612 @@
+[
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-001",
+    "rank": 1,
+    "wtdPwr": 6.22,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-002",
+    "rank": 2,
+    "wtdPwr": 5.85,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-003",
+    "rank": 3,
+    "wtdPwr": 5.61,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-004",
+    "rank": 4,
+    "wtdPwr": 5.42,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-005",
+    "rank": 5,
+    "wtdPwr": 5.4,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-field-watchman",
+    "rank": 6,
+    "wtdPwr": 5.35,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-007",
+    "rank": 7,
+    "wtdPwr": 5.32,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-008",
+    "rank": 8,
+    "wtdPwr": 5.18,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-009",
+    "rank": 9,
+    "wtdPwr": 5.08,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-010",
+    "rank": 10,
+    "wtdPwr": 4.99,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-011",
+    "rank": 11,
+    "wtdPwr": 4.95,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-012",
+    "rank": 12,
+    "wtdPwr": 4.93,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-013",
+    "rank": 13,
+    "wtdPwr": 4.91,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-014",
+    "rank": 14,
+    "wtdPwr": 4.78,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-015",
+    "rank": 15,
+    "wtdPwr": 4.71,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-016",
+    "rank": 16,
+    "wtdPwr": 4.7,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-017",
+    "rank": 17,
+    "wtdPwr": 4.67,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-018",
+    "rank": 18,
+    "wtdPwr": 4.62,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-019",
+    "rank": 19,
+    "wtdPwr": 4.59,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-020",
+    "rank": 20,
+    "wtdPwr": 4.58,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-021",
+    "rank": 21,
+    "wtdPwr": 4.58,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-022",
+    "rank": 22,
+    "wtdPwr": 4.49,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-023",
+    "rank": 23,
+    "wtdPwr": 4.43,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-024",
+    "rank": 24,
+    "wtdPwr": 4.42,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-025",
+    "rank": 25,
+    "wtdPwr": 4.38,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-026",
+    "rank": 26,
+    "wtdPwr": 4.37,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-027",
+    "rank": 27,
+    "wtdPwr": 4.35,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-028",
+    "rank": 28,
+    "wtdPwr": 4.34,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-029",
+    "rank": 29,
+    "wtdPwr": 4.29,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-030",
+    "rank": 30,
+    "wtdPwr": 4.28,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-031",
+    "rank": 31,
+    "wtdPwr": 4.25,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-032",
+    "rank": 32,
+    "wtdPwr": 4.24,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-033",
+    "rank": 33,
+    "wtdPwr": 4.21,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-034",
+    "rank": 34,
+    "wtdPwr": 4.19,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-035",
+    "rank": 35,
+    "wtdPwr": 4.18,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-036",
+    "rank": 36,
+    "wtdPwr": 4.14,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-037",
+    "rank": 37,
+    "wtdPwr": 4.12,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-038",
+    "rank": 38,
+    "wtdPwr": 4.12,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-039",
+    "rank": 39,
+    "wtdPwr": 4.11,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-040",
+    "rank": 40,
+    "wtdPwr": 4.08,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-041",
+    "rank": 41,
+    "wtdPwr": 4,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-042",
+    "rank": 42,
+    "wtdPwr": 3.98,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-043",
+    "rank": 43,
+    "wtdPwr": 3.98,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-044",
+    "rank": 44,
+    "wtdPwr": 3.97,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-045",
+    "rank": 45,
+    "wtdPwr": 3.96,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-046",
+    "rank": 46,
+    "wtdPwr": 3.94,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-047",
+    "rank": 47,
+    "wtdPwr": 3.94,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-048",
+    "rank": 48,
+    "wtdPwr": 3.94,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-049",
+    "rank": 49,
+    "wtdPwr": 3.94,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-050",
+    "rank": 50,
+    "wtdPwr": 3.92,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-051",
+    "rank": 51,
+    "wtdPwr": 3.92,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-052",
+    "rank": 52,
+    "wtdPwr": 3.91,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-053",
+    "rank": 53,
+    "wtdPwr": 3.91,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-054",
+    "rank": 54,
+    "wtdPwr": 3.87,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-055",
+    "rank": 55,
+    "wtdPwr": 3.87,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-056",
+    "rank": 56,
+    "wtdPwr": 3.83,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-057",
+    "rank": 57,
+    "wtdPwr": 3.8,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-058",
+    "rank": 58,
+    "wtdPwr": 3.79,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-059",
+    "rank": 59,
+    "wtdPwr": 3.77,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-060",
+    "rank": 60,
+    "wtdPwr": 3.7,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-061",
+    "rank": 61,
+    "wtdPwr": 3.69,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-062",
+    "rank": 62,
+    "wtdPwr": 3.69,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-063",
+    "rank": 63,
+    "wtdPwr": 3.68,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-064",
+    "rank": 64,
+    "wtdPwr": 3.67,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-065",
+    "rank": 65,
+    "wtdPwr": 3.66,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-066",
+    "rank": 66,
+    "wtdPwr": 3.65,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-067",
+    "rank": 67,
+    "wtdPwr": 3.64,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-068",
+    "rank": 68,
+    "wtdPwr": 3.6,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-069",
+    "rank": 69,
+    "wtdPwr": 3.6,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-070",
+    "rank": 70,
+    "wtdPwr": 3.58,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-071",
+    "rank": 71,
+    "wtdPwr": 3.55,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-072",
+    "rank": 72,
+    "wtdPwr": 3.49,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-073",
+    "rank": 73,
+    "wtdPwr": 3.47,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-074",
+    "rank": 74,
+    "wtdPwr": 3.44,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-075",
+    "rank": 75,
+    "wtdPwr": 3.42,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-076",
+    "rank": 76,
+    "wtdPwr": 3.38,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-077",
+    "rank": 77,
+    "wtdPwr": 3.37,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-078",
+    "rank": 78,
+    "wtdPwr": 3.34,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-079",
+    "rank": 79,
+    "wtdPwr": 3.32,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-080",
+    "rank": 80,
+    "wtdPwr": 3.32,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-081",
+    "rank": 81,
+    "wtdPwr": 3.29,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-082",
+    "rank": 82,
+    "wtdPwr": 3.28,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-083",
+    "rank": 83,
+    "wtdPwr": 3.26,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-084",
+    "rank": 84,
+    "wtdPwr": 3.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-085",
+    "rank": 85,
+    "wtdPwr": 3.24,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-086",
+    "rank": 86,
+    "wtdPwr": 3.23,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-087",
+    "rank": 87,
+    "wtdPwr": 3.21,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-088",
+    "rank": 88,
+    "wtdPwr": 3.2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-089",
+    "rank": 89,
+    "wtdPwr": 3.19,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-090",
+    "rank": 90,
+    "wtdPwr": 3.19,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-091",
+    "rank": 91,
+    "wtdPwr": 3.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-092",
+    "rank": 92,
+    "wtdPwr": 3.17,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-093",
+    "rank": 93,
+    "wtdPwr": 3.15,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-094",
+    "rank": 94,
+    "wtdPwr": 3.14,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-095",
+    "rank": 95,
+    "wtdPwr": 3.14,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-096",
+    "rank": 96,
+    "wtdPwr": 3.13,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-097",
+    "rank": 97,
+    "wtdPwr": 3.13,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-098",
+    "rank": 98,
+    "wtdPwr": 3.11,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-099",
+    "rank": 99,
+    "wtdPwr": 3.1,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-100",
+    "rank": 100,
+    "wtdPwr": 3.07,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-101",
+    "rank": 101,
+    "wtdPwr": 3.06,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-102",
+    "rank": 102,
+    "wtdPwr": 3.06,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-103",
+    "rank": 103,
+    "wtdPwr": 3.03,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-104",
+    "rank": 104,
+    "wtdPwr": 3.02,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-105",
+    "rank": 105,
+    "wtdPwr": 3.01,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-106",
+    "rank": 106,
+    "wtdPwr": 3.01,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-107",
+    "rank": 107,
+    "wtdPwr": 3,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-108",
+    "rank": 108,
+    "wtdPwr": 2.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-109",
+    "rank": 109,
+    "wtdPwr": 2.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-110",
+    "rank": 110,
+    "wtdPwr": 2.97,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-111",
+    "rank": 111,
+    "wtdPwr": 2.95,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-112",
+    "rank": 112,
+    "wtdPwr": 2.95,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-113",
+    "rank": 113,
+    "wtdPwr": 2.95,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-114",
+    "rank": 114,
+    "wtdPwr": 2.89,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-115",
+    "rank": 115,
+    "wtdPwr": 2.89,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-116",
+    "rank": 116,
+    "wtdPwr": 2.87,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-117",
+    "rank": 117,
+    "wtdPwr": 2.86,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-118",
+    "rank": 118,
+    "wtdPwr": 2.84,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-119",
+    "rank": 119,
+    "wtdPwr": 2.8,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-120",
+    "rank": 120,
+    "wtdPwr": 2.79,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-121",
+    "rank": 121,
+    "wtdPwr": 2.79,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-122",
+    "rank": 122,
+    "wtdPwr": 2.77,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-123",
+    "rank": 123,
+    "wtdPwr": 2.75,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-124",
+    "rank": 124,
+    "wtdPwr": 2.74,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-125",
+    "rank": 125,
+    "wtdPwr": 2.72,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-126",
+    "rank": 126,
+    "wtdPwr": 2.71,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-127",
+    "rank": 127,
+    "wtdPwr": 2.71,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-128",
+    "rank": 128,
+    "wtdPwr": 2.7,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-129",
+    "rank": 129,
+    "wtdPwr": 2.67,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-130",
+    "rank": 130,
+    "wtdPwr": 2.67,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-131",
+    "rank": 131,
+    "wtdPwr": 2.65,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-132",
+    "rank": 132,
+    "wtdPwr": 2.57,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-133",
+    "rank": 133,
+    "wtdPwr": 2.56,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-134",
+    "rank": 134,
+    "wtdPwr": 2.55,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-135",
+    "rank": 135,
+    "wtdPwr": 2.55,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-136",
+    "rank": 136,
+    "wtdPwr": 2.54,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-137",
+    "rank": 137,
+    "wtdPwr": 2.53,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-138",
+    "rank": 138,
+    "wtdPwr": 2.52,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-139",
+    "rank": 139,
+    "wtdPwr": 2.48,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-140",
+    "rank": 140,
+    "wtdPwr": 2.47,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-141",
+    "rank": 141,
+    "wtdPwr": 2.46,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-142",
+    "rank": 142,
+    "wtdPwr": 2.45,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-143",
+    "rank": 143,
+    "wtdPwr": 2.43,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-144",
+    "rank": 144,
+    "wtdPwr": 2.42,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-145",
+    "rank": 145,
+    "wtdPwr": 2.41,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-146",
+    "rank": 146,
+    "wtdPwr": 2.4,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-147",
+    "rank": 147,
+    "wtdPwr": 2.4,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-148",
+    "rank": 148,
+    "wtdPwr": 2.4,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-149",
+    "rank": 149,
+    "wtdPwr": 2.39,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-150",
+    "rank": 150,
+    "wtdPwr": 2.35,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-151",
+    "rank": 151,
+    "wtdPwr": 2.34,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-152",
+    "rank": 152,
+    "wtdPwr": 2.32,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-153",
+    "rank": 153,
+    "wtdPwr": 2.27,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-154",
+    "rank": 154,
+    "wtdPwr": 2.26,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-155",
+    "rank": 155,
+    "wtdPwr": 2.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-156",
+    "rank": 156,
+    "wtdPwr": 2.23,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-157",
+    "rank": 157,
+    "wtdPwr": 2.21,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-158",
+    "rank": 158,
+    "wtdPwr": 2.2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-159",
+    "rank": 159,
+    "wtdPwr": 2.2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-160",
+    "rank": 160,
+    "wtdPwr": 2.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-161",
+    "rank": 161,
+    "wtdPwr": 2.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-162",
+    "rank": 162,
+    "wtdPwr": 2.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-163",
+    "rank": 163,
+    "wtdPwr": 2.16,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-164",
+    "rank": 164,
+    "wtdPwr": 2.15,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-165",
+    "rank": 165,
+    "wtdPwr": 2.15,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-166",
+    "rank": 166,
+    "wtdPwr": 2.12,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-167",
+    "rank": 167,
+    "wtdPwr": 2.11,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-168",
+    "rank": 168,
+    "wtdPwr": 2.09,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-169",
+    "rank": 169,
+    "wtdPwr": 2.07,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-170",
+    "rank": 170,
+    "wtdPwr": 2.06,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-171",
+    "rank": 171,
+    "wtdPwr": 2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-172",
+    "rank": 172,
+    "wtdPwr": 1.99,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-173",
+    "rank": 173,
+    "wtdPwr": 1.99,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-174",
+    "rank": 174,
+    "wtdPwr": 1.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-175",
+    "rank": 175,
+    "wtdPwr": 1.96,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-176",
+    "rank": 176,
+    "wtdPwr": 1.95,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-177",
+    "rank": 177,
+    "wtdPwr": 1.91,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-178",
+    "rank": 178,
+    "wtdPwr": 1.9,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-179",
+    "rank": 179,
+    "wtdPwr": 1.87,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-180",
+    "rank": 180,
+    "wtdPwr": 1.83,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-181",
+    "rank": 181,
+    "wtdPwr": 1.83,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-182",
+    "rank": 182,
+    "wtdPwr": 1.81,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-183",
+    "rank": 183,
+    "wtdPwr": 1.8,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-184",
+    "rank": 184,
+    "wtdPwr": 1.8,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-185",
+    "rank": 185,
+    "wtdPwr": 1.78,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-186",
+    "rank": 186,
+    "wtdPwr": 1.78,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-187",
+    "rank": 187,
+    "wtdPwr": 1.76,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-188",
+    "rank": 188,
+    "wtdPwr": 1.71,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-189",
+    "rank": 189,
+    "wtdPwr": 1.71,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-190",
+    "rank": 190,
+    "wtdPwr": 1.65,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-191",
+    "rank": 191,
+    "wtdPwr": 1.64,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-192",
+    "rank": 192,
+    "wtdPwr": 1.61,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-193",
+    "rank": 193,
+    "wtdPwr": 1.55,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-194",
+    "rank": 194,
+    "wtdPwr": 1.54,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-195",
+    "rank": 195,
+    "wtdPwr": 1.54,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-196",
+    "rank": 196,
+    "wtdPwr": 1.52,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-197",
+    "rank": 197,
+    "wtdPwr": 1.52,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-198",
+    "rank": 198,
+    "wtdPwr": 1.51,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-199",
+    "rank": 199,
+    "wtdPwr": 1.49,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-200",
+    "rank": 200,
+    "wtdPwr": 1.49,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-201",
+    "rank": 201,
+    "wtdPwr": 1.48,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-202",
+    "rank": 202,
+    "wtdPwr": 1.48,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-203",
+    "rank": 203,
+    "wtdPwr": 1.47,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-204",
+    "rank": 204,
+    "wtdPwr": 1.47,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-205",
+    "rank": 205,
+    "wtdPwr": 1.4,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-206",
+    "rank": 206,
+    "wtdPwr": 1.35,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-207",
+    "rank": 207,
+    "wtdPwr": 1.35,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-208",
+    "rank": 208,
+    "wtdPwr": 1.33,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-209",
+    "rank": 209,
+    "wtdPwr": 1.29,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-210",
+    "rank": 210,
+    "wtdPwr": 1.27,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-211",
+    "rank": 211,
+    "wtdPwr": 1.27,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-212",
+    "rank": 212,
+    "wtdPwr": 1.26,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-213",
+    "rank": 213,
+    "wtdPwr": 1.25,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-214",
+    "rank": 214,
+    "wtdPwr": 1.24,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-215",
+    "rank": 215,
+    "wtdPwr": 1.23,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-216",
+    "rank": 216,
+    "wtdPwr": 1.23,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-217",
+    "rank": 217,
+    "wtdPwr": 1.2,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-218",
+    "rank": 218,
+    "wtdPwr": 1.2,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-219",
+    "rank": 219,
+    "wtdPwr": 1.15,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-220",
+    "rank": 220,
+    "wtdPwr": 1.15,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-221",
+    "rank": 221,
+    "wtdPwr": 1.08,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-222",
+    "rank": 222,
+    "wtdPwr": 1.08,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-223",
+    "rank": 223,
+    "wtdPwr": 1.07,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-224",
+    "rank": 224,
+    "wtdPwr": 1.05,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-225",
+    "rank": 225,
+    "wtdPwr": 1.04,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-226",
+    "rank": 226,
+    "wtdPwr": 1.03,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-227",
+    "rank": 227,
+    "wtdPwr": 1.02,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-228",
+    "rank": 228,
+    "wtdPwr": 1.02,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-229",
+    "rank": 229,
+    "wtdPwr": 0.99,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-230",
+    "rank": 230,
+    "wtdPwr": 0.96,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-231",
+    "rank": 231,
+    "wtdPwr": 0.96,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-232",
+    "rank": 232,
+    "wtdPwr": 0.94,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-233",
+    "rank": 233,
+    "wtdPwr": 0.93,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-234",
+    "rank": 234,
+    "wtdPwr": 0.93,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-235",
+    "rank": 235,
+    "wtdPwr": 0.88,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-236",
+    "rank": 236,
+    "wtdPwr": 0.84,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-237",
+    "rank": 237,
+    "wtdPwr": 0.82,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-238",
+    "rank": 238,
+    "wtdPwr": 0.82,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-239",
+    "rank": 239,
+    "wtdPwr": 0.78,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-240",
+    "rank": 240,
+    "wtdPwr": 0.77,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-241",
+    "rank": 241,
+    "wtdPwr": 0.77,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-242",
+    "rank": 242,
+    "wtdPwr": 0.72,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-243",
+    "rank": 243,
+    "wtdPwr": 0.69,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-244",
+    "rank": 244,
+    "wtdPwr": 0.69,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-245",
+    "rank": 245,
+    "wtdPwr": 0.65,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-246",
+    "rank": 246,
+    "wtdPwr": 0.59,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-247",
+    "rank": 247,
+    "wtdPwr": 0.58,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-248",
+    "rank": 248,
+    "wtdPwr": 0.57,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-249",
+    "rank": 249,
+    "wtdPwr": 0.57,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-250",
+    "rank": 250,
+    "wtdPwr": 0.54,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-251",
+    "rank": 251,
+    "wtdPwr": 0.49,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-252",
+    "rank": 252,
+    "wtdPwr": 0.44,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-253",
+    "rank": 253,
+    "wtdPwr": 0.42,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-254",
+    "rank": 254,
+    "wtdPwr": 0.4,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-255",
+    "rank": 255,
+    "wtdPwr": 0.37,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-256",
+    "rank": 256,
+    "wtdPwr": 0.33,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-257",
+    "rank": 257,
+    "wtdPwr": 0.26,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-258",
+    "rank": 258,
+    "wtdPwr": 0.21,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-259",
+    "rank": 259,
+    "wtdPwr": 0.2,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-260",
+    "rank": 260,
+    "wtdPwr": 0.17,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-261",
+    "rank": 261,
+    "wtdPwr": 0.14,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-262",
+    "rank": 262,
+    "wtdPwr": 0.13,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-263",
+    "rank": 263,
+    "wtdPwr": 0.12,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-264",
+    "rank": 264,
+    "wtdPwr": 0.1,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-265",
+    "rank": 265,
+    "wtdPwr": 0,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-266",
+    "rank": 266,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-267",
+    "rank": 267,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-268",
+    "rank": 268,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-269",
+    "rank": 269,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-270",
+    "rank": 270,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-271",
+    "rank": 271,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-272",
+    "rank": 272,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-273",
+    "rank": 273,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-274",
+    "rank": 274,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-275",
+    "rank": 275,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-276",
+    "rank": 276,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-277",
+    "rank": 277,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-278",
+    "rank": 278,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-279",
+    "rank": 279,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-280",
+    "rank": 280,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-281",
+    "rank": 281,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-282",
+    "rank": 282,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-283",
+    "rank": 283,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-284",
+    "rank": 284,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-285",
+    "rank": 285,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-286",
+    "rank": 286,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-287",
+    "rank": 287,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-288",
+    "rank": 288,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-289",
+    "rank": 289,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-290",
+    "rank": 290,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-291",
+    "rank": 291,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-292",
+    "rank": 292,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-293",
+    "rank": 293,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-294",
+    "rank": 294,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-295",
+    "rank": 295,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-296",
+    "rank": 296,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-297",
+    "rank": 297,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-298",
+    "rank": 298,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-299",
+    "rank": 299,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-300",
+    "rank": 300,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-301",
+    "rank": 301,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-302",
+    "rank": 302,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-303",
+    "rank": 303,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-304",
+    "rank": 304,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-305",
+    "rank": 305,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-306",
+    "rank": 306,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-307",
+    "rank": 307,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-308",
+    "rank": 308,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-309",
+    "rank": 309,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-310",
+    "rank": 310,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-311",
+    "rank": 311,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-312",
+    "rank": 312,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-313",
+    "rank": 313,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-314",
+    "rank": 314,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-315",
+    "rank": 315,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-316",
+    "rank": 316,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-317",
+    "rank": 317,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-318",
+    "rank": 318,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-319",
+    "rank": 319,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-320",
+    "rank": 320,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-321",
+    "rank": 321,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-322",
+    "rank": 322,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-323",
+    "rank": 323,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-324",
+    "rank": 324,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-325",
+    "rank": 325,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-326",
+    "rank": 326,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-327",
+    "rank": 327,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-328",
+    "rank": 328,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-329",
+    "rank": 329,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-330",
+    "rank": 330,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-331",
+    "rank": 331,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-332",
+    "rank": 332,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-333",
+    "rank": 333,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-334",
+    "rank": 334,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-335",
+    "rank": 335,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "occ-woongi-336",
+    "rank": 336,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-001",
+    "rank": 1,
+    "wtdPwr": 5.85,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-002",
+    "rank": 2,
+    "wtdPwr": 5.71,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-003",
+    "rank": 3,
+    "wtdPwr": 5.47,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-004",
+    "rank": 4,
+    "wtdPwr": 5.31,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-005",
+    "rank": 5,
+    "wtdPwr": 5.22,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-006",
+    "rank": 6,
+    "wtdPwr": 5.21,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-007",
+    "rank": 7,
+    "wtdPwr": 5.17,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-008",
+    "rank": 8,
+    "wtdPwr": 5.09,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-009",
+    "rank": 9,
+    "wtdPwr": 5.08,
+    "tier": "S"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-010",
+    "rank": 10,
+    "wtdPwr": 4.92,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-011",
+    "rank": 11,
+    "wtdPwr": 4.86,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-012",
+    "rank": 12,
+    "wtdPwr": 4.85,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-013",
+    "rank": 13,
+    "wtdPwr": 4.8,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-014",
+    "rank": 14,
+    "wtdPwr": 4.75,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-015",
+    "rank": 15,
+    "wtdPwr": 4.73,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-016",
+    "rank": 16,
+    "wtdPwr": 4.69,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-017",
+    "rank": 17,
+    "wtdPwr": 4.69,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-018",
+    "rank": 18,
+    "wtdPwr": 4.69,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-019",
+    "rank": 19,
+    "wtdPwr": 4.62,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-020",
+    "rank": 20,
+    "wtdPwr": 4.57,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-021",
+    "rank": 21,
+    "wtdPwr": 4.56,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-022",
+    "rank": 22,
+    "wtdPwr": 4.49,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-023",
+    "rank": 23,
+    "wtdPwr": 4.45,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-024",
+    "rank": 24,
+    "wtdPwr": 4.42,
+    "tier": "1"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-025",
+    "rank": 25,
+    "wtdPwr": 4.41,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-026",
+    "rank": 26,
+    "wtdPwr": 4.4,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-027",
+    "rank": 27,
+    "wtdPwr": 4.4,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-028",
+    "rank": 28,
+    "wtdPwr": 4.39,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-029",
+    "rank": 29,
+    "wtdPwr": 4.38,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-030",
+    "rank": 30,
+    "wtdPwr": 4.37,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-031",
+    "rank": 31,
+    "wtdPwr": 4.34,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-032",
+    "rank": 32,
+    "wtdPwr": 4.32,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-033",
+    "rank": 33,
+    "wtdPwr": 4.31,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-034",
+    "rank": 34,
+    "wtdPwr": 4.3,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-035",
+    "rank": 35,
+    "wtdPwr": 4.29,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-036",
+    "rank": 36,
+    "wtdPwr": 4.24,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-037",
+    "rank": 37,
+    "wtdPwr": 4.22,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-038",
+    "rank": 38,
+    "wtdPwr": 4.21,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-039",
+    "rank": 39,
+    "wtdPwr": 4.18,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-040",
+    "rank": 40,
+    "wtdPwr": 4.16,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-041",
+    "rank": 41,
+    "wtdPwr": 4.14,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-042",
+    "rank": 42,
+    "wtdPwr": 4.14,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-043",
+    "rank": 43,
+    "wtdPwr": 4.12,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-044",
+    "rank": 44,
+    "wtdPwr": 4.11,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-045",
+    "rank": 45,
+    "wtdPwr": 4.07,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-046",
+    "rank": 46,
+    "wtdPwr": 4.05,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-047",
+    "rank": 47,
+    "wtdPwr": 4.04,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-048",
+    "rank": 48,
+    "wtdPwr": 3.99,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-049",
+    "rank": 49,
+    "wtdPwr": 3.97,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-050",
+    "rank": 50,
+    "wtdPwr": 3.97,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-051",
+    "rank": 51,
+    "wtdPwr": 3.95,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-052",
+    "rank": 52,
+    "wtdPwr": 3.95,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-053",
+    "rank": 53,
+    "wtdPwr": 3.92,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-054",
+    "rank": 54,
+    "wtdPwr": 3.91,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-055",
+    "rank": 55,
+    "wtdPwr": 3.89,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-056",
+    "rank": 56,
+    "wtdPwr": 3.88,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-057",
+    "rank": 57,
+    "wtdPwr": 3.85,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-058",
+    "rank": 58,
+    "wtdPwr": 3.84,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-059",
+    "rank": 59,
+    "wtdPwr": 3.84,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-060",
+    "rank": 60,
+    "wtdPwr": 3.83,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-061",
+    "rank": 61,
+    "wtdPwr": 3.81,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-062",
+    "rank": 62,
+    "wtdPwr": 3.81,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-063",
+    "rank": 63,
+    "wtdPwr": 3.79,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-064",
+    "rank": 64,
+    "wtdPwr": 3.79,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-065",
+    "rank": 65,
+    "wtdPwr": 3.78,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-066",
+    "rank": 66,
+    "wtdPwr": 3.78,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-067",
+    "rank": 67,
+    "wtdPwr": 3.74,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-068",
+    "rank": 68,
+    "wtdPwr": 3.73,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-069",
+    "rank": 69,
+    "wtdPwr": 3.71,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-070",
+    "rank": 70,
+    "wtdPwr": 3.71,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-071",
+    "rank": 71,
+    "wtdPwr": 3.7,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-072",
+    "rank": 72,
+    "wtdPwr": 3.7,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-073",
+    "rank": 73,
+    "wtdPwr": 3.67,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-074",
+    "rank": 74,
+    "wtdPwr": 3.67,
+    "tier": "2"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-075",
+    "rank": 75,
+    "wtdPwr": 3.66,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-076",
+    "rank": 76,
+    "wtdPwr": 3.65,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-077",
+    "rank": 77,
+    "wtdPwr": 3.62,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-078",
+    "rank": 78,
+    "wtdPwr": 3.62,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-079",
+    "rank": 79,
+    "wtdPwr": 3.6,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-080",
+    "rank": 80,
+    "wtdPwr": 3.58,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-081",
+    "rank": 81,
+    "wtdPwr": 3.57,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-082",
+    "rank": 82,
+    "wtdPwr": 3.52,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-083",
+    "rank": 83,
+    "wtdPwr": 3.5,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-084",
+    "rank": 84,
+    "wtdPwr": 3.49,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-085",
+    "rank": 85,
+    "wtdPwr": 3.48,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-086",
+    "rank": 86,
+    "wtdPwr": 3.41,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-087",
+    "rank": 87,
+    "wtdPwr": 3.34,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-088",
+    "rank": 88,
+    "wtdPwr": 3.32,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-089",
+    "rank": 89,
+    "wtdPwr": 3.3,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-090",
+    "rank": 90,
+    "wtdPwr": 3.26,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-091",
+    "rank": 91,
+    "wtdPwr": 3.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-092",
+    "rank": 92,
+    "wtdPwr": 3.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-093",
+    "rank": 93,
+    "wtdPwr": 3.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-094",
+    "rank": 94,
+    "wtdPwr": 3.24,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-095",
+    "rank": 95,
+    "wtdPwr": 3.21,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-096",
+    "rank": 96,
+    "wtdPwr": 3.21,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-097",
+    "rank": 97,
+    "wtdPwr": 3.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-098",
+    "rank": 98,
+    "wtdPwr": 3.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-099",
+    "rank": 99,
+    "wtdPwr": 3.12,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-100",
+    "rank": 100,
+    "wtdPwr": 3.12,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-101",
+    "rank": 101,
+    "wtdPwr": 3.07,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-102",
+    "rank": 102,
+    "wtdPwr": 3.06,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-103",
+    "rank": 103,
+    "wtdPwr": 3.04,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-104",
+    "rank": 104,
+    "wtdPwr": 2.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-105",
+    "rank": 105,
+    "wtdPwr": 2.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-106",
+    "rank": 106,
+    "wtdPwr": 2.98,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-107",
+    "rank": 107,
+    "wtdPwr": 2.97,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-108",
+    "rank": 108,
+    "wtdPwr": 2.97,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-109",
+    "rank": 109,
+    "wtdPwr": 2.95,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-110",
+    "rank": 110,
+    "wtdPwr": 2.94,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-111",
+    "rank": 111,
+    "wtdPwr": 2.93,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-112",
+    "rank": 112,
+    "wtdPwr": 2.92,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-113",
+    "rank": 113,
+    "wtdPwr": 2.91,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-114",
+    "rank": 114,
+    "wtdPwr": 2.82,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-115",
+    "rank": 115,
+    "wtdPwr": 2.78,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-116",
+    "rank": 116,
+    "wtdPwr": 2.76,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-117",
+    "rank": 117,
+    "wtdPwr": 2.75,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-118",
+    "rank": 118,
+    "wtdPwr": 2.75,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-119",
+    "rank": 119,
+    "wtdPwr": 2.74,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-120",
+    "rank": 120,
+    "wtdPwr": 2.72,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-121",
+    "rank": 121,
+    "wtdPwr": 2.72,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-122",
+    "rank": 122,
+    "wtdPwr": 2.69,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-123",
+    "rank": 123,
+    "wtdPwr": 2.69,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-124",
+    "rank": 124,
+    "wtdPwr": 2.68,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-125",
+    "rank": 125,
+    "wtdPwr": 2.65,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-126",
+    "rank": 126,
+    "wtdPwr": 2.64,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-127",
+    "rank": 127,
+    "wtdPwr": 2.64,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-128",
+    "rank": 128,
+    "wtdPwr": 2.62,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-129",
+    "rank": 129,
+    "wtdPwr": 2.61,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-130",
+    "rank": 130,
+    "wtdPwr": 2.56,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-131",
+    "rank": 131,
+    "wtdPwr": 2.54,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-132",
+    "rank": 132,
+    "wtdPwr": 2.54,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-133",
+    "rank": 133,
+    "wtdPwr": 2.52,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-134",
+    "rank": 134,
+    "wtdPwr": 2.5,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-135",
+    "rank": 135,
+    "wtdPwr": 2.49,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-136",
+    "rank": 136,
+    "wtdPwr": 2.49,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-137",
+    "rank": 137,
+    "wtdPwr": 2.47,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-138",
+    "rank": 138,
+    "wtdPwr": 2.46,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-139",
+    "rank": 139,
+    "wtdPwr": 2.43,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-140",
+    "rank": 140,
+    "wtdPwr": 2.42,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-141",
+    "rank": 141,
+    "wtdPwr": 2.4,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-142",
+    "rank": 142,
+    "wtdPwr": 2.4,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-143",
+    "rank": 143,
+    "wtdPwr": 2.39,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-144",
+    "rank": 144,
+    "wtdPwr": 2.38,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-145",
+    "rank": 145,
+    "wtdPwr": 2.38,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-146",
+    "rank": 146,
+    "wtdPwr": 2.37,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-147",
+    "rank": 147,
+    "wtdPwr": 2.36,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-148",
+    "rank": 148,
+    "wtdPwr": 2.33,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-149",
+    "rank": 149,
+    "wtdPwr": 2.3,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-150",
+    "rank": 150,
+    "wtdPwr": 2.3,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-151",
+    "rank": 151,
+    "wtdPwr": 2.3,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-152",
+    "rank": 152,
+    "wtdPwr": 2.29,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-153",
+    "rank": 153,
+    "wtdPwr": 2.26,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-154",
+    "rank": 154,
+    "wtdPwr": 2.25,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-155",
+    "rank": 155,
+    "wtdPwr": 2.21,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-156",
+    "rank": 156,
+    "wtdPwr": 2.2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-157",
+    "rank": 157,
+    "wtdPwr": 2.18,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-158",
+    "rank": 158,
+    "wtdPwr": 2.11,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-159",
+    "rank": 159,
+    "wtdPwr": 2.11,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-160",
+    "rank": 160,
+    "wtdPwr": 2.1,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-161",
+    "rank": 161,
+    "wtdPwr": 2.1,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-162",
+    "rank": 162,
+    "wtdPwr": 2.09,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-163",
+    "rank": 163,
+    "wtdPwr": 2.09,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-164",
+    "rank": 164,
+    "wtdPwr": 2.08,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-165",
+    "rank": 165,
+    "wtdPwr": 2.08,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-166",
+    "rank": 166,
+    "wtdPwr": 2.08,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-167",
+    "rank": 167,
+    "wtdPwr": 2.06,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-168",
+    "rank": 168,
+    "wtdPwr": 2.04,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-169",
+    "rank": 169,
+    "wtdPwr": 2.01,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-170",
+    "rank": 170,
+    "wtdPwr": 2,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-171",
+    "rank": 171,
+    "wtdPwr": 1.99,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-172",
+    "rank": 172,
+    "wtdPwr": 1.97,
+    "tier": "3"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-173",
+    "rank": 173,
+    "wtdPwr": 1.95,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-174",
+    "rank": 174,
+    "wtdPwr": 1.94,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-175",
+    "rank": 175,
+    "wtdPwr": 1.93,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-176",
+    "rank": 176,
+    "wtdPwr": 1.92,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-177",
+    "rank": 177,
+    "wtdPwr": 1.92,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-178",
+    "rank": 178,
+    "wtdPwr": 1.82,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-179",
+    "rank": 179,
+    "wtdPwr": 1.81,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-180",
+    "rank": 180,
+    "wtdPwr": 1.74,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-181",
+    "rank": 181,
+    "wtdPwr": 1.74,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-182",
+    "rank": 182,
+    "wtdPwr": 1.73,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-183",
+    "rank": 183,
+    "wtdPwr": 1.71,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-184",
+    "rank": 184,
+    "wtdPwr": 1.71,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-185",
+    "rank": 185,
+    "wtdPwr": 1.7,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-186",
+    "rank": 186,
+    "wtdPwr": 1.69,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-187",
+    "rank": 187,
+    "wtdPwr": 1.69,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-188",
+    "rank": 188,
+    "wtdPwr": 1.69,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-189",
+    "rank": 189,
+    "wtdPwr": 1.67,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-190",
+    "rank": 190,
+    "wtdPwr": 1.61,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-191",
+    "rank": 191,
+    "wtdPwr": 1.61,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-192",
+    "rank": 192,
+    "wtdPwr": 1.59,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-193",
+    "rank": 193,
+    "wtdPwr": 1.57,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-194",
+    "rank": 194,
+    "wtdPwr": 1.5,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-195",
+    "rank": 195,
+    "wtdPwr": 1.43,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-196",
+    "rank": 196,
+    "wtdPwr": 1.43,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-197",
+    "rank": 197,
+    "wtdPwr": 1.43,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-198",
+    "rank": 198,
+    "wtdPwr": 1.41,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-199",
+    "rank": 199,
+    "wtdPwr": 1.39,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-200",
+    "rank": 200,
+    "wtdPwr": 1.38,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-201",
+    "rank": 201,
+    "wtdPwr": 1.37,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-202",
+    "rank": 202,
+    "wtdPwr": 1.37,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-203",
+    "rank": 203,
+    "wtdPwr": 1.37,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-204",
+    "rank": 204,
+    "wtdPwr": 1.31,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-205",
+    "rank": 205,
+    "wtdPwr": 1.27,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-206",
+    "rank": 206,
+    "wtdPwr": 1.25,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-207",
+    "rank": 207,
+    "wtdPwr": 1.23,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-208",
+    "rank": 208,
+    "wtdPwr": 1.22,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-209",
+    "rank": 209,
+    "wtdPwr": 1.2,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-210",
+    "rank": 210,
+    "wtdPwr": 1.19,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-211",
+    "rank": 211,
+    "wtdPwr": 1.19,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-212",
+    "rank": 212,
+    "wtdPwr": 1.19,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-213",
+    "rank": 213,
+    "wtdPwr": 1.18,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-214",
+    "rank": 214,
+    "wtdPwr": 1.01,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-215",
+    "rank": 215,
+    "wtdPwr": 0.97,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-216",
+    "rank": 216,
+    "wtdPwr": 0.95,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-217",
+    "rank": 217,
+    "wtdPwr": 0.91,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-218",
+    "rank": 218,
+    "wtdPwr": 0.91,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-219",
+    "rank": 219,
+    "wtdPwr": 0.89,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-220",
+    "rank": 220,
+    "wtdPwr": 0.87,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-221",
+    "rank": 221,
+    "wtdPwr": 0.87,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-222",
+    "rank": 222,
+    "wtdPwr": 0.87,
+    "tier": "4"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-223",
+    "rank": 223,
+    "wtdPwr": 0.87,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-224",
+    "rank": 224,
+    "wtdPwr": 0.82,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-225",
+    "rank": 225,
+    "wtdPwr": 0.8,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-226",
+    "rank": 226,
+    "wtdPwr": 0.77,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-227",
+    "rank": 227,
+    "wtdPwr": 0.76,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-228",
+    "rank": 228,
+    "wtdPwr": 0.76,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-229",
+    "rank": 229,
+    "wtdPwr": 0.73,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-230",
+    "rank": 230,
+    "wtdPwr": 0.67,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-231",
+    "rank": 231,
+    "wtdPwr": 0.66,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-232",
+    "rank": 232,
+    "wtdPwr": 0.66,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-233",
+    "rank": 233,
+    "wtdPwr": 0.63,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-234",
+    "rank": 234,
+    "wtdPwr": 0.62,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-235",
+    "rank": 235,
+    "wtdPwr": 0.62,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-236",
+    "rank": 236,
+    "wtdPwr": 0.6,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-237",
+    "rank": 237,
+    "wtdPwr": 0.58,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-238",
+    "rank": 238,
+    "wtdPwr": 0.55,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-239",
+    "rank": 239,
+    "wtdPwr": 0.51,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-240",
+    "rank": 240,
+    "wtdPwr": 0.46,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-241",
+    "rank": 241,
+    "wtdPwr": 0.43,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-242",
+    "rank": 242,
+    "wtdPwr": 0.43,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-243",
+    "rank": 243,
+    "wtdPwr": 0.41,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-244",
+    "rank": 244,
+    "wtdPwr": 0.38,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-245",
+    "rank": 245,
+    "wtdPwr": 0.33,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-246",
+    "rank": 246,
+    "wtdPwr": 0.31,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-247",
+    "rank": 247,
+    "wtdPwr": 0.04,
+    "tier": "5"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-248",
+    "rank": 248,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-249",
+    "rank": 249,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-250",
+    "rank": 250,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-251",
+    "rank": 251,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-252",
+    "rank": 252,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-253",
+    "rank": 253,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-254",
+    "rank": 254,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-255",
+    "rank": 255,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-256",
+    "rank": 256,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-257",
+    "rank": 257,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-258",
+    "rank": 258,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-259",
+    "rank": 259,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-260",
+    "rank": 260,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-261",
+    "rank": 261,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-262",
+    "rank": 262,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-263",
+    "rank": 263,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-264",
+    "rank": 264,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-265",
+    "rank": 265,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-266",
+    "rank": 266,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-267",
+    "rank": 267,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-268",
+    "rank": 268,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-269",
+    "rank": 269,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-270",
+    "rank": 270,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-271",
+    "rank": 271,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-272",
+    "rank": 272,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-273",
+    "rank": 273,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-274",
+    "rank": 274,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-275",
+    "rank": 275,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-276",
+    "rank": 276,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-277",
+    "rank": 277,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-278",
+    "rank": 278,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-279",
+    "rank": 279,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-280",
+    "rank": 280,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-281",
+    "rank": 281,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-282",
+    "rank": 282,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-283",
+    "rank": 283,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-284",
+    "rank": 284,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-285",
+    "rank": 285,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-286",
+    "rank": 286,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-287",
+    "rank": 287,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-288",
+    "rank": 288,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-289",
+    "rank": 289,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-290",
+    "rank": 290,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-291",
+    "rank": 291,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-292",
+    "rank": 292,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-293",
+    "rank": 293,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-294",
+    "rank": 294,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-295",
+    "rank": 295,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-296",
+    "rank": 296,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-297",
+    "rank": 297,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-298",
+    "rank": 298,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-299",
+    "rank": 299,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-300",
+    "rank": 300,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-301",
+    "rank": 301,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-302",
+    "rank": 302,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-303",
+    "rank": 303,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-304",
+    "rank": 304,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-305",
+    "rank": 305,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-306",
+    "rank": 306,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-307",
+    "rank": 307,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-308",
+    "rank": 308,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-309",
+    "rank": 309,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-310",
+    "rank": 310,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-311",
+    "rank": 311,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-312",
+    "rank": 312,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-313",
+    "rank": 313,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-314",
+    "rank": 314,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-315",
+    "rank": 315,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-316",
+    "rank": 316,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-317",
+    "rank": 317,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-318",
+    "rank": 318,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-319",
+    "rank": 319,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-320",
+    "rank": 320,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-321",
+    "rank": 321,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-322",
+    "rank": 322,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-323",
+    "rank": 323,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-324",
+    "rank": 324,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-325",
+    "rank": 325,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-326",
+    "rank": 326,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-327",
+    "rank": 327,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-328",
+    "rank": 328,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-329",
+    "rank": 329,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-330",
+    "rank": 330,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-331",
+    "rank": 331,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-332",
+    "rank": 332,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-333",
+    "rank": 333,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-334",
+    "rank": 334,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-335",
+    "rank": 335,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-336",
+    "rank": 336,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-337",
+    "rank": 337,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-338",
+    "rank": 338,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-339",
+    "rank": 339,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-340",
+    "rank": 340,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-341",
+    "rank": 341,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-342",
+    "rank": 342,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-343",
+    "rank": 343,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "major-woongi-344",
+    "rank": 344,
+    "tier": "주요 설비"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-345",
+    "rank": 345,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-346",
+    "rank": 346,
+    "tier": "없음"
+  },
+  {
+    "snapshotId": "woongi-lumin-bga-2025-09-01",
+    "cardId": "minor-woongi-347",
+    "rank": 347,
+    "tier": "없음"
+  }
+]

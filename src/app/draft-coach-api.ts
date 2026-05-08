@@ -23,7 +23,10 @@ export {
   type DraftCoachDataLoadOptions,
   type DraftCoachDataPaths,
   type DraftCoachInputDefaults,
-  type DraftCoachNormalizeOptions
+  type DraftCoachNormalizeOptions,
+  type DraftCoachSourcePermission,
+  type DraftCoachSourceRef,
+  type DraftCoachSourceRegistry
 } from "./draft-coach-data.ts";
 
 export const DRAFT_COACH_KOREAN_LOCALE = "ko-KR";

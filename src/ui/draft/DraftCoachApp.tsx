@@ -672,6 +672,14 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
         error={cardDetailError}
         onClose={closeCardDetail}
       />
+      <footer className="draft-source-footer" aria-label="데이터 출처">
+        <span>
+          출처: 웅이 / bigman0603 2025-09-01 아그리콜라 카드 티어리스트, Lumin BGA wtdPWR 기반.
+        </span>
+        <a href="https://boardgamelaboratory.tistory.com/7" target="_blank" rel="noreferrer">
+          원문
+        </a>
+      </footer>
     </div>
   );
 }

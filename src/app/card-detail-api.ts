@@ -6,9 +6,21 @@ import type {
   CardTranslation,
   StrategyRole
 } from "../features/draft/index.ts";
-import type { DraftCoachDataContext } from "./draft-coach-api.ts";
+import type { DraftCoachDataContext, DraftCoachSourceRef } from "./draft-coach-api.ts";
 
 export type CardDetailStrategyRole = Pick<StrategyRole, "id" | "labels" | "description" | "saturationBehavior">;
+
+export type CardDetailSourceScope = "card" | "translation" | "strategyProfile" | "cardPoolProfile";
+
+export type CardDetailSourceAttribution = {
+  sourceRef: string;
+  label: string;
+  scopes: CardDetailSourceScope[];
+  author?: string;
+  sourceUrl?: string;
+  snapshotDate?: string;
+  attributionTextKo?: string;
+};
 
 export type CardDetailResponse = {
   card: Card;
@@ -17,6 +29,8 @@ export type CardDetailResponse = {
   stat?: CardStatRow;
   strategyProfile?: CardStrategyProfile;
   strategyRoles: CardDetailStrategyRole[];
+  sourceRefs: string[];
+  sourceAttributions: CardDetailSourceAttribution[];
   interpretation: string[];
 };
 
@@ -36,6 +50,15 @@ export function getCardDetail(cardId: string, context: DraftCoachDataContext): C
       .filter((role): role is StrategyRole => role !== undefined)
       .map(toCardDetailStrategyRole) ?? [];
   const cardPoolStatus = context.data.cardPoolProfile.cardStatuses[normalizedCardId];
+  const sourceAttributions = buildSourceAttributions(
+    [
+      { scope: "card", sourceRefs: card.sourceRefs },
+      { scope: "translation", sourceRefs: translation?.sourceRefs ?? [] },
+      { scope: "strategyProfile", sourceRefs: strategyProfile?.sourceRefs ?? [] },
+      { scope: "cardPoolProfile", sourceRefs: context.data.cardPoolProfile.sourceRefs }
+    ],
+    context.sourceRefsById
+  );
 
   return {
     card,
@@ -44,6 +67,8 @@ export function getCardDetail(cardId: string, context: DraftCoachDataContext): C
     ...(stat === undefined ? {} : { stat }),
     ...(strategyProfile === undefined ? {} : { strategyProfile }),
     strategyRoles,
+    sourceRefs: sourceAttributions.map((source) => source.sourceRef),
+    sourceAttributions,
     interpretation: buildCardInterpretation(stat, strategyProfile)
   };
 }
@@ -55,6 +80,49 @@ function toCardDetailStrategyRole(role: StrategyRole): CardDetailStrategyRole {
     ...(role.description === undefined ? {} : { description: role.description }),
     ...(role.saturationBehavior === undefined ? {} : { saturationBehavior: role.saturationBehavior })
   };
+}
+
+function buildSourceAttributions(
+  entries: Array<{ scope: CardDetailSourceScope; sourceRefs: string[] }>,
+  sourceRefsById: Map<string, DraftCoachSourceRef>
+): CardDetailSourceAttribution[] {
+  const sourceScopes = new Map<string, Set<CardDetailSourceScope>>();
+
+  for (const entry of entries) {
+    for (const sourceRef of entry.sourceRefs) {
+      const normalizedSourceRef = sourceRef.trim();
+      if (!normalizedSourceRef) continue;
+
+      const scopes = sourceScopes.get(normalizedSourceRef) ?? new Set<CardDetailSourceScope>();
+      scopes.add(entry.scope);
+      sourceScopes.set(normalizedSourceRef, scopes);
+    }
+  }
+
+  return [...sourceScopes.entries()].map(([sourceRef, scopes]) =>
+    toSourceAttribution(sourceRef, [...scopes], sourceRefsById.get(sourceRef))
+  );
+}
+
+function toSourceAttribution(
+  sourceRef: string,
+  scopes: CardDetailSourceScope[],
+  source: DraftCoachSourceRef | undefined
+): CardDetailSourceAttribution {
+  return {
+    sourceRef,
+    label: source?.title ?? sourceLabel(sourceRef),
+    scopes,
+    ...(source?.author === undefined ? {} : { author: source.author }),
+    ...(source?.sourceUrl === undefined ? {} : { sourceUrl: source.sourceUrl }),
+    ...(source?.snapshotDate === undefined ? {} : { snapshotDate: source.snapshotDate }),
+    ...(source?.attributionTextKo === undefined ? {} : { attributionTextKo: source.attributionTextKo })
+  };
+}
+
+function sourceLabel(sourceRef: string): string {
+  if (sourceRef === "manual-prototype-seed") return "Manual prototype seed";
+  return sourceRef.replace(/[-_]+/g, " ");
 }
 
 function buildCardInterpretation(

@@ -1,0 +1,27 @@
+{
+  "sources": [
+    {
+      "id": "manual-prototype-seed",
+      "title": "Manual prototype seed",
+      "author": "agricola-korean-gosu",
+      "sourceType": "manual",
+      "permission": {
+        "status": "internal"
+      }
+    },
+    {
+      "id": "woongi-tierlist-2025-09-01",
+      "title": "아그리콜라 카드 티어리스트 검색기_250901_웅이_V2",
+      "author": "웅이 / bigman0603",
+      "sourceType": "spreadsheet",
+      "snapshotDate": "2025-09-01",
+      "sourceUrl": "https://boardgamelaboratory.tistory.com/7",
+      "permission": {
+        "status": "approved",
+        "evidence": "작성자가 출처를 명확히 기재하면 사용 가능하다고 답변함.",
+        "evidenceDate": "2025-05-10"
+      },
+      "attributionTextKo": "카드 티어 및 일부 설명 데이터는 웅이 / bigman0603님의 2025-09-01 아그리콜라 카드 티어리스트 자료를 출처로 합니다."
+    }
+  ]
+}

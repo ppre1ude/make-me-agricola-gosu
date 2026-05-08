@@ -16,6 +16,7 @@ export type DraftCoachDataPaths = {
   strategyRoles: string;
   strategyProfiles: string;
   cardPoolProfile: string;
+  sourceRefs: string;
 };
 
 export type DraftCoachDataLoadOptions = {
@@ -23,11 +24,35 @@ export type DraftCoachDataLoadOptions = {
   paths?: Partial<DraftCoachDataPaths>;
 };
 
+export type DraftCoachSourcePermission = {
+  status: string;
+  evidence?: string;
+  evidenceDate?: string;
+};
+
+export type DraftCoachSourceRef = {
+  id: string;
+  title: string;
+  author?: string;
+  sourceType: string;
+  snapshotDate?: string;
+  sourceUrl?: string;
+  permission?: DraftCoachSourcePermission;
+  attributionTextKo?: string;
+  notes?: string;
+};
+
+export type DraftCoachSourceRegistry = {
+  sources: DraftCoachSourceRef[];
+};
+
 export type DraftCoachDataContext = {
   rootDir: string;
   paths: DraftCoachDataPaths;
   data: DraftDataSet;
   dataIndex: DraftDataIndex;
+  sourceRefs: DraftCoachSourceRef[];
+  sourceRefsById: Map<string, DraftCoachSourceRef>;
 };
 
 export type DraftCoachInputDefaults = Partial<
@@ -45,7 +70,8 @@ export const DRAFT_COACH_DATA_PATHS: DraftCoachDataPaths = {
   stats: "data/normalized/stats.prototype.json",
   strategyRoles: "data/normalized/strategy-roles.json",
   strategyProfiles: "data/manual/card-strategy-profiles.json",
-  cardPoolProfile: "data/normalized/card-pool.bga-arena.prototype.json"
+  cardPoolProfile: "data/normalized/card-pool.bga-arena.prototype.json",
+  sourceRefs: "data/manual/source-refs.json"
 };
 
 export const DRAFT_COACH_DEFAULTS: Pick<
@@ -67,14 +93,15 @@ export async function loadDraftCoachData(
 ): Promise<DraftCoachDataContext> {
   const rootDir = path.resolve(options.rootDir ?? DEFAULT_ROOT_DIR);
   const paths: DraftCoachDataPaths = { ...DRAFT_COACH_DATA_PATHS, ...options.paths };
-  const [cards, translations, stats, strategyRoles, strategyProfiles, cardPoolProfile] =
+  const [cards, translations, stats, strategyRoles, strategyProfiles, cardPoolProfile, sourceRegistry] =
     await Promise.all([
       readJson<DraftDataSet["cards"]>(rootDir, paths.cards),
       readJson<DraftDataSet["translations"]>(rootDir, paths.translations),
       readJson<DraftDataSet["stats"]>(rootDir, paths.stats),
       readJson<DraftDataSet["strategyRoles"]>(rootDir, paths.strategyRoles),
       readJson<DraftDataSet["strategyProfiles"]>(rootDir, paths.strategyProfiles),
-      readJson<DraftDataSet["cardPoolProfile"]>(rootDir, paths.cardPoolProfile)
+      readJson<DraftDataSet["cardPoolProfile"]>(rootDir, paths.cardPoolProfile),
+      readJsonIfExists<DraftCoachSourceRegistry>(rootDir, paths.sourceRefs, { sources: [] })
     ]);
 
   const data: DraftDataSet = {
@@ -90,7 +117,9 @@ export async function loadDraftCoachData(
     rootDir,
     paths,
     data,
-    dataIndex: buildDraftDataIndex(data)
+    dataIndex: buildDraftDataIndex(data),
+    sourceRefs: sourceRegistry.sources,
+    sourceRefsById: new Map(sourceRegistry.sources.map((sourceRef) => [sourceRef.id, sourceRef]))
   };
 }
 
@@ -134,4 +163,17 @@ export function normalizeDraftCoachInput(
 async function readJson<T>(rootDir: string, filePath: string): Promise<T> {
   const absolutePath = path.isAbsolute(filePath) ? filePath : path.join(rootDir, filePath);
   return JSON.parse(await readFile(absolutePath, "utf8")) as T;
+}
+
+async function readJsonIfExists<T>(rootDir: string, filePath: string, fallback: T): Promise<T> {
+  try {
+    return await readJson<T>(rootDir, filePath);
+  } catch (error) {
+    if (isNodeErrnoException(error) && error.code === "ENOENT") return fallback;
+    throw error;
+  }
+}
+
+function isNodeErrnoException(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && "code" in error;
 }
