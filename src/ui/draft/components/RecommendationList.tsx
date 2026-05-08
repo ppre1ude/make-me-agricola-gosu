@@ -15,6 +15,7 @@ type RecommendationListProps = {
   explanationDepth: ExplanationDepth;
   statusText: string;
   onSelectCard: (cardId: string) => void;
+  onOpenCardDetail: (cardId: string) => void;
 };
 
 export function RecommendationList({
@@ -22,7 +23,8 @@ export function RecommendationList({
   selectedCardId,
   explanationDepth,
   statusText,
-  onSelectCard
+  onSelectCard,
+  onOpenCardDetail
 }: RecommendationListProps) {
   return (
     <section className="tool-panel recommendations-panel" aria-labelledby="recommendationsHeading">
@@ -48,6 +50,7 @@ export function RecommendationList({
               isSelected={selectedCardId === recommendation.cardId}
               explanationDepth={explanationDepth}
               onSelectCard={onSelectCard}
+              onOpenCardDetail={onOpenCardDetail}
             />
           ))
         )}
@@ -61,13 +64,15 @@ function RecommendationCard({
   isTop,
   isSelected,
   explanationDepth,
-  onSelectCard
+  onSelectCard,
+  onOpenCardDetail
 }: {
   recommendation: DraftCoachRecommendationView;
   isTop: boolean;
   isSelected: boolean;
   explanationDepth: ExplanationDepth;
   onSelectCard: (cardId: string) => void;
+  onOpenCardDetail: (cardId: string) => void;
 }) {
   const cardName = recommendation.cardNameKo ?? recommendation.cardName ?? recommendation.cardId;
   const reasons = selectReasons(recommendation, explanationDepth);
@@ -76,7 +81,19 @@ function RecommendationCard({
     .join(" ");
 
   return (
-    <label className={cardClassName} data-card-id={recommendation.cardId}>
+    <article
+      className={cardClassName}
+      data-card-id={recommendation.cardId}
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelectCard(recommendation.cardId)}
+      onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        onSelectCard(recommendation.cardId);
+      }}
+    >
       <input
         className="recommendation-radio"
         type="radio"
@@ -84,6 +101,7 @@ function RecommendationCard({
         value={recommendation.cardId}
         checked={isSelected}
         onChange={() => onSelectCard(recommendation.cardId)}
+        onClick={(event) => event.stopPropagation()}
       />
       <div className="recommendation-header">
         <div className="rank-badge">#{recommendation.rank}</div>
@@ -127,6 +145,16 @@ function RecommendationCard({
       </div>
 
       <div className="recommendation-footer">
+        <button
+          className="card-detail-open-button recommendation-detail-button"
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onOpenCardDetail(recommendation.cardId);
+          }}
+        >
+          상세
+        </button>
         <span className="footer-pill">{DRAFT_PICK_BAND_LABELS[recommendation.draftPickBand]}</span>
         <span className="footer-pill">{RETURN_LIKELIHOOD_LABELS[recommendation.returnLikelihood]}</span>
         <span className="footer-pill">{CONFIDENCE_LABELS[recommendation.evaluationMeta.confidence]}</span>
@@ -137,7 +165,7 @@ function RecommendationCard({
           </span>
         ))}
       </div>
-    </label>
+    </article>
   );
 }
 

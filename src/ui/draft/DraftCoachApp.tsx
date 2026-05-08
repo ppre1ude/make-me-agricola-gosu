@@ -5,8 +5,10 @@ import type { DraftFeedbackPossibleCause } from "../../features/draft/index.ts";
 import { createDefaultDraftInput, type UIDraftInput } from "./contract-adapter.ts";
 import {
   defaultDraftCoachAdapter,
+  type DraftCardDetail,
   type DraftCoachUiAdapter
 } from "./draftCoachAdapter.ts";
+import { CardDetailDrawer } from "./components/CardDetailDrawer";
 import { DraftStatePanel } from "./components/DraftStatePanel";
 import { FeedbackPanel } from "./components/FeedbackPanel";
 import { PickConfirmModal } from "./components/PickConfirmModal";
@@ -95,6 +97,10 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   const [recommendations, setRecommendations] = useState<DraftCoachRecommendationView[]>([]);
   const [cardSearchByGroup, setCardSearchByGroup] = useState(createCardSearchByGroup);
   const [cardNameCatalog, setCardNameCatalog] = useState<Record<string, string>>({});
+  const [detailCardId, setDetailCardId] = useState<string | null>(null);
+  const [cardDetail, setCardDetail] = useState<DraftCardDetail | null>(null);
+  const [cardDetailLoading, setCardDetailLoading] = useState(false);
+  const [cardDetailError, setCardDetailError] = useState("");
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [feedbackNote, setFeedbackNote] = useState("");
   const [resolutionNote, setResolutionNote] = useState("");
@@ -113,6 +119,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
   const searchDebounceIdsRef = useRef<Record<DraftCardGroupConfig["key"], ReturnType<typeof setTimeout> | null>>(
     createSearchDebounceIds()
   );
+  const cardDetailRequestIdRef = useRef(0);
 
   const cardNames = useMemo(
     () => buildCardNameMap(cardNameCatalog, recommendations),
@@ -357,6 +364,40 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     }));
   }
 
+  async function openCardDetail(cardId: string) {
+    const normalizedCardId = cardId.trim();
+    if (!normalizedCardId) return;
+
+    const requestId = cardDetailRequestIdRef.current + 1;
+    cardDetailRequestIdRef.current = requestId;
+    setDetailCardId(normalizedCardId);
+    setCardDetail(null);
+    setCardDetailError("");
+    setCardDetailLoading(true);
+
+    try {
+      const detail = await activeAdapter.getCardDetail(normalizedCardId);
+      if (cardDetailRequestIdRef.current !== requestId) return;
+      rememberCardDetail(detail);
+      setCardDetail(detail);
+      setCardDetailError("");
+    } catch (error) {
+      if (cardDetailRequestIdRef.current !== requestId) return;
+      setCardDetail(null);
+      setCardDetailError(errorMessage(error, "카드 상세를 불러오지 못했습니다."));
+    } finally {
+      if (cardDetailRequestIdRef.current === requestId) setCardDetailLoading(false);
+    }
+  }
+
+  function closeCardDetail() {
+    cardDetailRequestIdRef.current += 1;
+    setDetailCardId(null);
+    setCardDetail(null);
+    setCardDetailError("");
+    setCardDetailLoading(false);
+  }
+
   async function submitFeedback() {
     if (!modelTopCardId || !selectedCardId || modelTopCardId === selectedCardId) return;
 
@@ -520,6 +561,14 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
     });
   }
 
+  function rememberCardDetail(detail: DraftCardDetail) {
+    const name = detail.translation?.name ?? detail.card.id;
+    setCardNameCatalog((current) => ({
+      ...current,
+      [detail.card.id]: name
+    }));
+  }
+
   function setBusyRequest(appStatus: string, recommendationStatus: string) {
     setRequestState((current) => ({
       ...current,
@@ -555,6 +604,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
           onRemoveCard={removeCard}
           onCardSearchChange={updateCardSearch}
           onSelectSearchResult={selectSearchResult}
+          onOpenCardDetail={(cardId) => void openCardDetail(cardId)}
         />
         <RecommendationList
           recommendations={recommendations}
@@ -562,6 +612,7 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
           explanationDepth={input.explanationDepth}
           statusText={requestState.recommendationStatus}
           onSelectCard={setSelectedCardId}
+          onOpenCardDetail={(cardId) => void openCardDetail(cardId)}
         />
         <FeedbackPanel
           input={input}
@@ -589,6 +640,14 @@ export function DraftCoachApp({ adapter }: DraftCoachAppProps) {
         onResolutionNoteChange={setResolutionNote}
         onCancel={() => setConfirmOpen(false)}
         onConfirm={() => void confirmPick()}
+      />
+      <CardDetailDrawer
+        isOpen={detailCardId !== null}
+        cardId={detailCardId}
+        detail={cardDetail}
+        loading={cardDetailLoading}
+        error={cardDetailError}
+        onClose={closeCardDetail}
       />
     </div>
   );

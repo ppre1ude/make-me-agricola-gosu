@@ -1,1 +1,203 @@
 @import "../public/draft/styles.css";
+
+.card-detail-open-button {
+  min-width: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card-detail-open-button:hover,
+.card-detail-open-button:focus-visible {
+  color: var(--accent);
+  outline: 2px solid transparent;
+}
+
+.mini-card-detail-button {
+  display: grid;
+  gap: 3px;
+}
+
+.token-detail-button {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.recommendation-detail-button {
+  min-height: 24px;
+  padding: 3px 8px;
+  color: #16312f;
+  background: var(--accent-soft);
+  border: 1px solid #b6ded9;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.card-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+  background: rgba(17, 24, 39, 0.34);
+}
+
+.card-detail-drawer {
+  width: min(540px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  color: var(--text);
+  background: var(--surface);
+  border-left: 1px solid var(--line-strong);
+  box-shadow: -18px 0 42px rgba(17, 24, 39, 0.16);
+}
+
+.card-detail-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+  padding: 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.card-detail-name {
+  overflow-wrap: anywhere;
+}
+
+.card-detail-english-name {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.card-detail-body {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+}
+
+.card-detail-section {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.card-detail-section:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.card-detail-section h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+.card-detail-grid,
+.card-detail-stat-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.card-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card-detail-stat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card-detail-field {
+  min-width: 0;
+  padding: 9px 10px;
+  background: var(--surface-muted);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+
+.card-detail-field dt,
+.card-detail-tag-label {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.card-detail-field dd {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.card-detail-text,
+.card-detail-note-list li {
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.card-detail-note-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card-detail-tag-row {
+  display: grid;
+  gap: 6px;
+}
+
+.card-detail-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.footer-pill.is-muted,
+.empty-state.is-error {
+  color: var(--muted);
+}
+
+.empty-state.is-error {
+  color: var(--risk);
+}
+
+@media (max-width: 620px) {
+  .card-detail-header {
+    padding: 14px;
+  }
+
+  .card-detail-body {
+    padding: 14px;
+  }
+
+  .card-detail-grid,
+  .card-detail-stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

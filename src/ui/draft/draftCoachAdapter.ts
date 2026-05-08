@@ -8,6 +8,7 @@ import type {
   DraftRecommendPostResponse,
   DraftSampleGetResponse
 } from "../../app/draft-coach-api.ts";
+import type { CardDetailResponse } from "../../app/card-detail-api.ts";
 import {
   buildRecommendPostBody,
   buildScoringInput,
@@ -40,6 +41,8 @@ export type DraftCardSearchOptions = {
   limit?: number;
 };
 
+export type DraftCardDetail = CardDetailResponse;
+
 export type DraftCoachUiAdapter = {
   loadStoredDraftInput(): Promise<UIDraftInput | null>;
   saveDraftInput(input: UIDraftInput): Promise<void>;
@@ -56,6 +59,7 @@ export type DraftCoachUiAdapter = {
   popUndoSnapshot(): Promise<UIDraftInput | null>;
   peekUndoSnapshot(): Promise<UIDraftInput | null>;
   searchCards(options: DraftCardSearchOptions): Promise<DraftCardSummary[]>;
+  getCardDetail(cardId: string): Promise<DraftCardDetail>;
 };
 
 export const DRAFT_COACH_ENDPOINTS = {
@@ -135,6 +139,12 @@ export const defaultDraftCoachAdapter: DraftCoachUiAdapter = Object.freeze({
 
     const payload = await fetchJson<{ cards?: DraftCardSummary[] }>(url.toString());
     return Array.isArray(payload.cards) ? payload.cards : [];
+  },
+
+  async getCardDetail(cardId) {
+    return fetchJson<DraftCardDetail>(
+      `${DRAFT_COACH_ENDPOINTS.cards}/${encodeURIComponent(cardId)}`
+    );
   }
 });
 

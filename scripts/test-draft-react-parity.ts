@@ -99,6 +99,72 @@ const requiredReactCardSearchContractTokens = [
   "DraftCardSummary"
 ] as const;
 
+const requiredCardDetailDomIds = [
+  "cardDetailDrawer",
+  "closeCardDetailButton"
+] as const;
+
+const requiredCardDetailClassTokens = [
+  "card-detail-open-button",
+  "card-detail-drawer",
+  "card-detail-backdrop",
+  "card-detail-header",
+  "card-detail-body",
+  "card-detail-stats",
+  "card-detail-strategy-profile"
+] as const;
+
+const requiredReactCardDetailContractTokens = [
+  "CardDetailDrawer",
+  "DraftCardDetail"
+] as const;
+
+const requiredCardDetailHeaderTokens = [
+  "card-detail-name",
+  "card-detail-english-name",
+  "card-detail-type",
+  "card-detail-deck",
+  "card-detail-arena-status",
+  "card-detail-tier",
+  "card-detail-rank"
+] as const;
+
+const requiredCardDetailBodyTokens = [
+  "card-detail-text",
+  "card-detail-effect",
+  "card-detail-cost",
+  "card-detail-condition",
+  "card-detail-victory-points",
+  "card-detail-player-count"
+] as const;
+
+const requiredCardDetailStatsTokens = [
+  "card-detail-pwr",
+  "card-detail-wtd-pwr",
+  "card-detail-adp",
+  "card-detail-apr",
+  "card-detail-deals",
+  "card-detail-drafted",
+  "card-detail-plays",
+  "card-detail-w-hand",
+  "card-detail-w-play",
+  "card-detail-elo-play"
+] as const;
+
+const requiredCardDetailStrategyTokens = [
+  "card-detail-roles",
+  "card-detail-broken",
+  "card-detail-plan-anchor",
+  "card-detail-solves",
+  "card-detail-needs",
+  "card-detail-saturation",
+  "card-detail-synergy",
+  "card-detail-conflicts",
+  "card-detail-risks",
+  "card-detail-sequence",
+  "card-detail-next-pick"
+] as const;
+
 const reactSearchRoots = [
   path.join(rootDir, "app"),
   path.join(rootDir, "src", "app"),
@@ -218,6 +284,8 @@ function assertReactParity(source: string, files: string[]): void {
     /\bsearchCards\b/.test(source) || source.includes("/api/cards"),
     "React draft source should connect card autocomplete through adapter.searchCards or /api/cards."
   );
+
+  assertReactCardDetailDrawer(source);
 }
 
 function shouldEnforceReactParity(source: string, files: readonly string[]): boolean {
@@ -230,6 +298,43 @@ function shouldEnforceReactParity(source: string, files: readonly string[]): boo
 
 function assertIncludesToken(source: string, token: string, message: string): void {
   assert.ok(source.includes(token), message);
+}
+
+function assertReactCardDetailDrawer(source: string): void {
+  requiredReactCardDetailContractTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React draft source should preserve card detail contract token ${token}.`);
+  });
+
+  requiredCardDetailDomIds.forEach((id) => {
+    assertIncludesToken(source, id, `React draft source should preserve card detail #${id}.`);
+  });
+
+  requiredCardDetailClassTokens.forEach((className) => {
+    assertIncludesToken(source, className, `React draft source should preserve card detail class ${className}.`);
+  });
+
+  assert.ok(
+    /\bgetCardDetail\b/.test(source) ||
+      source.includes("/api/cards/[cardId]") ||
+      /\/api\/cards\/(?:\$\{|:cardId|cardId)/.test(source),
+    "React draft source should connect card detail through adapter.getCardDetail or /api/cards/[cardId]."
+  );
+
+  requiredCardDetailHeaderTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React card detail drawer should expose Header marker ${token}.`);
+  });
+
+  requiredCardDetailBodyTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React card detail drawer should expose Card Body marker ${token}.`);
+  });
+
+  requiredCardDetailStatsTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React card detail drawer should expose Stats marker ${token}.`);
+  });
+
+  requiredCardDetailStrategyTokens.forEach((token) => {
+    assertIncludesToken(source, token, `React card detail drawer should expose Strategy Profile marker ${token}.`);
+  });
 }
 
 function assertCardSearchRoles(source: string, sourceLabel: string): void {

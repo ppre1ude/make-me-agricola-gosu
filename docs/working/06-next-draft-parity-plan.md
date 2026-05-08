@@ -136,6 +136,42 @@ DraftCardSummary
 adapter.searchCards or /api/cards
 ```
 
+Card detail drawer markers for the next feature unit:
+
+```text
+CardDetailDrawer
+DraftCardDetail
+cardDetailDrawer
+closeCardDetailButton
+card-detail-open-button
+card-detail-drawer
+card-detail-backdrop
+card-detail-header
+card-detail-body
+card-detail-stats
+card-detail-strategy-profile
+/api/cards/[cardId] or adapter.getCardDetail
+```
+
+The static `public/draft` reference does not currently include the card detail
+drawer. That is a documented-flow gap, not a reason to omit the React drawer.
+The source of truth for this unit is the "카드 상세" section in
+`docs/core/04-feature-specs.md`. If the static reference conflicts with that
+section, report the conflict for human review rather than copying the static
+surface.
+
+The drawer should expose documented card detail sections:
+
+```text
+Header: name, English name, type, deck, Arena status, tier, rank
+Card Body: card text/image, effect summary, cost, condition, victory points,
+  player-count condition
+Stats: PWR, WtdPWR, ADP, APR, Deals, Drafted, Plays, W-Hand, W-Play, Elo/Play
+Strategy Profile: roles, broken/plan anchor status, solved problems,
+  additional needs, saturation risks, synergy, conflicts, risk tags,
+  operation sequence, next-pick guidance
+```
+
 React/Next candidates are searched in common scaffold locations:
 
 ```text
@@ -169,6 +205,16 @@ search adapter surface. If these markers fail while the documented product flow
 still expects autocomplete, report the gap for human review before changing the
 product behavior.
 
+The next feature unit after card search is the React card detail drawer. It
+should let a user open detail from a recommendation or card chip, fetch detail
+through `adapter.getCardDetail` or `/api/cards/[cardId]`, and close the drawer
+without changing the draft state. The marker guard checks drawer component
+presence, open/close markers, the detail API/adapter contract, and visible
+markers for Header, Card Body, Stats, and Strategy Profile fields. This remains
+static source coverage only; browser QA is still required for focus handling,
+keyboard dismissal, scroll lock, async loading/error states, and responsive
+layout.
+
 ## Test Command
 
 Run directly with Node:
@@ -194,6 +240,9 @@ The React/Next port is parity-ready when:
 - Pick resolution still uses the existing contract semantics.
 - Card search/autocomplete uses `adapter.searchCards` or `/api/cards`.
 - Card search results are selectable buttons, not only manual ID text input.
+- Card detail drawer uses `adapter.getCardDetail` or `/api/cards/[cardId]`.
+- Card detail drawer exposes Header, Card Body, Stats, and Strategy Profile
+  markers from `docs/core/04-feature-specs.md`.
 - `/draft` serves the React Draft Memory Coach while `public/draft` remains the
   fixed reference implementation for comparison.
 

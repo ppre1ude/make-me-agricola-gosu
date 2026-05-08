@@ -28,6 +28,7 @@ type DraftStatePanelProps = {
   onRemoveCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
   onCardSearchChange: (groupKey: DraftCardGroupConfig["key"], query: string) => void;
   onSelectSearchResult: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
+  onOpenCardDetail: (cardId: string) => void;
 };
 
 export function DraftStatePanel({
@@ -43,7 +44,8 @@ export function DraftStatePanel({
   onAddCard,
   onRemoveCard,
   onCardSearchChange,
-  onSelectSearchResult
+  onSelectSearchResult,
+  onOpenCardDetail
 }: DraftStatePanelProps) {
   return (
     <section className="tool-panel draft-panel" aria-labelledby="draftHeading">
@@ -184,6 +186,7 @@ export function DraftStatePanel({
           onRemoveCard={onRemoveCard}
           onCardSearchChange={onCardSearchChange}
           onSelectSearchResult={onSelectSearchResult}
+          onOpenCardDetail={onOpenCardDetail}
         />
       </div>
 
@@ -199,6 +202,7 @@ export function DraftStatePanel({
               onRemoveCard={onRemoveCard}
               onCardSearchChange={onCardSearchChange}
               onSelectSearchResult={onSelectSearchResult}
+              onOpenCardDetail={onOpenCardDetail}
             />
           </div>
         ))}
@@ -224,7 +228,8 @@ function CardGroupEditor({
   onAddCard,
   onRemoveCard,
   onCardSearchChange,
-  onSelectSearchResult
+  onSelectSearchResult,
+  onOpenCardDetail
 }: {
   config: DraftCardGroupConfig | undefined;
   cardIds: string[];
@@ -234,6 +239,7 @@ function CardGroupEditor({
   onRemoveCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
   onCardSearchChange: (groupKey: DraftCardGroupConfig["key"], query: string) => void;
   onSelectSearchResult: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
+  onOpenCardDetail: (cardId: string) => void;
 }) {
   if (!config) return null;
   const groupConfig = config;
@@ -333,6 +339,7 @@ function CardGroupEditor({
         listId={groupConfig.listId}
         cardNameById={cardNameById}
         onRemoveCard={onRemoveCard}
+        onOpenCardDetail={onOpenCardDetail}
       />
     </>
   );
@@ -401,7 +408,8 @@ function CardIdList({
   emptyText,
   listId,
   cardNameById,
-  onRemoveCard
+  onRemoveCard,
+  onOpenCardDetail
 }: {
   variant: "card" | "token";
   groupKey: DraftCardGroupConfig["key"];
@@ -410,6 +418,7 @@ function CardIdList({
   listId: string;
   cardNameById: (cardId: string) => string;
   onRemoveCard: (groupKey: DraftCardGroupConfig["key"], cardId: string) => void;
+  onOpenCardDetail: (cardId: string) => void;
 }) {
   if (cardIds.length === 0) {
     return (
@@ -425,10 +434,15 @@ function CardIdList({
         {cardIds.map((cardId, index) => (
           <div className="mini-card" key={cardId}>
             <div className="mini-card-index">{index + 1}</div>
-            <div>
+            <button
+              className="card-detail-open-button mini-card-detail-button"
+              type="button"
+              aria-label={`${cardNameById(cardId)} 상세 보기`}
+              onClick={() => onOpenCardDetail(cardId)}
+            >
               <div className="mini-card-name">{cardNameById(cardId)}</div>
               <div className="mini-card-id">{cardId}</div>
-            </div>
+            </button>
             <button
               className="remove-card-button"
               type="button"
@@ -447,7 +461,14 @@ function CardIdList({
     <div className="token-list" id={listId}>
       {cardIds.map((cardId) => (
         <span className="token" title={cardId} key={cardId}>
-          <span className="token-name">{cardNameById(cardId)}</span>
+          <button
+            className="card-detail-open-button token-detail-button"
+            type="button"
+            aria-label={`${cardNameById(cardId)} 상세 보기`}
+            onClick={() => onOpenCardDetail(cardId)}
+          >
+            <span className="token-name">{cardNameById(cardId)}</span>
+          </button>
           <button
             className="remove-card-button"
             type="button"
