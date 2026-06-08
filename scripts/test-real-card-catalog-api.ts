@@ -132,6 +132,16 @@ const fakeFetch: RealCardCatalogFetch = async (input, init) => {
   throw new Error(`Unexpected test fetch: ${url}`);
 };
 
+const koreanOverrides = [
+  {
+    printedId: "A14",
+    name: "\ubaa9\uc218\uc758 \ub9dd\uce58",
+    effectText: "\uc989\uc2dc \ub098\ubb34\uc9d1\uc5d0 \ubc29 1\uac1c\ub97c \ub9cc\ub4ed\ub2c8\ub2e4.",
+    costRaw: "\ub098\ubb34 1\uac1c",
+    sourceRef: "test-ko-source"
+  }
+];
+
 assert.equal(normalizeBgaPrintedId("A014*"), "A14");
 assert.deepEqual(getBgaFourPlayerBanlistStatus("A14"), {
   strong: true,
@@ -142,14 +152,30 @@ assert.equal(getBgaFourPlayerBanlistStatus("B40").strong, false, "B40 is not ban
 
 const catalog = await getRealCardCatalog({ decks: ["A", "B", "E"], limit: 20 }, { fetch: fakeFetch });
 assert.equal(catalog.cards.length, 5);
-assert.equal(catalog.sourceAttributions.length, 4);
+assert.equal(catalog.sourceAttributions.length, 5);
 
 const hammer = catalog.cards.find((card) => card.printedId === "A14");
 assert.ok(hammer, "A14 should be included from AgricolaDB.");
 assert.equal(hammer.name.en, "Carpenter's Hammer");
-assert.equal(hammer.costRaw, "木材1");
+assert.equal(hammer.name.ja, undefined);
+assert.equal(hammer.translationStatus, "ko_missing");
+assert.equal(hammer.effectText, undefined);
+assert.equal(hammer.effectLocale, undefined);
+assert.equal(hammer.costRaw, undefined);
+assert.equal(hammer.sourceCostRaw, undefined);
+assert.equal(hammer.sourceEffectLocale, undefined);
 assert.equal(hammer.bgaBanlist4p.strong, true);
 assert.equal(hammer.image?.sourcePageUrl, "http://play-agricola.com/Agricola/Cards/index.php?id=9001");
+
+const sourceCatalog = await getRealCardCatalog(
+  { decks: ["A"], limit: 20 },
+  { fetch: fakeFetch, includeSourceText: true }
+);
+const sourceHammer = sourceCatalog.cards.find((card) => card.printedId === "A14");
+assert.ok(sourceHammer, "A14 source detail should be available when requested.");
+assert.equal(sourceHammer.name.ja, "大工の槌");
+assert.equal(sourceHammer.sourceCostRaw, "木材1");
+assert.equal(sourceHammer.sourceEffectLocale, "ja");
 
 const breweryPond = catalog.cards.find((card) => card.printedId === "B40");
 assert.ok(breweryPond, "B40 should be included from AgricolaDB.");
@@ -159,22 +185,59 @@ const guestRoom = catalog.cards.find((card) => card.printedId === "E22");
 assert.ok(guestRoom, "E22 should be inferred from the BGA banlist name mapping.");
 assert.equal(guestRoom.bgaBanlist4p.strong, true);
 assert.equal(guestRoom.sourceSystem, "agricola-veronahe-rdf");
-assert.equal(guestRoom.effectText, "You receive room for one guest token.");
+assert.equal(guestRoom.translationStatus, "ko_missing");
+assert.equal(guestRoom.effectText, undefined);
+assert.equal(guestRoom.sourceEffectText, undefined);
+assert.equal(guestRoom.sourceEffectLocale, undefined);
+
+const koreanCatalog = await getRealCardCatalog(
+  { decks: ["A"], query: "\ubaa9\uc218\uc758 \ub9dd\uce58", limit: 20 },
+  { fetch: fakeFetch, koreanOverrides }
+);
+const koreanHammer = koreanCatalog.cards.find((card) => card.printedId === "A14");
+assert.ok(koreanHammer, "Korean override should make A14 searchable by Korean name.");
+assert.equal(koreanHammer.name.ko, "\ubaa9\uc218\uc758 \ub9dd\uce58");
+assert.equal(koreanHammer.translationStatus, "ko_available");
+assert.equal(koreanHammer.effectLocale, "ko-KR");
+assert.equal(koreanHammer.effectText, "\uc989\uc2dc \ub098\ubb34\uc9d1\uc5d0 \ubc29 1\uac1c\ub97c \ub9cc\ub4ed\ub2c8\ub2e4.");
+assert.equal(koreanHammer.costRaw, "\ub098\ubb34 1\uac1c");
+assert.ok(koreanHammer.sourceRefs.includes("test-ko-source"));
 
 const hammerDetail = await getRealCardDetail("A14", { fetch: fakeFetch });
 assert.ok(hammerDetail, "A14 detail should resolve by normalized BGA printed id.");
-assert.equal(hammerDetail.effectText, "Immediately build 1 room in your wooden hut.");
-assert.equal(hammerDetail.costRaw, "1 wood");
+assert.equal(hammerDetail.effectText, undefined);
+assert.equal(hammerDetail.costRaw, undefined);
+assert.equal(hammerDetail.sourceEffectText, undefined);
+assert.equal(hammerDetail.sourceEffectLocale, undefined);
+assert.equal(hammerDetail.sourceCostRaw, undefined);
 assert.equal(
   hammerDetail.image?.url,
   "http://play-agricola.com/Agricola/Cards/Cards/xminorCarpentersHammer_9001_1.jpg"
 );
 assert.ok(!hammerDetail.image?.url.includes("/public/"), "card images must not point at local public assets.");
 
+const sourceHammerDetail = await getRealCardDetail("A14", { fetch: fakeFetch, includeSourceText: true });
+assert.ok(sourceHammerDetail, "A14 source detail should resolve.");
+assert.equal(sourceHammerDetail.sourceEffectText, "Immediately build 1 room in your wooden hut.");
+assert.equal(sourceHammerDetail.sourceEffectLocale, "en");
+assert.equal(sourceHammerDetail.sourceCostRaw, "1 wood");
+
+const koreanHammerDetail = await getRealCardDetail("A14", {
+  fetch: fakeFetch,
+  koreanOverrides,
+  includeSourceText: true
+});
+assert.ok(koreanHammerDetail, "A14 detail with Korean override should resolve.");
+assert.equal(koreanHammerDetail.effectText, "\uc989\uc2dc \ub098\ubb34\uc9d1\uc5d0 \ubc29 1\uac1c\ub97c \ub9cc\ub4ed\ub2c8\ub2e4.");
+assert.equal(koreanHammerDetail.costRaw, "\ub098\ubb34 1\uac1c");
+assert.equal(koreanHammerDetail.sourceEffectText, "Immediately build 1 room in your wooden hut.");
+assert.equal(koreanHammerDetail.sourceCostRaw, "1 wood");
+
 const eDetail = await getRealCardDetail("E22", { fetch: fakeFetch });
 assert.ok(eDetail, "E deck detail should resolve by inferred printed id.");
 assert.equal(eDetail.name.en, "Guest Room");
-assert.equal(eDetail.costRaw, "1 wood");
+assert.equal(eDetail.costRaw, undefined);
+assert.equal(eDetail.sourceCostRaw, undefined);
 
 console.log("Real card catalog API contract passed.");
 

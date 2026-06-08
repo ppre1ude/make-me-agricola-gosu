@@ -1,7 +1,9 @@
 export type RealCardDeck = "A" | "B" | "C" | "D" | "E";
 export type RealCardType = "occupation" | "minor_improvement" | "major_improvement" | "unknown";
 export type RealCardSourceSystem = "agricoladb-graphql" | "agricola-veronahe-rdf";
-export type RealCardEffectLocale = "en" | "ja";
+export type RealCardEffectLocale = "ko-KR";
+export type RealCardSourceLocale = "en" | "ja";
+export type RealCardTranslationStatus = "ko_available" | "ko_missing";
 export type RealCardCatalogFetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>;
 
 export type RealCardBanlistStatus = {
@@ -24,15 +26,32 @@ export type RealCardExternalRefs = {
   veronaIri?: string;
 };
 
+export type RealCardKoreanOverride = {
+  id?: string;
+  printedId?: string;
+  literalId?: string;
+  agricolaDbCardId?: string;
+  agricolaDbLiteralId?: string;
+  playAgricolaCardId?: string;
+  veronaIri?: string;
+  name: string;
+  effectText?: string;
+  costRaw?: string;
+  prerequisiteRaw?: string;
+  sourceRef: string;
+};
+
 export type RealCardCatalogCard = {
   id: string;
   deck: RealCardDeck;
   type: RealCardType;
   sourceSystem: RealCardSourceSystem;
   name: {
+    ko?: string;
     en: string;
     ja?: string;
   };
+  translationStatus: RealCardTranslationStatus;
   bgaBanlist4p: RealCardBanlistStatus;
   sourceRefs: string[];
   externalRefs: RealCardExternalRefs;
@@ -46,6 +65,10 @@ export type RealCardCatalogCard = {
   effectLocale?: RealCardEffectLocale;
   costRaw?: string;
   prerequisiteRaw?: string;
+  sourceEffectText?: string;
+  sourceEffectLocale?: RealCardSourceLocale;
+  sourceCostRaw?: string;
+  sourcePrerequisiteRaw?: string;
   victoryPoints?: number;
   minPlayers?: number;
   products?: string[];
@@ -64,7 +87,7 @@ export type RealCardSourceAttribution = {
   sourceRef: string;
   label: string;
   sourceUrl: string;
-  scopes: Array<"catalog" | "detail" | "image" | "banlist">;
+  scopes: Array<"catalog" | "detail" | "image" | "banlist" | "translation">;
   permissionNote?: string;
 };
 
@@ -79,6 +102,8 @@ export type RealCardCatalogOptions = {
   agricolaDbGraphQlUrl?: string;
   veronaRdfUrl?: string;
   playAgricolaBaseUrl?: string;
+  koreanOverrides?: RealCardKoreanOverride[];
+  includeSourceText?: boolean;
 };
 
 type AgricolaDbDeck = Exclude<RealCardDeck, "E">;
@@ -193,6 +218,14 @@ const CATALOG_SOURCE_ATTRIBUTIONS: RealCardSourceAttribution[] = [
     label: "Board Game Arena Agricola help banlist",
     sourceUrl: "https://en.doc.boardgamearena.com/Gamehelpagricola",
     scopes: ["banlist"]
+  },
+  {
+    sourceRef: "woongi-tierlist-2025-09-01",
+    label: "아그리콜라 카드 티어리스트 검색기_250901_웅이_V2",
+    sourceUrl: "https://boardgamelaboratory.tistory.com/7",
+    scopes: ["translation"],
+    permissionNote:
+      "Use as a Korean card text overlay only when an explicit printed-id mapping has been reviewed."
   }
 ];
 
@@ -286,7 +319,7 @@ export async function getRealCardCatalog(
     .filter((card) => matchesCatalogQuery(card, query));
 
   return {
-    cards: cards.slice(0, limit),
+    cards: exposeSourceText(cards.slice(0, limit), options.includeSourceText),
     totalCount: cards.length,
     sourceAttributions: CATALOG_SOURCE_ATTRIBUTIONS
   };
@@ -302,18 +335,18 @@ export async function getRealCardDetail(
   if (!card) return null;
 
   const playAgricolaCardId = card.externalRefs.playAgricolaCardId;
-  if (!playAgricolaCardId) return card;
+  if (!playAgricolaCardId) return exposeCardSourceText(card, options.includeSourceText);
 
   const fetcher = options.fetch ?? fetch;
   const baseUrl = options.playAgricolaBaseUrl ?? PLAY_AGRICOLA_BASE_URL;
   const detailUrl = playAgricolaPageUrl(playAgricolaCardId, baseUrl);
   const response = await fetcher(detailUrl);
-  if (!response.ok) return card;
+  if (!response.ok) return exposeCardSourceText(card, options.includeSourceText);
 
   const parsed = parsePlayAgricolaCardHtml(await response.text(), playAgricolaCardId, baseUrl);
-  if (!parsed) return card;
+  if (!parsed) return exposeCardSourceText(card, options.includeSourceText);
 
-  return mergePlayAgricolaDetail(card, parsed);
+  return exposeCardSourceText(mergePlayAgricolaDetail(card, parsed), options.includeSourceText);
 }
 
 export function normalizeBgaPrintedId(value: string | null | undefined): string | undefined {
@@ -356,7 +389,9 @@ async function buildRealCardCatalog(options: RealCardCatalogOptions): Promise<Re
     fetchVeronaRevisedECards(options)
   ]);
 
-  return [...agricolaDbCards, ...veronaCards].sort(compareCatalogCards);
+  return applyKoreanOverrides([...agricolaDbCards, ...veronaCards], options.koreanOverrides ?? []).sort(
+    compareCatalogCards
+  );
 }
 
 async function fetchAgricolaDbCards(options: RealCardCatalogOptions): Promise<RealCardCatalogCard[]> {
@@ -406,9 +441,9 @@ function mapAgricolaDbCard(node: AgricolaDbCardNode, fallbackDeck: AgricolaDbDec
   const playAgricolaCardId = optionalString(node.playAgricolaCardID);
   const sourceRefs = ["agricoladb-graphql"];
   const literalId = optionalString(node.literalID);
-  const effectText = optionalString(node.description);
-  const costRaw = optionalString(node.cost);
-  const prerequisiteRaw = optionalString(node.prerequisite);
+  const sourceEffectText = optionalString(node.description);
+  const sourceCostRaw = optionalString(node.cost);
+  const sourcePrerequisiteRaw = optionalString(node.prerequisite);
   const products = node.products?.map((product) => product.nameEn).filter((name): name is string => Boolean(name));
   const image =
     playAgricolaCardId === undefined
@@ -432,9 +467,10 @@ function mapAgricolaDbCard(node: AgricolaDbCardNode, fallbackDeck: AgricolaDbDec
       en: nameEn,
       ...(nameJa === undefined ? {} : { ja: nameJa })
     },
-    ...(effectText === undefined ? {} : { effectText, effectLocale: "ja" as const }),
-    ...(costRaw === undefined ? {} : { costRaw }),
-    ...(prerequisiteRaw === undefined ? {} : { prerequisiteRaw }),
+    translationStatus: "ko_missing",
+    ...(sourceEffectText === undefined ? {} : { sourceEffectText, sourceEffectLocale: "ja" as const }),
+    ...(sourceCostRaw === undefined ? {} : { sourceCostRaw }),
+    ...(sourcePrerequisiteRaw === undefined ? {} : { sourcePrerequisiteRaw }),
     ...(node.victoryPoint === null ? {} : { victoryPoints: node.victoryPoint }),
     ...(node.minPlayersNumber === null ? {} : { minPlayers: node.minPlayersNumber }),
     ...(products === undefined || products.length === 0 ? {} : { products }),
@@ -486,9 +522,9 @@ function parseVeronaRevisedECards(turtle: string): RealCardCatalogCard[] {
     if (!nameEn) continue;
 
     const printedId = printedIdFromBanlistName(nameEn);
-    const costRaw = extractCostRaw(block, costLabels);
-    const effectText = extractRdfString(block, "<http://agricola.veronahe.no/cardText>");
-    const prerequisiteRaw = extractRdfString(block, "<http://agricola.veronahe.no/prerequisite>");
+    const sourceCostRaw = extractCostRaw(block, costLabels);
+    const sourceEffectText = extractRdfString(block, "<http://agricola.veronahe.no/cardText>");
+    const sourcePrerequisiteRaw = extractRdfString(block, "<http://agricola.veronahe.no/prerequisite>");
     const victoryPoints = parseOptionalNumber(extractRdfString(block, "<http://agricola.veronahe.no/bonusPoints>"));
     const minPlayers = parseOptionalNumber(extractRdfString(block, "<http://agricola.veronahe.no/players>"));
     const image: RealCardExternalImage = {
@@ -506,9 +542,10 @@ function parseVeronaRevisedECards(turtle: string): RealCardCatalogCard[] {
         type,
         sourceSystem: "agricola-veronahe-rdf" as const,
         name: { en: nameEn },
-        ...(effectText === undefined ? {} : { effectText, effectLocale: "en" as const }),
-        ...(costRaw === undefined ? {} : { costRaw }),
-        ...(prerequisiteRaw === undefined ? {} : { prerequisiteRaw }),
+        translationStatus: "ko_missing",
+        ...(sourceEffectText === undefined ? {} : { sourceEffectText, sourceEffectLocale: "en" as const }),
+        ...(sourceCostRaw === undefined ? {} : { sourceCostRaw }),
+        ...(sourcePrerequisiteRaw === undefined ? {} : { sourcePrerequisiteRaw }),
         ...(victoryPoints === undefined ? {} : { victoryPoints }),
         ...(minPlayers === undefined ? {} : { minPlayers }),
         bgaBanlist4p: getBgaFourPlayerBanlistStatus(printedId, nameEn),
@@ -618,32 +655,131 @@ function mergePlayAgricolaDetail(
 ): RealCardCatalogCard {
   const sourceRefs = new Set([...card.sourceRefs, "play-agricola"]);
   const {
-    effectText: _effectText,
-    effectLocale: _effectLocale,
-    costRaw: _costRaw,
-    prerequisiteRaw: _prerequisiteRaw,
+    sourceEffectText: _sourceEffectText,
+    sourceEffectLocale: _sourceEffectLocale,
+    sourceCostRaw: _sourceCostRaw,
+    sourcePrerequisiteRaw: _sourcePrerequisiteRaw,
     victoryPoints: _victoryPoints,
     image: _image,
     ...baseCard
   } = card;
-  const effectText = parsed.effectText ?? card.effectText;
-  const effectLocale = parsed.effectText === undefined ? card.effectLocale : ("en" as const);
-  const costRaw = parsed.costRaw ?? card.costRaw;
-  const prerequisiteRaw = parsed.prerequisiteRaw ?? card.prerequisiteRaw;
+  const sourceEffectText = parsed.effectText ?? card.sourceEffectText;
+  const sourceEffectLocale = parsed.effectText === undefined ? card.sourceEffectLocale : ("en" as const);
+  const sourceCostRaw = parsed.costRaw ?? card.sourceCostRaw;
+  const sourcePrerequisiteRaw = parsed.prerequisiteRaw ?? card.sourcePrerequisiteRaw;
   const victoryPoints = parsed.victoryPoints ?? card.victoryPoints;
   const image = parsed.image ?? card.image;
 
   return {
     ...baseCard,
     type: parsed.type === undefined || parsed.type === "unknown" ? card.type : parsed.type,
-    ...(effectText === undefined ? {} : { effectText }),
-    ...(effectLocale === undefined ? {} : { effectLocale }),
-    ...(costRaw === undefined ? {} : { costRaw }),
-    ...(prerequisiteRaw === undefined ? {} : { prerequisiteRaw }),
+    ...(sourceEffectText === undefined ? {} : { sourceEffectText }),
+    ...(sourceEffectLocale === undefined ? {} : { sourceEffectLocale }),
+    ...(sourceCostRaw === undefined ? {} : { sourceCostRaw }),
+    ...(sourcePrerequisiteRaw === undefined ? {} : { sourcePrerequisiteRaw }),
     ...(victoryPoints === undefined ? {} : { victoryPoints }),
     ...(image === undefined ? {} : { image }),
     sourceRefs: [...sourceRefs]
   };
+}
+
+function applyKoreanOverrides(
+  cards: RealCardCatalogCard[],
+  overrides: RealCardKoreanOverride[]
+): RealCardCatalogCard[] {
+  if (overrides.length === 0) return cards;
+
+  const overridesByKey = new Map<string, RealCardKoreanOverride>();
+  for (const override of overrides) {
+    for (const key of koreanOverrideKeys(override)) {
+      overridesByKey.set(key, override);
+    }
+  }
+
+  return cards.map((card) => {
+    const override = cardKoreanOverrideKeys(card)
+      .map((key) => overridesByKey.get(key))
+      .find((candidate): candidate is RealCardKoreanOverride => candidate !== undefined);
+
+    if (override === undefined) return card;
+
+    return {
+      ...card,
+      name: {
+        ...card.name,
+        ko: override.name
+      },
+      translationStatus: override.effectText === undefined ? card.translationStatus : "ko_available",
+      ...(override.effectText === undefined
+        ? {}
+        : { effectText: override.effectText, effectLocale: "ko-KR" as const }),
+      ...(override.costRaw === undefined ? {} : { costRaw: override.costRaw }),
+      ...(override.prerequisiteRaw === undefined ? {} : { prerequisiteRaw: override.prerequisiteRaw }),
+      sourceRefs: uniqueStrings([...card.sourceRefs, override.sourceRef])
+    };
+  });
+}
+
+function exposeSourceText(cards: RealCardCatalogCard[], includeSourceText: boolean | undefined): RealCardCatalogCard[] {
+  if (includeSourceText === true) return cards;
+  return cards.map((card) => exposeCardSourceText(card, includeSourceText));
+}
+
+function exposeCardSourceText(
+  card: RealCardCatalogCard,
+  includeSourceText: boolean | undefined
+): RealCardCatalogCard {
+  if (includeSourceText === true) return card;
+
+  const {
+    sourceEffectText: _sourceEffectText,
+    sourceEffectLocale: _sourceEffectLocale,
+    sourceCostRaw: _sourceCostRaw,
+    sourcePrerequisiteRaw: _sourcePrerequisiteRaw,
+    ...baseCard
+  } = card;
+  const { ja: _ja, ...name } = card.name;
+
+  return {
+    ...baseCard,
+    name
+  };
+}
+
+function koreanOverrideKeys(override: RealCardKoreanOverride): string[] {
+  return uniqueStrings(
+    [
+      override.id,
+      override.printedId,
+      override.literalId,
+      override.agricolaDbCardId,
+      override.agricolaDbLiteralId,
+      override.playAgricolaCardId,
+      override.veronaIri
+    ].flatMap((value) => overrideLookupKeyCandidates(value))
+  );
+}
+
+function cardKoreanOverrideKeys(card: RealCardCatalogCard): string[] {
+  return uniqueStrings(
+    [
+      card.id,
+      card.printedId,
+      card.literalId,
+      card.externalRefs.agricolaDbCardId,
+      card.externalRefs.agricolaDbLiteralId,
+      card.externalRefs.playAgricolaCardId,
+      card.externalRefs.veronaIri
+    ].flatMap((value) => overrideLookupKeyCandidates(value))
+  );
+}
+
+function overrideLookupKeyCandidates(value: string | undefined): string[] {
+  if (value === undefined) return [];
+  const printedId = normalizeBgaPrintedId(value);
+  return printedId === undefined
+    ? [normalizeCardLookup(value)]
+    : [normalizeCardLookup(value), normalizeCardLookup(printedId)];
 }
 
 function matchesCatalogQuery(card: RealCardCatalogCard, query: string): boolean {
@@ -653,10 +789,14 @@ function matchesCatalogQuery(card: RealCardCatalogCard, query: string): boolean 
     card.id,
     card.printedId,
     card.literalId,
+    card.name.ko,
     card.name.en,
     card.name.ja,
     card.effectText,
-    card.costRaw
+    card.costRaw,
+    card.sourceEffectText,
+    card.sourceCostRaw,
+    card.sourcePrerequisiteRaw
   ].filter((value): value is string => typeof value === "string" && value.length > 0);
 
   return values.some((value) => normalizeSearchText(value).includes(query));
@@ -683,6 +823,7 @@ function matchesCardLookup(card: RealCardCatalogCard, normalizedLookup: string):
     card.externalRefs.agricolaDbLiteralId,
     card.externalRefs.playAgricolaCardId,
     card.externalRefs.veronaIri,
+    card.name.ko,
     slugify(card.name.en)
   ].filter((value): value is string => typeof value === "string" && value.length > 0);
 
@@ -799,6 +940,10 @@ function optionalString(value: string | null | undefined): string | undefined {
   if (value === null || value === undefined) return undefined;
   const trimmed = value.trim();
   return trimmed.length === 0 ? undefined : trimmed;
+}
+
+function uniqueStrings(values: string[]): string[] {
+  return [...new Set(values.filter((value) => value.trim() !== ""))];
 }
 
 function parseOptionalNumber(value: string | null | undefined): number | undefined {

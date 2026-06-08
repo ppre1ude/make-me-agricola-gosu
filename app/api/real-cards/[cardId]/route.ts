@@ -5,10 +5,11 @@ type RealCardDetailRouteContext = {
   params: Promise<{ cardId: string }>;
 };
 
-export async function GET(_request: NextRequest, context: RealCardDetailRouteContext) {
+export async function GET(request: NextRequest, context: RealCardDetailRouteContext) {
   try {
     const { cardId } = await context.params;
-    const detail = await getRealCardDetail(decodeURIComponent(cardId));
+    const includeSourceText = request.nextUrl.searchParams.get("includeSourceText") === "true";
+    const detail = await getRealCardDetail(decodeURIComponent(cardId), { includeSourceText });
 
     if (!detail) {
       return NextResponse.json({ error: "Real card not found." }, { status: 404 });

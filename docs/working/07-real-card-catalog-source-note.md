@@ -15,13 +15,15 @@ The catalog is intentionally separate from the draft scoring engine:
 
 ## Sources
 
-The catalog combines three external sources:
+The catalog combines external metadata sources and a Korean text overlay path:
 
-- AgricolaDB GraphQL: A-D revised deck identity, names, Japanese text, cost,
+- AgricolaDB GraphQL: A-D revised deck identity, names, raw source text/cost,
   prerequisites, product metadata, and Play-Agricola IDs.
-- Agricola Card Ontology RDF: Revised E deck identity and English card text.
-- Play-Agricola: external rendered image URL and English detail text when a
-  Play-Agricola card ID is available.
+- Agricola Card Ontology RDF: Revised E deck identity and raw source card text.
+- Play-Agricola: external rendered image URL and raw English detail text when
+  a Play-Agricola card ID is available.
+- Woongi tierlist spreadsheet: Korean card text overlay source once a reviewed
+  BGA printed-id mapping is available.
 
 BGA 4-player banlist flags are encoded from:
 
@@ -65,10 +67,27 @@ GET /api/real-cards/E22
 
 IDs prefer normalized BGA printed IDs, such as `A14` instead of `A014`.
 
+User-facing text fields are Korean-only:
+
+- `effectText`, `costRaw`, and `prerequisiteRaw` are populated only from a
+  Korean override.
+- `effectLocale` is `ko-KR` when Korean text is present.
+- `translationStatus` is `ko_available` or `ko_missing`.
+- Raw external source text is omitted by default. It is available only when
+  `includeSourceText=true`, using `sourceEffectText`, `sourceEffectLocale`,
+  `sourceCostRaw`, and `sourcePrerequisiteRaw`.
+
 ## Known Gaps
 
-- A-D effect text from AgricolaDB is Japanese unless a Play-Agricola detail
-  page is available and parsed on detail lookup.
+- A-E entries without a reviewed Korean override intentionally return no
+  `effectText`/`costRaw` rather than falling back to Japanese or English.
+- Until the Korean override mapping is complete, those entries may still carry
+  external identity fields such as `name.en`; callers must treat
+  `translationStatus=ko_missing` as not ready for Korean card browsing.
+- The Woongi spreadsheet has Korean card names, effects, and costs for 683
+  cards, but does not include BGA printed IDs. A reviewed mapping from
+  printed ID to Woongi card ID is still required before using it as the default
+  A-E Korean overlay.
 - Revised E has RDF text and source page links, but no guaranteed rendered
   image URL.
 - The BGA source page identifies E banlist cards by printed ID, but the RDF

@@ -23,13 +23,17 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get("q") ?? undefined;
     const limit = parseLimit(searchParams.get("limit"));
     const banlist4p = parseBanlist(searchParams.get("banlist4p"));
-    const response = await getRealCardCatalog({
-      ...(decks === undefined ? {} : { decks }),
-      ...(type === undefined ? {} : { type }),
-      ...(query === undefined ? {} : { query }),
-      ...(limit === undefined ? {} : { limit }),
-      ...(banlist4p === undefined ? {} : { banlist4p })
-    });
+    const includeSourceText = searchParams.get("includeSourceText") === "true";
+    const response = await getRealCardCatalog(
+      {
+        ...(decks === undefined ? {} : { decks }),
+        ...(type === undefined ? {} : { type }),
+        ...(query === undefined ? {} : { query }),
+        ...(limit === undefined ? {} : { limit }),
+        ...(banlist4p === undefined ? {} : { banlist4p })
+      },
+      { includeSourceText }
+    );
 
     return NextResponse.json(response);
   } catch (error) {
