@@ -384,10 +384,12 @@ async function loadRealCardCatalog(options: RealCardCatalogOptions): Promise<Rea
 }
 
 async function buildRealCardCatalog(options: RealCardCatalogOptions): Promise<RealCardCatalogCard[]> {
-  const [agricolaDbCards, veronaCards] = await Promise.all([
+  const [agricolaDbCardsResult, veronaCardsResult] = await Promise.allSettled([
     fetchAgricolaDbCards(options),
     fetchVeronaRevisedECards(options)
   ]);
+  const agricolaDbCards = agricolaDbCardsResult.status === "fulfilled" ? agricolaDbCardsResult.value : [];
+  const veronaCards = veronaCardsResult.status === "fulfilled" ? veronaCardsResult.value : [];
 
   return applyKoreanOverrides([...agricolaDbCards, ...veronaCards], options.koreanOverrides ?? []).sort(
     compareCatalogCards
@@ -504,7 +506,7 @@ async function fetchVeronaRevisedECards(options: RealCardCatalogOptions): Promis
 
 function parseVeronaRevisedECards(turtle: string): RealCardCatalogCard[] {
   const costLabels = parseVeronaCostLabels(turtle);
-  const blocks = turtle.split(/\n(?=<http:\/\/agricola\.veronahe\.no\/[^>]+>\s+a\s+)/);
+  const blocks = turtle.split(/\r?\n(?=<http:\/\/agricola\.veronahe\.no\/[^>]+>\s+a\s+)/);
   const cards: RealCardCatalogCard[] = [];
 
   for (const block of blocks) {
@@ -567,7 +569,7 @@ function parseVeronaRevisedECards(turtle: string): RealCardCatalogCard[] {
 
 function parseVeronaCostLabels(turtle: string): Map<string, string> {
   const costLabels = new Map<string, string>();
-  const blocks = turtle.split(/\n(?=<http:\/\/agricola\.veronahe\.no\/[^>]+>\s+a\s+)/);
+  const blocks = turtle.split(/\r?\n(?=<http:\/\/agricola\.veronahe\.no\/[^>]+>\s+a\s+)/);
 
   for (const block of blocks) {
     const header = block.match(
@@ -612,7 +614,7 @@ function parsePlayAgricolaCardHtml(
     "i"
   );
   const idMatch = idRegex.exec(html);
-  if (!idMatch?.index || !idMatch[1]) return null;
+  if (!idMatch || !idMatch[1]) return null;
 
   const rowStart = html.lastIndexOf("<tr", idMatch.index);
   const rowEnd = html.indexOf("</tr>", idMatch.index);
@@ -921,9 +923,13 @@ function decodeRdfString(value: string): string {
 }
 
 function resolvePlayAgricolaImageUrl(fileName: string, baseUrl: string): string | undefined {
-  const resolved = new URL(fileName, `${baseUrl.replace(/\/+$/, "")}/Cards/`);
-  if (resolved.protocol !== "http:" && resolved.protocol !== "https:") return undefined;
-  return resolved.href;
+  try {
+    const resolved = new URL(fileName, `${baseUrl.replace(/\/+$/, "")}/Cards/`);
+    if (resolved.protocol !== "http:" && resolved.protocol !== "https:") return undefined;
+    return resolved.href;
+  } catch {
+    return undefined;
+  }
 }
 
 function slugify(value: string): string {
@@ -959,8 +965,4 @@ function clampLimit(limit: number | undefined): number {
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-function removeUndefinedFields<T extends Record<string, unknown>>(value: T): T {
-  return Object.fromEntries(Object.entries(value).filter(([, entryValue]) => entryValue !== undefined)) as T;
 }

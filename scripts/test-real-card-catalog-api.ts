@@ -107,18 +107,7 @@ const fakeFetch: RealCardCatalogFetch = async (input, init) => {
   const url = String(input);
 
   if (url === "https://api.db.agricolajp.dev/graphql") {
-    const body = JSON.parse(String(init?.body));
-    const deckId = String(body.variables.deckId);
-    const edges = (graphQlCardsByDeck[deckId] ?? []).map((node) => ({ node }));
-
-    return jsonResponse({
-      data: {
-        cards: {
-          totalCount: edges.length,
-          edges
-        }
-      }
-    });
+    return graphQlDeckResponse(init);
   }
 
   if (url === "https://agricola.veronahe.no/api/export-rdf") {
@@ -130,6 +119,52 @@ const fakeFetch: RealCardCatalogFetch = async (input, init) => {
   }
 
   throw new Error(`Unexpected test fetch: ${url}`);
+};
+
+const rdfFailureFetch: RealCardCatalogFetch = async (input, init) => {
+  const url = String(input);
+
+  if (url === "https://api.db.agricolajp.dev/graphql") {
+    return graphQlDeckResponse(init);
+  }
+
+  if (url === "https://agricola.veronahe.no/api/export-rdf") {
+    return new Response("service unavailable", { status: 503 });
+  }
+
+  throw new Error(`Unexpected RDF failure test fetch: ${url}`);
+};
+
+const crlfRdfFetch: RealCardCatalogFetch = async (input, init) => {
+  const url = String(input);
+
+  if (url === "https://api.db.agricolajp.dev/graphql") {
+    return graphQlDeckResponse(init);
+  }
+
+  if (url === "https://agricola.veronahe.no/api/export-rdf") {
+    return textResponse(veronaTurtle.replace(/\n/g, "\r\n"), "text/turtle; charset=utf-8");
+  }
+
+  throw new Error(`Unexpected CRLF RDF test fetch: ${url}`);
+};
+
+const invalidPlayAgricolaBaseFetch: RealCardCatalogFetch = async (input, init) => {
+  const url = String(input);
+
+  if (url === "https://api.db.agricolajp.dev/graphql") {
+    return graphQlDeckResponse(init);
+  }
+
+  if (url === "https://agricola.veronahe.no/api/export-rdf") {
+    return textResponse(veronaTurtle, "text/turtle; charset=utf-8");
+  }
+
+  if (url === "::::/index.php?id=9001") {
+    return textResponse(playAgricolaHtml, "text/html; charset=UTF-8");
+  }
+
+  throw new Error(`Unexpected invalid-base test fetch: ${url}`);
 };
 
 const koreanOverrides = [
@@ -153,6 +188,14 @@ assert.equal(getBgaFourPlayerBanlistStatus("B40").strong, false, "B40 is not ban
 const catalog = await getRealCardCatalog({ decks: ["A", "B", "E"], limit: 20 }, { fetch: fakeFetch });
 assert.equal(catalog.cards.length, 5);
 assert.equal(catalog.sourceAttributions.length, 5);
+
+const rdfFailureCatalog = await getRealCardCatalog(
+  { decks: ["A", "B", "E"], limit: 20 },
+  { fetch: rdfFailureFetch }
+);
+assert.equal(rdfFailureCatalog.cards.length, 3);
+assert.ok(rdfFailureCatalog.cards.some((card) => card.printedId === "A14"));
+assert.equal(rdfFailureCatalog.cards.some((card) => card.deck === "E"), false);
 
 const hammer = catalog.cards.find((card) => card.printedId === "A14");
 assert.ok(hammer, "A14 should be included from AgricolaDB.");
@@ -222,6 +265,15 @@ assert.equal(sourceHammerDetail.sourceEffectText, "Immediately build 1 room in y
 assert.equal(sourceHammerDetail.sourceEffectLocale, "en");
 assert.equal(sourceHammerDetail.sourceCostRaw, "1 wood");
 
+const invalidBaseDetail = await getRealCardDetail("A14", {
+  fetch: invalidPlayAgricolaBaseFetch,
+  playAgricolaBaseUrl: "::::",
+  includeSourceText: true
+});
+assert.ok(invalidBaseDetail, "A14 detail should survive invalid Play-Agricola image base URLs.");
+assert.equal(invalidBaseDetail.sourceEffectText, "Immediately build 1 room in your wooden hut.");
+assert.equal(invalidBaseDetail.image?.url, undefined);
+
 const koreanHammerDetail = await getRealCardDetail("A14", {
   fetch: fakeFetch,
   koreanOverrides,
@@ -239,7 +291,30 @@ assert.equal(eDetail.name.en, "Guest Room");
 assert.equal(eDetail.costRaw, undefined);
 assert.equal(eDetail.sourceCostRaw, undefined);
 
+const crlfRdfCatalog = await getRealCardCatalog(
+  { decks: ["E"], limit: 20 },
+  { fetch: crlfRdfFetch, includeSourceText: true }
+);
+const crlfGuestRoom = crlfRdfCatalog.cards.find((card) => card.printedId === "E22");
+assert.ok(crlfGuestRoom, "CRLF RDF input should still parse Revised E cards.");
+assert.equal(crlfGuestRoom.sourceCostRaw, "1 wood");
+
 console.log("Real card catalog API contract passed.");
+
+function graphQlDeckResponse(init: RequestInit | undefined): Response {
+  const body = JSON.parse(String(init?.body));
+  const deckId = String(body.variables.deckId);
+  const edges = (graphQlCardsByDeck[deckId] ?? []).map((node) => ({ node }));
+
+  return jsonResponse({
+    data: {
+      cards: {
+        totalCount: edges.length,
+        edges
+      }
+    }
+  });
+}
 
 function jsonResponse(payload: unknown): Response {
   return new Response(JSON.stringify(payload), {
